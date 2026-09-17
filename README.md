@@ -2,7 +2,7 @@
 
 **Understand exactly what will change before publishing a Neos workspace.**
 
-The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, keyboard review and a visual compare of the rendered page. Publishing, discarding and the module path keep their existing behavior. The preview requires backend access and checks read access to private workspaces.
+The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, keyboard review, a visual compare of the rendered page and a review narrowed to a single page. Publishing, discarding and the module path keep their existing behavior. The preview requires backend access and checks read access to private workspaces.
 
 ## Improvements at a glance
 
@@ -14,6 +14,7 @@ The package replaces the review view of the Neos backend module *Management → 
 - **Word-level diffs reduce noise.** Reviewers see the changed words instead of comparing two complete paragraphs. Long unchanged passages collapse to an ellipsis. Deleted words are struck through, so the diff does not rely on colour alone.
 - **Status and position are instantly clear.** Created, deleted, moved and hidden elements receive explicit badges. Positions use readable sibling numbers instead of sorting indexes.
 - **Three ways to publish, each stated.** Publish or discard a single element with the labelled buttons on its card, select several changes for the batch buttons, or act on everything. The footer stays in view and says what its buttons act on: the selection with its count, or all changes when nothing is selected.
+- **Review and publish a single page.** A link with the page's node narrows the review to that page: only its changes are listed, the heading names it, and the batch buttons publish or discard only them. The footer says when other pages have changes too and links to the whole workspace. See [Review a single page](#review-a-single-page).
 - **Every change has an explanation.** Visibility changes, reverted edits and internal updates no longer produce unexplained empty rows.
 - **Links and formatting become visible.** Retargeted links, window behavior, linked text and formatting changes are detected even when the wording remains unchanged.
 
@@ -68,13 +69,30 @@ Shortcuts stay off inside form controls, and modifier combinations are left to t
 
 ### Review a single page
 
-The review accepts an optional `document` module argument with the context path of a document node:
+The review accepts an optional `document` module argument with the context path of a document node. Another package, a bookmark or a message to a reviewer can link straight to the changes of one page:
 
 ```
 /neos/management/workspaces/show?moduleArguments[workspace][__identity]=user-admin&moduleArguments[document]=/sites/site/blog/post@user-admin%3Blanguage=de
 ```
 
-Only that page is listed then, with its ancestors in the page tree, and the batch buttons publish or discard only its changes. The `;` of the context path has to be URL-encoded as `%3B`, because a query string ends an argument at a plain `;`. A value without a dimension part – a plain node path, or a context path cut off at an unencoded `;` – covers every dimension variant of the page. A page without changes shows a notice instead of an empty list. If other pages have changes too, the footer says so and links to the review of the whole workspace. A new page is published together with the new or moved pages it lives in, as in the full review, even though the filter hides them. After publishing or discarding, the core action returns to the review of the whole workspace.
+What the argument changes:
+
+- **The review lists only that page.** The heading reads "Review changes on *Page title*", the subtitle counts its changed elements, and the page tree shows the page with the ancestors that lead to it.
+- **The batch buttons act on that page only.** "Publish all" and "Discard all" post everything shown through the batch form instead of calling the core actions for the whole workspace. Selecting single changes and the buttons of a single element work as in the full review.
+- **Other changes stay reachable.** If other pages have changes too, the footer says "There are more changes on other pages, show all" and links to the review without the argument.
+- **A page without changes says so.** Instead of an empty list, a notice states that the page has no unpublished changes and links to the whole workspace.
+- **New pages are published with what they need.** A new page is published together with the new or moved pages it lives in, as in the full review, even though the filter hides them.
+
+The value of the argument:
+
+| Value | Matches |
+| --- | --- |
+| `/sites/site/blog/post@user-admin%3Blanguage=de` | that page in that dimension combination |
+| `/sites/site/blog/post` | every dimension variant of the page |
+
+The `;` of a context path has to be URL-encoded as `%3B`, because a query string ends an argument at a plain `;`. A context path cut off there arrives without its dimension part and is treated like the plain node path. The workspace part of the value is ignored; the review is about the workspace it was opened for.
+
+After publishing or discarding, the inherited core action returns to the review of the whole workspace.
 
 ## Configuration
 
