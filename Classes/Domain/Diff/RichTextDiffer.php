@@ -22,11 +22,9 @@ use Neos\Flow\Annotations as Flow;
  * Findings are returned as plain arrays; turning them into labels and
  * translations is the caller's job, so this class needs no dependencies.
  *
- * Findings are deliberately conservative: they are only stated when the
- * surrounding words prove what happened. As soon as the anchor text itself was
- * edited or the structure around it changed, nothing is reported here and the
- * caller's word-level text diff (or its "technical change" note) owns the
- * story - a silent finding is better than a wrong one.
+ * Matching labels identify target changes. Otherwise, newly introduced and
+ * removed destinations are reported separately, including when the wording
+ * changes or an entire linked paragraph is added.
  *
  * Note on the parser: libxml silently truncates markup nested deeper than ~254
  * levels, which cannot occur in rich-text editor content.
@@ -101,9 +99,7 @@ class RichTextDiffer
      */
     public function compare(string $original, string $changed): array
     {
-        if ($original === $changed || trim($original) === '' || trim($changed) === '') {
-            // With one side empty there is nothing to align: every difference
-            // is a plain addition or removal the text diff already shows.
+        if ($original === $changed) {
             return [];
         }
 
@@ -378,7 +374,7 @@ class RichTextDiffer
         return array_merge(
             $identityFindings,
             $labelFindings,
-            $this->compareUnmatchedLinks($originalRest, $changedRest, $originalDocument, $changedDocument)
+            $this->compareUnmatchedLinks($originalRest, $changedRest)
         );
     }
 
@@ -424,11 +420,8 @@ class RichTextDiffer
     }
 
     /**
-     * Reports links without a partner as added or removed - but only when the
-     * plain text of both sides is word for word the same, which is the one case
-     * that proves the words stayed and merely the linking around them changed.
-     * As soon as a single word was edited, the word-level text diff shows the
-     * passage anyway and a guess about the link would contradict it.
+     * Reports unmatched destinations even when their surrounding wording has
+     * changed. The plain text diff cannot show where a link points.
      *
      * @param array<int, array<string, ?string>> $originalRest
      * @param array<int, array<string, ?string>> $changedRest
@@ -436,14 +429,9 @@ class RichTextDiffer
      */
     protected function compareUnmatchedLinks(
         array $originalRest,
-        array $changedRest,
-        array $originalDocument,
-        array $changedDocument
+        array $changedRest
     ): array {
         if ($originalRest === [] && $changedRest === []) {
-            return [];
-        }
-        if ($originalDocument['text'] !== $changedDocument['text']) {
             return [];
         }
 

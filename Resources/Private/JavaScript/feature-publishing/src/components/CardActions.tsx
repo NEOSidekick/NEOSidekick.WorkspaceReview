@@ -3,6 +3,8 @@ import { Button, Icon } from '@neos-project/react-ui-components';
 import { useIntl, useReviewActions, useReviewData, useReviewState } from '@neosidekick/workspace-review-core';
 import type { NodeChange } from '@neosidekick/workspace-review-core';
 
+import { ActionScopeInfo } from './ActionScopeInfo';
+
 import styles from './CardActions.module.css';
 
 /**
@@ -23,6 +25,7 @@ export function CardActions({ change }: { change: NodeChange }) {
 
     return (
         <div className={styles.actions}>
+            <ActionScopeInfo />
             <Button
                 style="lighter"
                 hoverStyle="error"

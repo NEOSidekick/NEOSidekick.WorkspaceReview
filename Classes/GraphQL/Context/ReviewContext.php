@@ -9,15 +9,9 @@ namespace NEOSidekick\WorkspaceReview\GraphQL\Context;
  */
 
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use t3n\GraphQL\Context;
 
-/**
- * The review answers with URIs - the preview route of the visual compare and
- * the frontend URI of a page - and building them needs a ControllerContext.
- * The base context keeps only the main request, so this one holds on to the
- * whole controller context it is constructed with.
- */
-class ReviewContext extends Context
+/** Holds the request context used to build the review's preview and frontend URIs. */
+class ReviewContext
 {
     /**
      * @var ControllerContext
@@ -26,7 +20,6 @@ class ReviewContext extends Context
 
     public function __construct(ControllerContext $controllerContext)
     {
-        parent::__construct($controllerContext);
         $this->controllerContext = $controllerContext;
     }
 

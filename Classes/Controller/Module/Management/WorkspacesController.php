@@ -156,7 +156,7 @@ class WorkspacesController extends NeosWorkspacesController
 
     /**
      * The endpoint lives outside the module, so its URI is built on the main
-     * request. The t3n route only matches the format "json", which the main
+     * request. The API route only matches the format "json", which the main
      * request does not carry, hence the explicit setFormat().
      */
     protected function buildGraphQlUri(): string
@@ -166,7 +166,7 @@ class WorkspacesController extends NeosWorkspacesController
         return $uriBuilder->reset()
             ->setCreateAbsoluteUri(false)
             ->setFormat('json')
-            ->uriFor('query', ['endpoint' => 'workspace-review'], 'GraphQL', 't3n.GraphQL');
+            ->uriFor('query', [], 'GraphQL', 'NEOSidekick.WorkspaceReview');
     }
 
     /**

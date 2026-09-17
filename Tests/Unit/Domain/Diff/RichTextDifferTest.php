@@ -107,10 +107,49 @@ class RichTextDifferTest extends UnitTestCase
                     ['kind' => 'linkAdded', 'linkText' => 'neos.eu', 'href' => 'https://neos.eu'],
                 ],
             ],
-            'label rewritten together with the target belongs to the text diff' => [
+            'rewritten link exposes both destinations' => [
                 '<p><a href="https://neos.eu/alt">Alte Seite</a></p>',
                 '<p><a href="https://neos.eu/neu">Neue Seite</a></p>',
-                [],
+                [
+                    ['kind' => 'linkRemoved', 'linkText' => 'Alte Seite', 'href' => 'https://neos.eu/alt'],
+                    ['kind' => 'linkAdded', 'linkText' => 'Neue Seite', 'href' => 'https://neos.eu/neu'],
+                ],
+            ],
+            'anchor text and target changed together' => [
+                '<p>Bitte <a href="/kontakt">hier</a> melden</p>',
+                '<p>Bitte <a href="/impressum">hier klicken</a> melden</p>',
+                [
+                    ['kind' => 'linkRemoved', 'linkText' => 'hier', 'href' => '/kontakt'],
+                    ['kind' => 'linkAdded', 'linkText' => 'hier klicken', 'href' => '/impressum'],
+                ],
+            ],
+            'a second link with the same label is not paired by position' => [
+                '<p>Klicken Sie <a href="/2">hier</a></p>',
+                '<p>Klicken Sie <a href="/1">hier</a> oder <a href="/2">hier</a></p>',
+                [
+                    ['kind' => 'linkAdded', 'linkText' => 'hier', 'href' => '/1'],
+                ],
+            ],
+            'an anchor label that is only a substring of the new text' => [
+                '<p>Mehr <a href="/info">Info</a> hier</p>',
+                '<p>Mehr Information hier</p>',
+                [
+                    ['kind' => 'linkRemoved', 'linkText' => 'Info', 'href' => '/info'],
+                ],
+            ],
+            'a link inside an entirely new paragraph' => [
+                '<p>Unser Team ist für Sie da</p>',
+                '<p>Unser Team ist für Sie da</p><p>Das <a href="/team">Team</a> im Detail</p>',
+                [
+                    ['kind' => 'linkAdded', 'linkText' => 'Team', 'href' => '/team'],
+                ],
+            ],
+            'link removed together with its words' => [
+                '<p>Mehr auf <a href="https://neos.eu">neos.eu</a> lesen</p>',
+                '<p>Mehr lesen</p>',
+                [
+                    ['kind' => 'linkRemoved', 'linkText' => 'neos.eu', 'href' => 'https://neos.eu'],
+                ],
             ],
             'umlauts and entities survive extraction' => [
                 '<p><a href="http://neos.eu/ueber-uns">Über uns &amp; Grüße</a></p>',
@@ -365,31 +404,11 @@ class RichTextDifferTest extends UnitTestCase
                 '<p>Bitte <a href="/kontakt">hier</a> melden</p>',
                 '<p>Bitte <a href="/kontakt">hier klicken</a> melden</p>',
             ],
-            'anchor text and target changed together' => [
-                '<p>Bitte <a href="/kontakt">hier</a> melden</p>',
-                '<p>Bitte <a href="/impressum">hier klicken</a> melden</p>',
-            ],
-            'a second link with the same label is not paired by position' => [
-                '<p>Klicken Sie <a href="/2">hier</a></p>',
-                '<p>Klicken Sie <a href="/1">hier</a> oder <a href="/2">hier</a></p>',
-            ],
-            'an anchor label that is only a substring of the new text' => [
-                '<p>Mehr <a href="/info">Info</a> hier</p>',
-                '<p>Mehr Information hier</p>',
-            ],
-            'a link inside an entirely new paragraph' => [
-                '<p>Unser Team ist für Sie da</p>',
-                '<p>Unser Team ist für Sie da</p><p>Das <a href="/team">Team</a> im Detail</p>',
-            ],
             'unclosed tag recovers to the same markup' => [
                 '<p>Hallo <strong>Welt</p>',
                 '<p>Hallo <strong>Welt</strong></p>',
             ],
             'severely broken markup' => ['<<<>>> kaputt <p offen <a href=', '<p>Text</p>'],
-            'link removed together with its words' => [
-                '<p>Mehr auf <a href="https://neos.eu">neos.eu</a> lesen</p>',
-                '<p>Mehr lesen</p>',
-            ],
             'original side empty' => ['', '<p>Hallo Welt</p>'],
             'changed side empty' => ['<p>Hallo Welt</p>', ''],
             'both sides empty' => ['', ''],

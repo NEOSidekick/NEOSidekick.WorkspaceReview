@@ -47,7 +47,7 @@ The card header names the element type next to the node label, because the label
 - **Text changes** are compared word by word. An unchanged run longer than two dozen words collapses to the words surrounding the edit plus an ellipsis. Deleted words are struck through in addition to their colouring, and each edited run starts with a visually hidden "deleted:" or "added:" label, because `<del>` and `<ins>` alone are not reliably announced by screen readers. HTML entities are decoded before comparison, so titles show `&` instead of `&amp;`.
 - **Configuration values** use translated `editorOptions.values` labels, such as "Kein Abstand" instead of `none`. Booleans render as Yes or No, references as node labels. A property changed back to its NodeType default is still reported.
 - **Gallery and asset lists** compare persisted asset identities in order. Replacements, additions, removals and reordering show asset titles or filenames; equally named lists include identifiers to distinguish them.
-- **Links and formatting** are compared a second time on the markup level, conservatively: a link pointing elsewhere (internal `node://` and `asset://` targets resolved to page and asset names), a changed window behavior, words linked or unlinked while the wording stayed, and bold, italic, underline, strikethrough, subscript, superscript, code, highlight and heading-level changes per passage. Two targets that resolve to the same label keep their raw URIs, so the result never claims `X → X`.
+- **Links and formatting** are compared a second time on the markup level, conservatively: a link pointing elsewhere (internal `node://` and `asset://` targets resolved to page and asset names), a changed window behavior, links added or removed even alongside rewritten or newly created text, and bold, italic, underline, strikethrough, subscript, superscript, code, highlight and heading-level changes per passage. Two targets that resolve to the same label keep their raw URIs, so the result never claims `X → X`.
 - **Position and status**: a moved node shows its place among siblings, such as `3 of 3 → 1 of 3`. An index changed only by sibling renumbering is identified as internal re-sorting.
 - **Changes without a visible diff** use three distinct notes: "Changed – the wording is unchanged, please check details in the preview.", "Edited, but matching the published version again – no content differences found." and "No visible changes (internal update)."
 
@@ -111,9 +111,13 @@ Neos:
 
 Word-diff thresholds (24 context words, 50 edited words) are constants in `Domain\Diff\WordDiffer`: they shape server-rendered HTML and therefore cannot be client-side flags.
 
+After installing the package into a running website, sign out of Neos and sign back in so the session picks up the new backend request patterns.
+
+The info icon beside publishing and discarding actions explains Neos’s recursive behavior: pages and containers include their nested content, even when those child changes are not selected. Child pages are excluded from that content cascade. The native publishing and discarding behavior is unchanged.
+
 ## GraphQL API
 
-The review data is served read-only through `t3n/graphql` at `neos/graphql/workspace-review`, configured in `Configuration/Settings.GraphQL.yaml` and described by `Resources/Private/GraphQL/schema.root.graphql`. One query answers the whole review:
+The review data is served read-only by this package’s `GraphQLController` at `neos/graphql/workspace-review`, described by `Resources/Private/GraphQL/schema.root.graphql`. It uses `webonyx/graphql-php` directly and supports both the 0.13 library used by older Media UI installations and version 15 used by newer installations. It does not change other packages’ GraphQL endpoints or field resolvers. One query answers the whole review:
 
 ```graphql
 query { workspace(name: "user-admin") { name canPublishToBase sites { name dimensions { hash label pages { depth hasChildren page { id changes { label properties { kind label diffHtml } } } } } } } }

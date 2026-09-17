@@ -378,6 +378,18 @@
             <trans-unit id="review.headingOnPage" xml:space="preserve">
                 <source>Review changes on {0}</source>
             </trans-unit>
+            <trans-unit id="actions.scopeHelp" xml:space="preserve">
+                <source>What will be published or discarded?</source>
+            </trans-unit>
+            <trans-unit id="actions.scopeContent" xml:space="preserve">
+                <source>Neos publishes or discards an entire element, including all its changed properties. For pages and containers, this also includes their nested content, even when those child changes are not selected. Child pages are not included by this rule.</source>
+            </trans-unit>
+            <trans-unit id="actions.scopeSelection" xml:space="preserve">
+                <source>To act on individual content changes, select those elements instead of their page or container. Publishing can also require new or moved parent pages; their changes are added to the selection. Discarding does not add those parent pages.</source>
+            </trans-unit>
+            <trans-unit id="actions.scopeDiscard" xml:space="preserve">
+                <source>Publishing transfers the affected changes to the base workspace. Discarding removes them from this workspace and restores the base version; newly created elements are removed.</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

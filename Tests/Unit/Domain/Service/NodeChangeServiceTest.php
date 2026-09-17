@@ -605,6 +605,33 @@ class NodeChangeServiceTest extends UnitTestCase
         self::assertSame('moved-a1b2c3', $change['id']);
     }
 
+    /** @test */
+    public function reorderedContentHasAMovedBadgeButIndexRenumberingDoesNot(): void
+    {
+        $type = $this->createNodeType('Vendor.Site:Text');
+        $type->method('getLabel')->willReturn('Text');
+        $original = $this->createNode($type, [], 100, $this->createParent('/sites/example', ['first', 'moved', 'third']));
+        foreach ([['moved', 'first', 'third'], ['first', 'moved', 'third']] as $order) {
+            $changed = $this->createNode($type, [], 250, $this->createParent('/sites/example', $order));
+            $changed->method('getNodeData')->willReturn($this->createMock(NodeData::class));
+            $change = $this->createService($original)->buildChange($changed, 'de', false, false, true);
+            self::assertSame($order[0] === 'moved', $change['isMoved']);
+        }
+    }
+
+    /** @test */
+    public function linksInNewTextAreListedAlongsideTheTextDiff(): void
+    {
+        $type = $this->createNodeType('Vendor.Site:Text');
+        $changed = $this->createNode($type, ['text' => '<p><a href="https://example.com/?q=1&amp;x=2#section">New link</a></p>']);
+        foreach ([null, $this->createNode($type, ['text' => '<p>Old text</p>'])] as $original) {
+            $changes = $this->createService($original)->renderContentChanges($changed);
+            $links = array_values(array_filter($changes, static fn(array $change): bool => $change['kind'] === 'LINK'));
+            self::assertCount(1, $links);
+            self::assertSame('https://example.com/?q=1&x=2#section', $links[0]['changed']);
+        }
+    }
+
     /**
      * The five fields every assertion here is about, in one line.
      *

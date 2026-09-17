@@ -506,6 +506,22 @@
                 <source>Review changes on {0}</source>
                 <target>Änderungen prüfen auf {0}</target>
             </trans-unit>
+            <trans-unit id="actions.scopeHelp" xml:space="preserve">
+                <source>What will be published or discarded?</source>
+                <target>Was wird veröffentlicht oder verworfen?</target>
+            </trans-unit>
+            <trans-unit id="actions.scopeContent" xml:space="preserve">
+                <source>Neos publishes or discards an entire element, including all its changed properties. For pages and containers, this also includes their nested content, even when those child changes are not selected. Child pages are not included by this rule.</source>
+                <target>Neos veröffentlicht oder verwirft ein vollständiges Element mit allen geänderten Eigenschaften. Bei Seiten und Containern gehören auch die darin verschachtelten Inhalte dazu, selbst wenn deren Änderungen nicht ausgewählt sind. Unterseiten sind von dieser Regel nicht betroffen.</target>
+            </trans-unit>
+            <trans-unit id="actions.scopeSelection" xml:space="preserve">
+                <source>To act on individual content changes, select those elements instead of their page or container. Publishing can also require new or moved parent pages; their changes are added to the selection. Discarding does not add those parent pages.</source>
+                <target>Um einzelne Inhaltsänderungen zu übernehmen, wählen Sie die betreffenden Elemente statt ihrer Seite oder ihres Containers aus. Beim Veröffentlichen können neue oder verschobene übergeordnete Seiten erforderlich sein; deren Änderungen werden zur Auswahl hinzugefügt. Beim Verwerfen werden diese übergeordneten Seiten nicht hinzugefügt.</target>
+            </trans-unit>
+            <trans-unit id="actions.scopeDiscard" xml:space="preserve">
+                <source>Publishing transfers the affected changes to the base workspace. Discarding removes them from this workspace and restores the base version; newly created elements are removed.</source>
+                <target>Veröffentlichen überträgt die betroffenen Änderungen in den Basis-Arbeitsbereich. Verwerfen entfernt sie aus diesem Arbeitsbereich und stellt den Basisstand wieder her; neu erstellte Elemente werden entfernt.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

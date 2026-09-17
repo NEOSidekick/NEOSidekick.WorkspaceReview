@@ -15,6 +15,8 @@ import {
     useReviewState,
 } from '@neosidekick/workspace-review-core';
 
+import { ActionScopeInfo } from './ActionScopeInfo';
+
 import styles from './PublishingFooter.module.css';
 import { discardScope, selectAll } from '../selection';
 import { useSelection } from '../useSelection';
@@ -86,6 +88,7 @@ export function PublishingFooter() {
                 )}
                 {/* The buttons act on the selection, or on everything without one.
                     Their labels say so; a selection is counted in front of them. */}
+                <ActionScopeInfo />
                 <span className={styles.scope} aria-live="polite">
                     {hasSelection &&
                         translate('selection.count', '{0} of {1} changes selected', [selection.size, changeCount])}

@@ -10,14 +10,9 @@ privilegeTargets:
     'NEOSidekick.WorkspaceReview:CoreWorkspacesControllerActions':
       label: 'Access to the inherited core workspace controller actions'
       matcher: 'method(public Neos\Neos\Controller\Module\Management\WorkspacesController->(?!initialize).*Action())'
-    # The controller clause is required: without a grant on the shared t3n
-    # controller the endpoint is denied for everyone as soon as no other
-    # GraphQL package grants it. It is constrained to this package's endpoint,
-    # because the controller serves every GraphQL endpoint of an installation
-    # and an unconstrained grant would open all of them.
     'NEOSidekick.WorkspaceReview:Queries':
       label: 'Query the changes of a workspace'
-      matcher: 'method(public NEOSidekick\WorkspaceReview\GraphQL\Resolver\(.*)Resolver->.*()) || method(t3n\GraphQL\Controller\GraphQLController->queryAction(endpoint == "workspace-review"))'
+      matcher: 'method(public NEOSidekick\WorkspaceReview\GraphQL\Resolver\(.*)Resolver->.*()) || method(NEOSidekick\WorkspaceReview\Controller\GraphQLController->queryAction())'
     'NEOSidekick.WorkspaceReview:Preview':
       label: 'Render a page of a reviewed workspace for the visual compare'
       matcher: 'method(NEOSidekick\WorkspaceReview\Controller\PreviewController->showAction())'

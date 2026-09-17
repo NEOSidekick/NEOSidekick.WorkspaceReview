@@ -15,10 +15,6 @@ Neos:
               # The backend session has to authenticate the GraphQL endpoint
               # and the preview rendering as well; both live outside the Neos
               # controller namespaces the provider covers by default.
-              'NEOSidekick.WorkspaceReview:GraphQLControllers':
-                pattern: 'ControllerObjectName'
-                patternOptions:
-                  controllerObjectNamePattern: 't3n\GraphQL\Controller\.*'
               'NEOSidekick.WorkspaceReview:Controllers':
                 pattern: 'ControllerObjectName'
                 patternOptions:

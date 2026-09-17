@@ -15,18 +15,13 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\UserService;
 use NEOSidekick\WorkspaceReview\Domain\Service\ReviewService;
 use NEOSidekick\WorkspaceReview\GraphQL\Context\ReviewContext;
-use t3n\GraphQL\ResolverInterface;
 
 /**
  * The single entry point of the read-only review API.
  *
- * t3n wires a resolver only when it implements ResolverInterface and matches
- * the configured resolver path pattern; without both, "Query.workspace"
- * silently resolves to null.
- *
  * @Flow\Scope("singleton")
  */
-class QueryResolver implements ResolverInterface
+class QueryResolver
 {
     /**
      * @Flow\Inject

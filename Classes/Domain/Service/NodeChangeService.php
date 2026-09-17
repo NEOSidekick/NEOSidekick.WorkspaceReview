@@ -122,6 +122,10 @@ class NodeChangeService
      */
     public function buildChange(NodeInterface $node, string $dimensionHash, bool $isNew, bool $isMoved, bool $publishable): array
     {
+        $properties = $this->renderContentChanges($node);
+        // A reorder keeps the node path, but is still a move in the rendered page.
+        $isReordered = ($properties['_index']['kind'] ?? null) === 'VALUE';
+
         return [
             'id' => $node->getIdentifier() . '-' . $dimensionHash,
             'identifier' => $node->getIdentifier(),
@@ -130,12 +134,12 @@ class NodeChangeService
             'label' => $this->propertyLabelService->cleanLabel((string)$node->getLabel()),
             'typeLabel' => $this->renderNodeTypeLabel($node->getNodeType()),
             'isNew' => $isNew,
-            'isMoved' => $isMoved,
+            'isMoved' => $isMoved || (!$isNew && !$node->isRemoved() && $isReordered),
             'isHidden' => $node->isHidden(),
             'isRemoved' => $node->isRemoved(),
             'lastModified' => $this->readLastModified($node),
             'publishable' => $publishable,
-            'properties' => array_values($this->renderContentChanges($node)),
+            'properties' => array_values($properties),
         ];
     }
 
@@ -555,10 +559,10 @@ class NodeChangeService
                 'changedText' => implode(' ', $this->wordDiffer->tokenize($changedText)),
             ]);
         }
-        if (is_string($originalValue) && is_string($changedValue) && !$isRemoved) {
+        if (($originalValue === null || is_string($originalValue)) && is_string($changedValue) && !$isRemoved) {
             // The text diff strips all tags, so link and formatting edits are
             // invisible to it and are compared on the markup level instead.
-            foreach ($this->richTextDiffer->compare($originalValue, $changedValue) as $finding) {
+            foreach ($this->richTextDiffer->compare($originalText, $changedText) as $finding) {
                 $entries[] = $this->renderRichTextFinding($finding, $propertyName, $propertyLabel, $changedNode);
             }
         }

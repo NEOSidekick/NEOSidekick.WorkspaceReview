@@ -12,21 +12,9 @@ use Neos\Neos\Domain\Service\UserService;
 use NEOSidekick\WorkspaceReview\Domain\Service\ReviewService;
 use NEOSidekick\WorkspaceReview\GraphQL\Context\ReviewContext;
 use NEOSidekick\WorkspaceReview\GraphQL\Resolver\Type\QueryResolver;
-use t3n\GraphQL\ResolverInterface;
 
 class QueryResolverTest extends UnitTestCase
 {
-    /**
-     * t3n only wires a resolver that implements its interface; without it the
-     * query silently resolves to null.
-     *
-     * @test
-     */
-    public function theResolverIsRecognizedByTheGraphQlPackage(): void
-    {
-        self::assertInstanceOf(ResolverInterface::class, new QueryResolver());
-    }
-
     /**
      * The resolver hands the review array on unchanged: graphql-php's default
      * field resolver reads it by key, so no mapping sits in between.
