@@ -24,8 +24,6 @@ composer require neosidekick/workspace-review
 ./flow flow:cache:flush
 ```
 
-The package conflicts with `codeq/workspace-review`: both configure the same module controller, so only one of them can be installed.
-
 ## What reviewers see
 
 Every changed node becomes one card with one entry for each effect publishing would have. Cards are grouped beneath their page header. When no renderable property changed, the card explains why instead of staying empty.
