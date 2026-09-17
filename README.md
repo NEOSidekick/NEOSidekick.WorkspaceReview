@@ -8,14 +8,14 @@ As AI agents like [NEOSidekick v3](https://neosidekick.com/) change content, hav
 
 ## Preview
 
-![Annotated change list: single-page review, page hierarchy and dimension, readable configuration and link changes, word-level diffs, and page-scoped publishing.](Documentation/workspace-review-changes.png)
+![Annotated change list: readable configurations, word-by-word comparison, link and formatting changes, explicit status badges, and sibling positions.](Documentation/workspace-review-changes.png)
 
-![Annotated visual comparison: text edits in the rendered page, a deleted image restored for review, and labels for moved, changed, hidden and newly created content.](Documentation/workspace-review-visual.png)
+![See changes in page previews: a full backend screenshot showing newly created content, in-place text edits, and a deleted image restored for review.](Documentation/workspace-review-visual.png)
 
 <details>
 <summary>Media, batch actions, publishing scope and keyboard navigation</summary>
 
-![Annotated media review: published and replacement images side by side, gallery and boolean changes, two selected changes across pages, and publishing controls.](Documentation/workspace-review-media.png)
+![Annotated media review: red and green borders distinguish published and replacement images, gallery changes stay visible, and the footer counts the selected changes across pages.](Documentation/workspace-review-media.png)
 
 ![Annotated help dialogs: native recursive publishing and discarding scope, plus keyboard shortcuts for pages, changes and views.](Documentation/workspace-review-workflow.png)
 
@@ -55,7 +55,7 @@ Every changed node becomes one card with one entry for each effect publishing wo
 | Formatting   | the same words carry different formatting                                    | `"18 Uhr," · no formatting → bold`                                  |
 | Value        | a property changed, shown with its editor labels                             | `Abstand unten · Groß → Klein`                                      |
 | Position     | a node was reordered among its siblings                                      | `Position · 3 of 3 → 1 of 3`                                        |
-| Image, Asset | media was replaced                                                           | the published and the new file side by side                         |
+| Image, Asset | media was replaced                                                           | the published and the new file side by side, framed red and green                         |
 | Visibility   | a node was hidden or made visible                                            | `Visible → Hidden`                                                  |
 | Note         | nothing renderable changed                                                   | an explanation of the remaining difference                          |
 

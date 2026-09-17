@@ -234,6 +234,10 @@
     border-color: var(--review-removed-border);
 }
 
+.mediaNew.mediaThumbnail {
+    border-color: var(--review-added-border);
+}
+
 /* The old file name reads as replaced even where no thumbnail exists. */
 .mediaOld {
     text-decoration: line-through;

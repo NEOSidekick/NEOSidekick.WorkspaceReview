@@ -24,6 +24,7 @@ function Media({ media, variant }: { media: MediaRef; variant: 'old' | 'new' }) 
             className={classnames(
                 styles.mediaItem,
                 variant === 'old' && styles.mediaOld,
+                variant === 'new' && styles.mediaNew,
                 media.thumbnailUri && styles.mediaThumbnail
             )}
         >

@@ -1,0 +1,43 @@
+# Local English labels for the CodeQ.Site README demo, not package defaults.
+'CodeQ.Site:Mixin.SpaceBelow':
+  properties:
+    spaceBelow:
+      ui:
+        label: 'Spacing below'
+        inspector:
+          editorOptions:
+            values:
+              small:
+                label: 'Small'
+              big:
+                label: 'Large'
+'CodeQ.Site:Content.Image.Block':
+  ui:
+    label: Image
+  properties:
+    image:
+      ui:
+        label: Image
+'CodeQ.Site:Document.PageWithHeroImage':
+  ui:
+    label: 'Page with image hero'
+  properties:
+    heroImage:
+      ui:
+        label: Image
+'CodeQ.Site:Content.ImageGallery.Section':
+  ui:
+    label: 'Image gallery'
+  properties:
+    images:
+      ui:
+        label: Images
+    lightboxEnabled:
+      ui:
+        label: 'Enable lightbox'
+'CodeQ.Site:Content.TableOfContent':
+  ui:
+    label: 'Table of contents'
+  properties:
+    title:
+      defaultValue: '<h5>Table of contents</h5>'

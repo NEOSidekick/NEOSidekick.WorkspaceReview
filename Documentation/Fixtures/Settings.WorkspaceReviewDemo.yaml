@@ -1,0 +1,8 @@
+# English UI labels for the local screenshot fixture's existing dimension.
+Neos:
+  ContentRepository:
+    contentDimensions:
+      language:
+        presets:
+          de:
+            label: German
