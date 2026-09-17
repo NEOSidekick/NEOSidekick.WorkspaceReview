@@ -25,7 +25,7 @@ export function ChangeList() {
     // What is published where, and how much of it. A dimension variant of a
     // page is a review entry of its own, so it counts as a page of its own.
     const heading = (
-        <ReviewHeading>
+        <ReviewHeading pageLabel={isFiltered ? pages[0]?.node.label : undefined}>
             {workspace.title || workspace.name}
             <span className={styles.to} aria-hidden="true">
                 →

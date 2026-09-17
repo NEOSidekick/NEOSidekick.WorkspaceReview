@@ -7,7 +7,16 @@
     justify-content: center;
     width: 24px;
     height: 24px;
+    /* Replaces the bottom margin the backend stylesheet gives every label. The
+       box is 24px high next to a first line of 20px, hence the 2px up. */
+    margin: -2px 0 0;
     cursor: pointer;
+}
+
+/* The backend stylesheet pushes every checkbox 4px down, off the middle of the
+   label next to it; three classes outweigh its selector. */
+.wrapper.wrapper .input {
+    margin: 0;
 }
 
 .input {
@@ -58,6 +67,7 @@
 /* Paired with .wrapper, so it outweighs the repeated class above. */
 .wrapper.withLabel {
     width: auto;
+    margin: 0;
     gap: var(--theme-spacing-Half);
     padding-right: var(--theme-spacing-Half);
 }

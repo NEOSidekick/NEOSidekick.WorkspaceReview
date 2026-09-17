@@ -502,6 +502,10 @@
                 <source>Show all changes of the workspace</source>
                 <target>Alle Änderungen des Arbeitsbereichs ansehen</target>
             </trans-unit>
+            <trans-unit id="review.headingOnPage" xml:space="preserve">
+                <source>Review changes on {0}</source>
+                <target>Änderungen prüfen auf {0}</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
