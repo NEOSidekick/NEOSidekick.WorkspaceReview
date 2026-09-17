@@ -39,7 +39,7 @@
      */
     --review-card-background: var(--theme-grayMedium);
     --review-card-backgroundHover: #383838;
-    --review-card-backgroundSelected: #2f3c43;
+    --review-card-backgroundSelected: #2b3f49;
     --review-card-separator: var(--theme-grayDark);
     --review-card-border: var(--theme-grayLight);
     --review-card-text: var(--theme-textOnGray);
@@ -49,6 +49,8 @@
     --review-added-text: #8fe8ad;
     --review-removed-background: rgba(255, 70, 13, 0.22);
     --review-removed-text: #ffab91;
+    /* The frame of a deleted image: a full red, darker than the text on a tint. */
+    --review-removed-border: #c9371a;
     --review-moved-background: rgba(255, 135, 0, 0.22);
     --review-moved-text: #ffc680;
     --review-neutral-background: #4a4a4a;

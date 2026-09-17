@@ -53,6 +53,7 @@ export function ChangeCard({ change, changeIndex, pageIndex }: ChangeCardProps) 
             className={classnames(
                 styles.card,
                 isHighlighted && styles.highlight,
+                change.isRemoved ? styles.deleted : change.isNew && styles.created,
                 selection.has(change.contextPath) && styles.selected,
                 change.isHidden && styles.hiddenElement
             )}

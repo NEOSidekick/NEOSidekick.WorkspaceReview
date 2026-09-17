@@ -3,8 +3,9 @@
     align-items: flex-start;
     gap: var(--theme-spacing-Half);
     padding: 12px var(--theme-spacing-Full) 14px 5px;
-    /* Reserved for the mark of a selected card, so selecting moves nothing. */
-    border-left: 3px solid transparent;
+    /* The edge states what publishing does to the element, in the colours the
+       backend uses for it and the page tree uses for a changed page. */
+    border-left: 3px solid var(--theme-orange);
     /* The same clearance the page headings keep, so a card the shortcuts jump
        to does not end up under the Neos top bar. */
     scroll-margin-top: var(--review-toolbarOffset);
@@ -20,10 +21,18 @@
     background: var(--review-card-backgroundHover);
 }
 
-/* Selected for the batch actions of the footer, in the backend's selection blue. */
+.created {
+    border-left-color: var(--theme-green);
+}
+
+.deleted {
+    border-left-color: var(--theme-warning);
+}
+
+/* Selected for the batch actions of the footer. The edge keeps its status
+   colour, so the selection is a tint of the backend's selection blue. */
 .selected,
 .selected:hover {
-    border-left-color: var(--theme-colors-PrimaryBlue);
     background: var(--review-card-backgroundSelected);
 }
 
@@ -202,14 +211,22 @@
     width: auto;
     height: auto;
     display: block;
+}
+
+/* The frame sits on the wrapper: on the image itself it would fade with it. */
+.mediaThumbnail {
+    border: 2px solid var(--review-card-border);
     border-radius: 3px;
-    border: 1px solid var(--review-card-border);
+    overflow: hidden;
 }
 
 /* A replaced or deleted image is dimmed and framed in the colour of a loss. */
 .mediaOld img {
     opacity: 0.55;
-    border-color: var(--review-removed-text);
+}
+
+.mediaOld.mediaThumbnail {
+    border-color: var(--review-removed-border);
 }
 
 /* The old file name reads as replaced even where no thumbnail exists. */

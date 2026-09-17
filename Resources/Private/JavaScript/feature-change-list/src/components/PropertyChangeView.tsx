@@ -20,7 +20,13 @@ interface PropertyChangeViewProps {
 function Media({ media, variant }: { media: MediaRef; variant: 'old' | 'new' }) {
     const name = media.filename || media.label;
     return (
-        <div className={classnames(styles.mediaItem, variant === 'old' && styles.mediaOld)}>
+        <div
+            className={classnames(
+                styles.mediaItem,
+                variant === 'old' && styles.mediaOld,
+                media.thumbnailUri && styles.mediaThumbnail
+            )}
+        >
             {media.thumbnailUri ? (
                 <img src={media.thumbnailUri} alt={media.label} />
             ) : media.uri ? (
