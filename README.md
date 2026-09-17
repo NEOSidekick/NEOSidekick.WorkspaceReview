@@ -12,16 +12,9 @@ As AI agents like [NEOSidekick v3](https://neosidekick.com/) change content, hav
 
 ![See changes in page previews: a full backend screenshot showing newly created content, in-place text edits, and a deleted image restored for review.](Documentation/workspace-review-visual.png)
 
-<details>
-<summary>Media, batch actions, publishing scope and keyboard navigation</summary>
-
 ![Annotated media review: red and green borders distinguish published and replacement images, gallery changes stay visible, and the footer counts the selected changes across pages.](Documentation/workspace-review-media.png)
 
 ![Annotated help dialogs: native recursive publishing and discarding scope, plus keyboard shortcuts for pages, changes and views.](Documentation/workspace-review-workflow.png)
-
-</details>
-
-[Original screenshots and demo setup](Documentation/Showcase.md). Visual comparison requires a Fusion-rendered frontend; the change list also works with Next.js/Zebra sites.
 
 ## Improvements at a glance
 
@@ -36,6 +29,7 @@ As AI agents like [NEOSidekick v3](https://neosidekick.com/) change content, hav
 - **Review and publish a single page.** A link with the page's node narrows the review to that page: only its changes are listed, the heading names it, and the batch buttons publish or discard only them. The footer says when other pages have changes too and links to the whole workspace. See [Review a single page](#review-a-single-page).
 - **Every change has an explanation.** Visibility changes, reverted edits and internal updates no longer produce unexplained empty rows.
 - **Links and formatting become visible.** Retargeted links, window behavior, linked text and formatting changes are detected even when the wording remains unchanged.
+- **Zebra Support** Works with Zebra for nextjs. Visual comparison requires a Fusion-rendered frontend, so the visual compare is automatically hidden.
 
 ## Installation
 
