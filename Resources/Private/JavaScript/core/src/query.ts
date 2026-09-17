@@ -1,7 +1,5 @@
-import { gql } from '@apollo/client';
-
 /** One query for the whole review; it selects every field of schema.root.graphql. */
-export const WORKSPACE_QUERY = gql`
+export const WORKSPACE_QUERY = `
     query Workspace($name: String!) {
         workspace(name: $name) {
             name

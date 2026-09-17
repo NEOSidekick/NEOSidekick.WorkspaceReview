@@ -9,7 +9,6 @@
         "watch": "node esbuild.js --watch"
     },
     "dependencies": {
-        "@apollo/client": "^3.13.0",
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
         "@fortawesome/free-solid-svg-icons": "^5.15.4",
         "@friendsofreactjs/react-css-themr": "~4.2.0",
@@ -22,7 +21,6 @@
         "@neosidekick/workspace-review-review-progress": "workspace:*",
         "@neosidekick/workspace-review-visual-compare": "workspace:*",
         "classnames": "^2.5.1",
-        "graphql": "^16.10.0",
         "notosans-fontface": "^1.3.0",
         "prop-types": "^15.8.1",
         "react": "^16.14.0",

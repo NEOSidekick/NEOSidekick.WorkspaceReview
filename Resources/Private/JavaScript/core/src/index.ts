@@ -2,7 +2,7 @@ export * from './types';
 export * from './constants';
 export * from './dom';
 export * from './intl';
-export * from './apollo';
+export * from './graphql';
 export * from './query';
 export * from './visualRegistry';
 export * from './ReviewApplicationWrapper';

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import {
     ReviewApplicationWrapper,
-    createApolloClient,
     createTranslate,
     moduleIndexUri,
     parseFeatureFlags,
@@ -33,13 +32,17 @@ function bootstrap(): void {
         discardWorkspace: root.dataset.uriDiscardWorkspace || '',
         index: moduleIndexUri(window.location.pathname),
     };
-    const client = createApolloClient(root.dataset.graphql || '', (message) =>
-        notificationApi ? notificationApi.error(message) : console.error(message)
-    );
+    const notify = (message: string) => (notificationApi ? notificationApi.error(message) : console.error(message));
 
     render(
-        <ReviewApplicationWrapper client={client} translate={translate}>
-            <ReviewRoot workspaceName={workspaceName} features={parseFeatureFlags(root.dataset.features)} uris={uris} />
+        <ReviewApplicationWrapper translate={translate}>
+            <ReviewRoot
+                graphQlUri={root.dataset.graphql || ''}
+                workspaceName={workspaceName}
+                features={parseFeatureFlags(root.dataset.features)}
+                uris={uris}
+                notify={notify}
+            />
         </ReviewApplicationWrapper>,
         root
     );
