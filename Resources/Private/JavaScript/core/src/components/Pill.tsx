@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import styles from './Pill.module.css';
 
 interface PillProps {
-    variant: 'old' | 'new';
+    variant: 'old' | 'new' | 'neutral' | 'neutralOld';
     /** Link targets may be long and are allowed to wrap. */
     wrapping?: boolean;
     children: React.ReactNode;

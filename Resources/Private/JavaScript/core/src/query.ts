@@ -78,6 +78,7 @@ export const WORKSPACE_QUERY = `
         label
         icon
         dimensionLabel
+        isHidden
     }
 
     fragment MediaRefFields on MediaRef {

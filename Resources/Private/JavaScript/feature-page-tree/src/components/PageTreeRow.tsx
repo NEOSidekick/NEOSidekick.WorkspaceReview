@@ -4,6 +4,7 @@ import { Icon } from '@neos-project/react-ui-components';
 import {
     LINK_ATTRIBUTE,
     NodeTypeIcon,
+    SrOnly,
     useIntl,
     useJumpToPage,
     useReviewState,
@@ -14,13 +15,20 @@ import styles from './PageTreeRow.module.css';
 
 /** The chevron, node type icon and label shared by both row kinds. */
 function RowContent({ row }: { row: TreeRow }) {
+    const translate = useIntl();
     return (
         <>
             <span className={styles.chevron}>{row.hasChildren && <Icon icon="caret-down" />}</span>
             <span className={styles.icon}>
                 <NodeTypeIcon icon={row.node.icon} />
             </span>
-            <span className={styles.label}>{row.node.label}</span>
+            <span className={classnames(styles.label, row.node.isHidden && styles.hiddenPage)}>{row.node.label}</span>
+            {row.node.isHidden && (
+                <span className={styles.hiddenMark} title={translate('status.hidden', 'hidden')}>
+                    <Icon icon="eye-slash" />
+                    <SrOnly>{translate('status.hidden', 'hidden')}</SrOnly>
+                </span>
+            )}
         </>
     );
 }

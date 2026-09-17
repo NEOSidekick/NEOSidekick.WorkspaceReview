@@ -244,6 +244,7 @@ class ReviewService
             'label' => $this->propertyLabelService->cleanLabel((string)$node->getLabel()),
             'icon' => $this->nodeTypeIconService->forNode($node),
             'dimensionLabel' => $this->renderDimensionLabel($node),
+            'isHidden' => $node->isHidden(),
         ];
     }
 

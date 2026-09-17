@@ -2,6 +2,34 @@
     min-width: 0;
 }
 
+.head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--theme-spacing-Quarter) var(--theme-spacing-Full);
+    padding-bottom: 12px;
+}
+
+/* The class is repeated to outweigh the heading rules of the backend stylesheet. */
+.title.title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 30px;
+    color: var(--theme-textOnGray);
+}
+
+.to {
+    margin: 0 var(--theme-spacing-Half);
+    color: var(--theme-textSubtleLight);
+}
+
+.counts {
+    margin: 0 0 0 auto;
+    font-size: var(--theme-fontSize-base);
+    color: var(--theme-textSubtleLight);
+}
+
 .toolbar {
     display: flex;
     align-items: center;

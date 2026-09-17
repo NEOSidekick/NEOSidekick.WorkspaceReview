@@ -38,7 +38,14 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
             <div {...markers} className={styles.header} tabIndex={-1}>
                 <PageCheckbox page={page} />
                 <div className={styles.text}>
-                    <div className={styles.title}>{page.node.label}</div>
+                    <div className={styles.title}>
+                        {page.node.label}
+                        <span className={styles.changeCount}>
+                            {page.changes.length === 1
+                                ? translate('count.change', '1 change')
+                                : translate('count.changes', '{0} changes', [page.changes.length])}
+                        </span>
+                    </div>
                     <div className={styles.path}>
                         <Breadcrumb nodes={page.breadcrumb} />
                         {page.node.dimensionLabel && (

@@ -101,14 +101,22 @@ export function PropertyChangeView({ property, change }: PropertyChangeViewProps
                     </div>
                 );
             case 'VISIBILITY':
+                // A before and after like every other value, but without red and
+                // green: hiding an element is neither a loss nor an addition.
                 return (
-                    <span className={styles.visibility}>
-                        <Icon icon={property.hidden ? 'eye-slash' : 'eye'} padded="right" />
-                        {property.message ||
-                            (property.hidden
-                                ? translate('visibility.hidden', 'Element was hidden')
-                                : translate('visibility.shown', 'Element was made visible'))}
-                    </span>
+                    <>
+                        <Pill variant="neutralOld">
+                            {property.hidden
+                                ? translate('visibility.stateVisible', 'Visible')
+                                : translate('visibility.stateHidden', 'Hidden')}
+                        </Pill>
+                        <Arrow />
+                        <Pill variant="neutral">
+                            {property.hidden
+                                ? translate('visibility.stateHidden', 'Hidden')
+                                : translate('visibility.stateVisible', 'Visible')}
+                        </Pill>
+                    </>
                 );
             case 'NOTE':
                 return property.help ? (

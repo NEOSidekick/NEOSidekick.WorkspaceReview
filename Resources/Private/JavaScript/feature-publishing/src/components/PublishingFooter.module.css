@@ -29,8 +29,23 @@
     color: var(--theme-textOnGray);
 }
 
-.count {
+.scope {
     color: var(--theme-textSubtleLight);
-    font-size: var(--theme-fontSize-small);
+    font-size: var(--theme-fontSize-base);
     font-variant-numeric: tabular-nums;
+}
+
+.clear {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--theme-colors-PrimaryBlue);
+    font-size: var(--theme-fontSize-base);
+    cursor: pointer;
+}
+
+.clear:hover,
+.clear:focus-visible {
+    color: var(--theme-colors-PrimaryBlueHover);
+    text-decoration: underline;
 }

@@ -175,8 +175,8 @@
                 <target>ausgeblendet</target>
             </trans-unit>
             <trans-unit id="selection.all" xml:space="preserve">
-                <source>Select all changes</source>
-                <target>Alle Änderungen auswählen</target>
+                <source>Select all {0} changes</source>
+                <target>Alle {0} Änderungen auswählen</target>
             </trans-unit>
             <trans-unit id="selection.page" xml:space="preserve">
                 <source>Select all changes of this page</source>
@@ -187,8 +187,8 @@
                 <target>Diese Änderung auswählen</target>
             </trans-unit>
             <trans-unit id="selection.count" xml:space="preserve">
-                <source>{0} selected</source>
-                <target>{0} ausgewählt</target>
+                <source>{0} of {1} changes selected</source>
+                <target>{0} von {1} Änderungen ausgewählt</target>
             </trans-unit>
             <trans-unit id="actions.publishSelected" xml:space="preserve">
                 <source>Publish selected changes to “{0}”</source>
@@ -409,6 +409,66 @@
             <trans-unit id="format.heading" xml:space="preserve">
                 <source>Heading {0}</source>
                 <target>Überschrift {0}</target>
+            </trans-unit>
+            <trans-unit id="review.publishesTo" xml:space="preserve">
+                <source>publishes to</source>
+                <target>veröffentlicht nach</target>
+            </trans-unit>
+            <trans-unit id="count.page" xml:space="preserve">
+                <source>1 page</source>
+                <target>1 Seite</target>
+            </trans-unit>
+            <trans-unit id="count.pages" xml:space="preserve">
+                <source>{0} pages</source>
+                <target>{0} Seiten</target>
+            </trans-unit>
+            <trans-unit id="count.change" xml:space="preserve">
+                <source>1 change</source>
+                <target>1 Änderung</target>
+            </trans-unit>
+            <trans-unit id="count.changes" xml:space="preserve">
+                <source>{0} changes</source>
+                <target>{0} Änderungen</target>
+            </trans-unit>
+            <trans-unit id="selection.none" xml:space="preserve">
+                <source>Nothing selected – the actions apply to all {0} changes</source>
+                <target>Nichts ausgewählt – die Aktionen gelten für alle {0} Änderungen</target>
+            </trans-unit>
+            <trans-unit id="selection.clear" xml:space="preserve">
+                <source>Clear selection</source>
+                <target>Auswahl aufheben</target>
+            </trans-unit>
+            <trans-unit id="actions.publish" xml:space="preserve">
+                <source>Publish</source>
+                <target>Veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="actions.discard" xml:space="preserve">
+                <source>Discard</source>
+                <target>Verwerfen</target>
+            </trans-unit>
+            <trans-unit id="actions.discardSelectedCount" xml:space="preserve">
+                <source>Discard {0} selected</source>
+                <target>{0} ausgewählte verwerfen</target>
+            </trans-unit>
+            <trans-unit id="actions.publishSelectedCount" xml:space="preserve">
+                <source>Publish {0} selected to “{1}”</source>
+                <target>{0} ausgewählte nach „{1}“ veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="actions.discardAllCount" xml:space="preserve">
+                <source>Discard all {0} changes</source>
+                <target>Alle {0} Änderungen verwerfen</target>
+            </trans-unit>
+            <trans-unit id="actions.publishAllCount" xml:space="preserve">
+                <source>Publish all {0} changes to “{1}”</source>
+                <target>Alle {0} Änderungen nach „{1}“ veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="visibility.stateVisible" xml:space="preserve">
+                <source>Visible</source>
+                <target>Sichtbar</target>
+            </trans-unit>
+            <trans-unit id="visibility.stateHidden" xml:space="preserve">
+                <source>Hidden</source>
+                <target>Ausgeblendet</target>
             </trans-unit>
         </body>
     </file>

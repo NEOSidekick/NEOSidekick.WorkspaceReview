@@ -10,6 +10,8 @@
     gap: var(--theme-spacing-Half);
     padding: 10px var(--theme-spacing-Full) 10px var(--theme-spacing-Half);
     scroll-margin-top: var(--review-toolbarOffset);
+    /* Darker than the cards below it, so page and elements read as two levels. */
+    background: var(--theme-grayDarker);
 }
 
 .header:focus-visible {
@@ -27,6 +29,14 @@
     font-weight: 600;
     line-height: 20px;
     color: var(--theme-textOnGray);
+}
+
+/* Also tells what the checkbox of the page selects. */
+.changeCount {
+    margin-left: 10px;
+    font-size: var(--theme-fontSize-small);
+    font-weight: 400;
+    color: var(--theme-textSubtleLight);
 }
 
 .path {
@@ -107,7 +117,7 @@
 }
 
 .cards {
-    border-top: 1px solid var(--theme-grayLight);
+    border-top: 1px solid var(--review-card-separator);
 }
 
 /* A hidden card must not be laid out, but its checkbox stays in the form. */

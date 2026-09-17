@@ -27,7 +27,7 @@ interface ChangeCardProps {
 export function ChangeCard({ change, changeIndex, pageIndex }: ChangeCardProps) {
     const translate = useIntl();
     const actions = useReviewActions();
-    const { highlightedChangeId } = useReviewState();
+    const { highlightedChangeId, selection } = useReviewState();
     const cardRef = useRef<HTMLDivElement>(null);
     const isHighlighted = highlightedChangeId === change.id;
     const locale = backendLocale();
@@ -50,7 +50,12 @@ export function ChangeCard({ change, changeIndex, pageIndex }: ChangeCardProps) 
             ref={cardRef}
             id={`change-${change.id}`}
             tabIndex={-1}
-            className={classnames(styles.card, isHighlighted && styles.highlight)}
+            className={classnames(
+                styles.card,
+                isHighlighted && styles.highlight,
+                selection.has(change.contextPath) && styles.selected,
+                change.isHidden && styles.hiddenElement
+            )}
         >
             <NodeCheckbox change={change} />
             <div className={styles.body}>

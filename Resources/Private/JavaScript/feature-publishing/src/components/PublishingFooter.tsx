@@ -7,6 +7,7 @@ import {
     NODES_FIELD_NAME,
     POST_HELPER_FORM_ID,
     PUBLISH_FORM_ID,
+    countChanges,
     useIntl,
     useReviewActions,
     useReviewData,
@@ -25,10 +26,10 @@ type Confirmation = 'none' | 'selected' | 'workspace';
  */
 export function PublishingFooter() {
     const translate = useIntl();
-    const { workspace, uris } = useReviewData();
+    const { workspace, uris, pages } = useReviewData();
     const reviewActions = useReviewActions();
     const { singleAction } = useReviewState();
-    const { selection } = useSelection();
+    const { selection, toggleAll } = useSelection();
     const [confirmation, setConfirmation] = useState<Confirmation>('none');
     const singleActionButton = useRef<HTMLButtonElement>(null);
 
@@ -45,6 +46,7 @@ export function PublishingFooter() {
     }, [reviewActions, singleAction]);
 
     const hasSelection = selection.size > 0;
+    const changeCount = countChanges(pages);
     // While a card publishes or discards itself, the form carries its node
     // alone; a batch submit would post that single node under another action.
     const isPending = singleAction !== null;
@@ -57,10 +59,19 @@ export function PublishingFooter() {
                 </a>
             </div>
             <div className={styles.group}>
+                {/* The buttons act on the selection, or on everything without one;
+                    the line in front of them says which of the two applies. */}
+                <span className={styles.scope} aria-live="polite">
+                    {hasSelection
+                        ? translate('selection.count', '{0} of {1} changes selected', [selection.size, changeCount])
+                        : translate('selection.none', 'Nothing selected – the actions apply to all {0} changes', [
+                              changeCount,
+                          ])}
+                </span>
                 {hasSelection && (
-                    <span className={styles.count}>
-                        {translate('selection.count', '{0} selected', [selection.size])}
-                    </span>
+                    <button type="button" className={styles.clear} disabled={isPending} onClick={() => toggleAll(false)}>
+                        {translate('selection.clear', 'Clear selection')}
+                    </button>
                 )}
                 {hasSelection ? (
                     <>
@@ -72,7 +83,7 @@ export function PublishingFooter() {
                             title={translate('actions.discardSelected', 'Discard selected changes')}
                         >
                             <Icon icon="trash-alt" />
-                            {translate('actions.discardSelected', 'Discard selected changes')}
+                            {translate('actions.discardSelectedCount', 'Discard {0} selected', [selection.size])}
                         </Button>
                         {workspace.canPublishToBase && (
                             <Button
@@ -85,7 +96,8 @@ export function PublishingFooter() {
                                 value="publish"
                             >
                                 <Icon icon="check" />
-                                {translate('actions.publishSelected', 'Publish selected changes to “{0}”', [
+                                {translate('actions.publishSelectedCount', 'Publish {0} selected to “{1}”', [
+                                    selection.size,
                                     workspace.baseWorkspaceTitle,
                                 ])}
                             </Button>
@@ -100,7 +112,7 @@ export function PublishingFooter() {
                             onClick={() => setConfirmation('workspace')}
                         >
                             <Icon icon="trash-alt" />
-                            {translate('actions.discardAll', 'Discard all changes')}
+                            {translate('actions.discardAllCount', 'Discard all {0} changes', [changeCount])}
                         </Button>
                         {workspace.canPublishToBase && (
                             <Button
@@ -112,7 +124,8 @@ export function PublishingFooter() {
                                 formAction={uris.publishWorkspace}
                             >
                                 <Icon icon="check-double" />
-                                {translate('actions.publishAll', 'Publish all changes to “{0}”', [
+                                {translate('actions.publishAllCount', 'Publish all {0} changes to “{1}”', [
+                                    changeCount,
                                     workspace.baseWorkspaceTitle,
                                 ])}
                             </Button>

@@ -1,11 +1,12 @@
 .badge {
     display: inline-block;
-    padding: 2px 10px;
-    border-radius: 10px;
+    padding: 2px 7px;
+    border-radius: 2px;
     font-size: var(--theme-fontSize-tiny);
     font-weight: 600;
     line-height: 16px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     white-space: nowrap;
     background: var(--review-neutral-background);
     color: var(--review-neutral-text);

@@ -27,6 +27,7 @@ export interface NodeRef {
     label: string;
     icon: string;
     dimensionLabel: string | null;
+    isHidden: boolean;
 }
 
 export interface PropertyChange {

@@ -25,7 +25,9 @@
     max-height: 16px;
     flex: 0 0 16px;
     margin: 0;
-    border: 1px solid var(--theme-grayLight);
+    /* Brighter than the backend's own box, whose border disappears on the
+       medium gray of a change card. */
+    border: 1px solid var(--theme-colors-ContrastBright);
     border-radius: 1px;
     background: var(--theme-grayDarker);
     cursor: pointer;
@@ -51,12 +53,6 @@
 .input:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-/* On the light change card the dark backend checkbox would disappear. */
-.onCard .input {
-    border-color: #c4c4c4;
-    background: #fff;
 }
 
 /* Paired with .wrapper, so it outweighs the repeated class above. */

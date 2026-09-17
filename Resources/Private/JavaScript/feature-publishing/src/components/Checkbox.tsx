@@ -15,8 +15,6 @@ interface CheckboxProps {
     name?: string;
     value?: string;
     onChange(checked: boolean): void;
-    /** Renders the light variant used on a change card. */
-    onCard?: boolean;
     /** Shows the label next to the box instead of only to screen readers. */
     visibleLabel?: boolean;
 }
@@ -34,7 +32,6 @@ export function Checkbox({
     name,
     value,
     onChange,
-    onCard = false,
     visibleLabel = false,
 }: CheckboxProps) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +41,7 @@ export function Checkbox({
     }, [indeterminate, checked]);
 
     return (
-        <label className={classnames(styles.wrapper, onCard && styles.onCard, visibleLabel && styles.withLabel)}>
+        <label className={classnames(styles.wrapper, visibleLabel && styles.withLabel)}>
             <input
                 ref={inputRef}
                 className={styles.input}

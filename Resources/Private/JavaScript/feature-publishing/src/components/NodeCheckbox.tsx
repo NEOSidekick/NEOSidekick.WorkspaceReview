@@ -15,7 +15,6 @@ export function NodeCheckbox({ change }: { change: NodeChange }) {
     const { selection, disabled, toggleOneChange } = useSelection();
     return (
         <Checkbox
-            onCard
             checked={selection.has(change.contextPath)}
             disabled={disabled}
             form={PUBLISH_FORM_ID}

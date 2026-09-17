@@ -39,6 +39,11 @@ export function collectTreeRows(workspace: Workspace | null | undefined): TreeRo
 }
 
 /** Clamps a page index to the existing pages, as the keyboard navigation does. */
+/** The number of changed elements the review lists, over all pages. */
+export function countChanges(pages: Pick<ChangedPage, 'changes'>[]): number {
+    return pages.reduce((sum, page) => sum + page.changes.length, 0);
+}
+
 export function clampPageIndex(index: number, pageCount: number): number {
     if (pageCount <= 0) return -1;
     return Math.max(0, Math.min(index, pageCount - 1));

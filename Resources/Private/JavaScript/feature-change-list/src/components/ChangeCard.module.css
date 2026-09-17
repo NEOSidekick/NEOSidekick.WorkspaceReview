@@ -2,7 +2,9 @@
     display: flex;
     align-items: flex-start;
     gap: var(--theme-spacing-Half);
-    padding: 10px var(--theme-spacing-Full) 10px var(--theme-spacing-Half);
+    padding: 12px var(--theme-spacing-Full) 14px 5px;
+    /* Reserved for the mark of a selected card, so selecting moves nothing. */
+    border-left: 3px solid transparent;
     /* The same clearance the page headings keep, so a card the shortcuts jump
        to does not end up under the Neos top bar. */
     scroll-margin-top: var(--review-toolbarOffset);
@@ -11,7 +13,18 @@
 }
 
 .card + .card {
-    border-top: 1px solid var(--review-card-rule);
+    border-top: 1px solid var(--review-card-separator);
+}
+
+.card:hover {
+    background: var(--review-card-backgroundHover);
+}
+
+/* Selected for the batch actions of the footer, in the backend's selection blue. */
+.selected,
+.selected:hover {
+    border-left-color: var(--theme-colors-PrimaryBlue);
+    background: var(--review-card-backgroundSelected);
 }
 
 .card:focus-visible {
@@ -43,16 +56,16 @@
 /* The label takes the room the badges and date leave and yields to them when the
    header gets tight, so a card header stays one line. */
 /*
- * The component library resets its icons to white, which the light card
- * hides, and the backend stylesheet removes the margin of everything with an
- * "fa-" class, which glues them to the text next to them.
+ * The component library resets its icons to white instead of the colour of the
+ * text they belong to, and the backend stylesheet removes the margin of
+ * everything with an "fa-" class, which glues them to the text next to them.
  */
 .body svg {
     color: inherit;
 }
 
 .body .meta svg,
-.body .visibility svg {
+.body .badges svg {
     margin-right: 5px;
 }
 
@@ -65,7 +78,7 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 10px;
-    padding: 0 0 var(--theme-spacing-Half);
+    padding: 0 0 var(--theme-spacing-Quarter);
 }
 
 .label {
@@ -80,17 +93,24 @@
     white-space: nowrap;
 }
 
+/* A hidden element reads dimmed, as hidden nodes do in the backend trees. */
+.hiddenElement .label {
+    color: var(--review-card-textMuted);
+}
+
 /* Names the element type ("Headline"), because the label is usually the
-   element's own text and does not say what kind of element changed. */
+   element's own text and does not say what kind of element changed. It is
+   plain text: badges state a status and pills a value, the type is neither. */
 .type {
     flex: 0 0 auto;
-    padding: 1px var(--theme-spacing-Half);
-    border: 1px solid #d2d2d2;
-    border-radius: 10px;
-    font-size: var(--theme-fontSize-tiny);
-    line-height: 16px;
-    color: var(--review-card-textSubtle);
+    font-size: var(--theme-fontSize-small);
+    color: var(--review-card-textMuted);
     white-space: nowrap;
+}
+
+.type::before {
+    content: '·';
+    margin-right: 10px;
 }
 
 .dimensions {
@@ -112,18 +132,18 @@
     grid-template-columns: 130px minmax(0, 1fr);
     gap: var(--theme-spacing-Quarter) var(--review-treeIndent);
     align-items: baseline;
-    padding: 7px 0;
-    border-top: 1px solid var(--review-card-rule);
+    /* No rules inside a card: its properties are one group, the rules of the
+       list separate elements. */
+    padding: 3px 0;
 }
 
 .propertyMedia {
     align-items: start;
 }
 
-/* A follow-up line belongs to the property above it, so no rule separates them. */
+/* A follow-up line belongs to the property above it and moves closer to it. */
 .propertyContinuation {
-    padding-top: 3px;
-    border-top: 0;
+    padding-top: 0;
 }
 
 .propertyLabel {
@@ -141,7 +161,7 @@
     max-width: 78ch;
     font-size: 13px;
     line-height: 1.6;
-    color: #333;
+    color: var(--review-card-textSubtle);
     overflow-wrap: anywhere;
 }
 
@@ -155,14 +175,14 @@
     margin-bottom: 3px;
     font-size: var(--theme-fontSize-tiny);
     line-height: 1.5;
-    color: #a8a8a8;
+    color: var(--review-card-textMuted);
     overflow-wrap: anywhere;
 }
 
 /* Two classes, because the backend stylesheet puts every "fa-" icon on the baseline. */
 .body .arrow {
     margin: 0 var(--theme-spacing-Half);
-    color: #b0b0b0;
+    color: var(--review-card-textMuted);
     vertical-align: middle;
 }
 
@@ -186,8 +206,10 @@
     border: 1px solid var(--review-card-border);
 }
 
+/* A replaced or deleted image is dimmed and framed in the colour of a loss. */
 .mediaOld img {
     opacity: 0.55;
+    border-color: var(--review-removed-text);
 }
 
 /* The old file name reads as replaced even where no thumbnail exists. */
@@ -199,10 +221,6 @@
 
 .mediaOld a {
     color: inherit;
-}
-
-.visibility {
-    color: var(--review-card-text);
 }
 
 .note {
@@ -223,7 +241,7 @@
     color: var(--review-added-text);
     text-decoration: none;
     padding: 1px 3px;
-    border-radius: 3px;
+    border-radius: 2px;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
 }
@@ -235,7 +253,7 @@
     text-decoration-color: var(--review-removed-text);
     text-decoration-thickness: 1.5px;
     padding: 1px 3px;
-    border-radius: 3px;
+    border-radius: 2px;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
 }

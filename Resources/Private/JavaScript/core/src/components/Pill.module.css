@@ -6,7 +6,7 @@
     white-space: nowrap;
     vertical-align: middle;
     padding: 2px 10px;
-    border-radius: 10px;
+    border-radius: 2px;
     font-size: var(--theme-fontSize-small);
     font-weight: 500;
     background: var(--review-neutral-background);
@@ -17,13 +17,18 @@
     background: var(--review-removed-background);
     color: var(--review-removed-text);
     text-decoration: line-through;
-    text-decoration-color: rgba(150, 38, 43, 0.55);
+    text-decoration-color: var(--review-removed-text);
 }
 
 .new {
     background: var(--review-added-background);
     color: var(--review-added-text);
     text-decoration: none;
+}
+
+/* A state that is neither an addition nor a loss, such as the visibility. */
+.neutralOld {
+    text-decoration: line-through;
 }
 
 /* URLs have no spaces to break at, so a link pill wraps anywhere instead of

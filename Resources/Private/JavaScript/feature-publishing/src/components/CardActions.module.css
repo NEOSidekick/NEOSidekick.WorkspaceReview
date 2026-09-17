@@ -8,5 +8,16 @@
 .actions button {
     height: 32px;
     min-width: 32px;
-    padding: 0 10px;
+    padding: 0 12px;
+    font-size: 13px;
+}
+
+/* The icon follows the label: subdued at rest, white on the hover colour. */
+.actions button svg {
+    color: inherit;
+    opacity: 0.75;
+}
+
+.actions button:hover svg {
+    opacity: 1;
 }

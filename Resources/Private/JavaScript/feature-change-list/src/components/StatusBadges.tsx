@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from '@neos-project/react-ui-components';
 import { Badge, useIntl } from '@neosidekick/workspace-review-core';
 import type { NodeChange } from '@neosidekick/workspace-review-core';
 
@@ -23,7 +24,12 @@ export function StatusBadges({ change }: { change: NodeChange }) {
         <span className={styles.badges}>
             {change.isNew && <Badge variant="created">{translate('status.created', 'created')}</Badge>}
             {change.isMoved && <Badge variant="moved">{translate('status.moved', 'moved')}</Badge>}
-            {change.isHidden && <Badge variant="hidden">{translate('status.hidden', 'hidden')}</Badge>}
+            {change.isHidden && (
+                <Badge variant="hidden">
+                    <Icon icon="eye-slash" />
+                    {translate('status.hidden', 'hidden')}
+                </Badge>
+            )}
         </span>
     );
 }

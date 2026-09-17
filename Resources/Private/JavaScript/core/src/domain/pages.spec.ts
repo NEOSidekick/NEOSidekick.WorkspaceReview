@@ -1,11 +1,18 @@
 import { deepStrictEqual, strictEqual } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { appendQueryArgument, clampPageIndex, collectTreeRows, moduleIndexUri, pageContextPath } from './pages';
+import {
+    appendQueryArgument,
+    clampPageIndex,
+    collectTreeRows,
+    countChanges,
+    moduleIndexUri,
+    pageContextPath,
+} from './pages';
 import type { Workspace } from '../types';
 
 function node(identifier: string) {
-    return { identifier, label: identifier, icon: 'fas fa-file', dimensionLabel: null };
+    return { identifier, label: identifier, icon: 'fas fa-file', dimensionLabel: null, isHidden: false };
 }
 
 function page(id: string, nodePath: string, changeCount: number) {
@@ -58,7 +65,9 @@ const workspace: Workspace = {
                 {
                     hash: 'en',
                     label: 'English',
-                    pages: [{ node: node('a'), depth: 1, hasChildren: false, page: page('a-en', '/sites/example/a', 1) }],
+                    pages: [
+                        { node: node('a'), depth: 1, hasChildren: false, page: page('a-en', '/sites/example/a', 1) },
+                    ],
                 },
             ],
         },
@@ -66,16 +75,20 @@ const workspace: Workspace = {
 };
 
 describe('page order helpers', () => {
+    it('counts the changes of all pages', () => {
+        strictEqual(countChanges([{ changes: [] }, { changes: [{}, {}] as never[] }, { changes: [{}] as never[] }]), 3);
+    });
+
     it('numbers the changed pages across dimensions and keeps the unchanged ancestors', () => {
         const rows = collectTreeRows(workspace);
         deepStrictEqual(
             rows.map((row) => row.pageIndex),
-            [-1, 0, 1]
+            [-1, 0, 1],
         );
         strictEqual(rows[0].page, null);
         deepStrictEqual(
             rows.filter((row) => row.page !== null).map((row) => row.page?.id),
-            ['a-de', 'a-en']
+            ['a-de', 'a-en'],
         );
     });
 
@@ -97,7 +110,7 @@ describe('page order helpers', () => {
     it('appends arguments to a URI that already carries a query', () => {
         strictEqual(
             appendQueryArgument('/neos/management/workspaces/rebase?moduleArguments[a]=1', 'b', '/sites/x@user'),
-            '/neos/management/workspaces/rebase?moduleArguments[a]=1&b=%2Fsites%2Fx%40user'
+            '/neos/management/workspaces/rebase?moduleArguments[a]=1&b=%2Fsites%2Fx%40user',
         );
         strictEqual(appendQueryArgument('/neos/x', 'b', 'c'), '/neos/x?b=c');
     });

@@ -32,23 +32,27 @@
     --theme-transition-default: 0.25s;
 
     /**
-     * Review-specific tokens. The change cards sit on a light surface: the added
-     * and deleted colours are readable there and have no Neos counterpart.
+     * Review-specific tokens. A change card is a row of a backend table: medium
+     * gray, separated from the next one by the darker page colour. The added,
+     * deleted and moved colours have no Neos counterpart; they are the backend's
+     * green, red and orange as a tint, with a text colour readable on it.
      */
-    --review-card-background: #fff;
-    --review-card-border: #e2e2e2;
-    --review-card-text: #141414;
-    --review-card-textSubtle: #6f6f6f;
-    --review-card-textMuted: #8c8c8c;
-    --review-card-rule: #ececec;
-    --review-added-background: #dff2e4;
-    --review-added-text: #0f5132;
-    --review-removed-background: #fbe7e7;
-    --review-removed-text: #96262b;
-    --review-moved-background: #fbf0da;
-    --review-moved-text: #7d5410;
-    --review-neutral-background: #ebebeb;
-    --review-neutral-text: #555;
+    --review-card-background: var(--theme-grayMedium);
+    --review-card-backgroundHover: #383838;
+    --review-card-backgroundSelected: #2f3c43;
+    --review-card-separator: var(--theme-grayDark);
+    --review-card-border: var(--theme-grayLight);
+    --review-card-text: var(--theme-textOnGray);
+    --review-card-textSubtle: #dcdcdc;
+    --review-card-textMuted: #9c9c9c;
+    --review-added-background: rgba(0, 163, 56, 0.26);
+    --review-added-text: #8fe8ad;
+    --review-removed-background: rgba(255, 70, 13, 0.22);
+    --review-removed-text: #ffab91;
+    --review-moved-background: rgba(255, 135, 0, 0.22);
+    --review-moved-text: #ffc680;
+    --review-neutral-background: #4a4a4a;
+    --review-neutral-text: #e0e0e0;
 
     --review-sidebarWidth: 300px;
     --review-toolbarOffset: 56px;

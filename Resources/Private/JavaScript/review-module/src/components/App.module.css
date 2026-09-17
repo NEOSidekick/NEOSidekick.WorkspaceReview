@@ -6,8 +6,13 @@
     margin-top: var(--theme-spacing-Quarter);
 }
 
+/* Stays in view while the stream scrolls, so what the batch buttons act on
+   is readable next to the changes being selected. */
 .footer {
     grid-column: 1 / -1;
+    position: sticky;
+    bottom: 0;
+    z-index: var(--review-zIndex-sticky);
 }
 
 .state {

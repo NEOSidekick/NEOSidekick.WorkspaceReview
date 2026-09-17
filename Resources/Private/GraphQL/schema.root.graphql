@@ -132,4 +132,5 @@ type NodeRef {
   icon: String!
   # the node's own dimension preset label; null without dimensions
   dimensionLabel: String
+  isHidden: Boolean!
 }

@@ -87,6 +87,18 @@
     text-overflow: ellipsis;
 }
 
+/* A hidden page reads dimmed with a struck-through eye, as in the backend page tree. */
+.hiddenPage {
+    opacity: 0.55;
+}
+
+.hiddenMark {
+    flex: 0 0 auto;
+    margin-left: 6px;
+    font-size: var(--theme-fontSize-tiny);
+    color: var(--theme-textSubtleLight);
+}
+
 .dimensions {
     flex: 0 0 auto;
     margin-left: auto;
