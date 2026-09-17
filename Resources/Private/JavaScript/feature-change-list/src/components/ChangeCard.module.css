@@ -153,7 +153,8 @@
     overflow-wrap: anywhere;
 }
 
-.arrow {
+/* Two classes, because the backend stylesheet puts every "fa-" icon on the baseline. */
+.body .arrow {
     margin: 0 var(--theme-spacing-Half);
     color: #b0b0b0;
     vertical-align: middle;
@@ -195,7 +196,7 @@
 }
 
 .visibility {
-    color: var(--review-moved-text);
+    color: var(--review-card-text);
 }
 
 .note {
@@ -208,8 +209,10 @@
 }
 
 /* Added words are underlined and deleted words struck through, so the kind of
-   change is readable without telling red from green. */
-.text ins {
+   change is readable without telling red from green. The selectors are this
+   long to outweigh the rule of the backend stylesheet for <ins> and <del> in
+   the workspaces module, which sets its own colours and removes the lines. */
+.card .body .propertyValue .text ins {
     background: var(--review-added-background);
     color: var(--review-added-text);
     text-decoration: underline;
@@ -222,7 +225,7 @@
     -webkit-box-decoration-break: clone;
 }
 
-.text del {
+.card .body .propertyValue .text del {
     background: var(--review-removed-background);
     color: var(--review-removed-text);
     text-decoration: line-through;
