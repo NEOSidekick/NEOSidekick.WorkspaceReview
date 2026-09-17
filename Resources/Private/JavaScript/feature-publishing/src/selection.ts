@@ -16,22 +16,35 @@ function withChanges(selection: Selection, page: SelectablePage, checked: boolea
 }
 
 /**
+ * The dimension part of a context path ("/path@workspace;language=en"). The
+ * same node path exists once per dimension combination, and each variant is
+ * published on its own.
+ */
+export function dimensionsOf(contextPath: string): string {
+    const separator = contextPath.indexOf(';');
+    return separator === -1 ? '' : contextPath.slice(separator + 1);
+}
+
+/**
  * Mirrors the core module's propagation: a new or moved node can only be
  * published together with the new or moved pages it lives in, so checking it
- * checks every such ancestor page and all of its changes. A plain edit
- * propagates nothing, and nothing ever propagates downwards.
+ * checks every such ancestor page of the same dimensions and all of its
+ * changes. A plain edit propagates nothing, and nothing ever propagates
+ * downwards.
  */
 export function propagateUpwards(
     pages: SelectablePage[],
     nodePath: string,
+    dimensions: string,
     checked: boolean,
-    selection: Selection
+    selection: Selection,
 ): Set<string> {
     let next = new Set(selection);
-    const path = `${nodePath}/`;
     pages.forEach((page) => {
         if (!page.isNew && !page.isMoved) return;
-        if (path.indexOf(page.nodePath) !== 0) return;
+        // Whole path segments only: "/news" is no ancestor of "/newsletter".
+        if (nodePath !== page.nodePath && nodePath.indexOf(`${page.nodePath}/`) !== 0) return;
+        if (!page.changes.length || dimensionsOf(page.changes[0].contextPath) !== dimensions) return;
         next = withChanges(next, page, checked);
     });
     return next;
@@ -42,13 +55,13 @@ export function toggleChange(
     pages: SelectablePage[],
     change: Pick<NodeChange, 'contextPath' | 'nodePath' | 'isNew' | 'isMoved'>,
     checked: boolean,
-    selection: Selection
+    selection: Selection,
 ): Set<string> {
     const next = new Set(selection);
     if (checked) next.add(change.contextPath);
     else next.delete(change.contextPath);
     if (!change.isNew && !change.isMoved) return next;
-    return propagateUpwards(pages, change.nodePath, checked, next);
+    return propagateUpwards(pages, change.nodePath, dimensionsOf(change.contextPath), checked, next);
 }
 
 /** The page checkbox checks every change of its page, then propagates upwards. */
@@ -56,11 +69,11 @@ export function togglePage(
     pages: SelectablePage[],
     page: SelectablePage,
     checked: boolean,
-    selection: Selection
+    selection: Selection,
 ): Set<string> {
     const next = withChanges(selection, page, checked);
-    if (!page.isNew && !page.isMoved) return next;
-    return propagateUpwards(pages, page.nodePath, checked, next);
+    if ((!page.isNew && !page.isMoved) || !page.changes.length) return next;
+    return propagateUpwards(pages, page.nodePath, dimensionsOf(page.changes[0].contextPath), checked, next);
 }
 
 /** The toolbar checkbox above the stream. */

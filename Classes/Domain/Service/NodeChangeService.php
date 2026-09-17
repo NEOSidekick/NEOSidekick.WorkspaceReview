@@ -162,7 +162,21 @@ class NodeChangeService
         $changeNodePropertiesDefaults = $changedNode->getNodeType()->getDefaultValuesForProperties();
         $hasScalarDifference = false;
 
+        $changedProperties = [];
         foreach ($changedNode->getProperties() as $propertyName => $changedPropertyValue) {
+            $changedProperties[$propertyName] = $changedPropertyValue;
+        }
+        if ($originalNode !== null) {
+            // A property that was removed from the node exists on the published
+            // version only, and its removal is a change like any other.
+            foreach ($originalNode->getPropertyNames() as $propertyName) {
+                if (!array_key_exists($propertyName, $changedProperties)) {
+                    $changedProperties[$propertyName] = null;
+                }
+            }
+        }
+
+        foreach ($changedProperties as $propertyName => $changedPropertyValue) {
             $isDefaultValue = isset($changeNodePropertiesDefaults[$propertyName])
                 && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName];
             if ($originalNode === null && (empty($changedPropertyValue) || $isDefaultValue)) {
@@ -273,6 +287,37 @@ class NodeChangeService
             'message' => null,
             'help' => null,
         ], $values);
+    }
+
+    /**
+     * The identifiers of the nodes a reference or references value points to,
+     * in their order, or null for any other kind of value.
+     *
+     * @param mixed $value
+     * @return string[]|null
+     */
+    protected function referencedIdentifiers($value): ?array
+    {
+        $identifiers = [];
+        foreach (is_array($value) ? $value : [$value] as $entry) {
+            if (!$entry instanceof NodeInterface) {
+                return null;
+            }
+            $identifiers[] = $entry->getIdentifier();
+        }
+        return $identifiers;
+    }
+
+    /**
+     * @param mixed $value a node or a list of nodes
+     */
+    protected function renderReferenceLabelWithPath($value): string
+    {
+        $labels = [];
+        foreach (is_array($value) ? $value : [$value] as $node) {
+            $labels[] = sprintf('%s (%s)', $this->propertyLabelService->cleanLabel((string)$node->getLabel()), $node->getPath());
+        }
+        return implode(', ', $labels);
     }
 
     /**
@@ -446,6 +491,16 @@ class NodeChangeService
                     // Scalars compare by value, so equal labels over different
                     // values mean a real but invisible change.
                     return $this->renderTechnicalOnlyNote($propertyName, $propertyLabel, $originalValue, $changedValue, $isRemoved);
+                }
+                $originalReferences = $this->referencedIdentifiers($originalValue);
+                $changedReferences = $this->referencedIdentifiers($changedValue);
+                if (!$isRemoved && $originalReferences !== null && $changedReferences !== null && $originalReferences !== $changedReferences) {
+                    // Other nodes of the same name: the paths tell them apart,
+                    // so the entry never claims "Contact -> Contact".
+                    return [$this->entry('VALUE', $propertyName, $propertyLabel, [
+                        'original' => $this->renderReferenceLabelWithPath($originalValue),
+                        'changed' => $this->renderReferenceLabelWithPath($changedValue),
+                    ])];
                 }
                 // Objects and arrays are rebuilt per request and differ by
                 // identity, so an entry here would be a false positive.

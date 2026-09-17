@@ -1,7 +1,14 @@
 import { deepStrictEqual, strictEqual } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { allSelectionState, pageSelectionState, propagateUpwards, selectAll, toggleChange, togglePage } from './selection';
+import {
+    allSelectionState,
+    pageSelectionState,
+    propagateUpwards,
+    selectAll,
+    toggleChange,
+    togglePage,
+} from './selection';
 import type { SelectablePage } from './selection';
 
 const newParent: SelectablePage = {
@@ -38,7 +45,7 @@ describe('selection propagation', () => {
                 isMoved: false,
             },
             true,
-            new Set()
+            new Set(),
         );
         deepStrictEqual([...selection].sort(), ['content-a', 'parent-a', 'parent-b']);
     });
@@ -53,7 +60,7 @@ describe('selection propagation', () => {
                 isMoved: false,
             },
             true,
-            new Set()
+            new Set(),
         );
         deepStrictEqual([...selection], ['content-a']);
     });
@@ -68,20 +75,49 @@ describe('selection propagation', () => {
             pages,
             { contextPath: 'content-a', nodePath: '/sites/example/new-parent/child/x', isMoved: true, isNew: false },
             true,
-            new Set()
+            new Set(),
         );
         const unchecked = toggleChange(
             pages,
             { contextPath: 'content-a', nodePath: '/sites/example/new-parent/child/x', isMoved: true, isNew: false },
             false,
-            checked
+            checked,
         );
         deepStrictEqual([...unchecked], []);
     });
 
     it('ignores pages that are not an ancestor', () => {
-        const selection = propagateUpwards(pages, '/sites/example/new-parent/child/x', true, new Set());
+        const selection = propagateUpwards(pages, '/sites/example/new-parent/child/x', '', true, new Set());
         strictEqual(selection.has('other-a'), false);
+    });
+
+    it('matches whole path segments and stays inside the dimensions of the change', () => {
+        const page = (nodePath: string, contextPath: string): SelectablePage => ({
+            nodePath,
+            isNew: true,
+            isMoved: false,
+            changes: [{ contextPath }],
+        });
+        const variants = [
+            page('/sites/example/news', '/sites/example/news@user-admin;language=en'),
+            page('/sites/example/newsletter', '/sites/example/newsletter@user-admin;language=en'),
+            page('/sites/example/newsletter', '/sites/example/newsletter@user-admin;language=de'),
+        ];
+        const selection = toggleChange(
+            variants,
+            {
+                contextPath: '/sites/example/newsletter/main/text@user-admin;language=en',
+                nodePath: '/sites/example/newsletter/main/text',
+                isNew: true,
+                isMoved: false,
+            },
+            true,
+            new Set(),
+        );
+        deepStrictEqual([...selection].sort(), [
+            '/sites/example/newsletter/main/text@user-admin;language=en',
+            '/sites/example/newsletter@user-admin;language=en',
+        ]);
     });
 
     it('reports the selection state of a page and of the whole stream', () => {

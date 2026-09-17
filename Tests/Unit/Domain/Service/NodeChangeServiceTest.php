@@ -32,6 +32,7 @@ class NodeChangeServiceTest extends UnitTestCase
 
         $originalNode = $this->createMock(NodeInterface::class);
         $originalNode->method('getNodeType')->willReturn($originalNodeType);
+        $originalNode->method('getPropertyNames')->willReturn([]);
         $originalNode->method('isHidden')->willReturn(false);
         $originalNode->method('getHiddenBeforeDateTime')->willReturn(null);
         $originalNode->method('getHiddenAfterDateTime')->willReturn(new \DateTimeImmutable('2026-09-10 08:00:00'));
@@ -470,6 +471,40 @@ class NodeChangeServiceTest extends UnitTestCase
     }
 
     /** @test */
+    public function renderContentChangesReportsAPropertyThatWasRemovedFromTheNode(): void
+    {
+        $nodeType = $this->createNodeType('Vendor.Site:Text');
+        $originalNode = $this->createNode($nodeType, ['text' => '<p>Hallo</p>', 'title' => 'Titel']);
+        $changedNode = $this->createNode($nodeType, ['text' => '<p>Hallo</p>']);
+
+        $changes = $this->createService($originalNode)->renderContentChanges($changedNode);
+
+        self::assertSame(['title'], array_keys($changes));
+        self::assertSame('TEXT', $changes['title']['kind']);
+        self::assertStringContainsString('<del>', $changes['title']['diffHtml']);
+        self::assertStringNotContainsString('<ins>', $changes['title']['diffHtml']);
+    }
+
+    /** @test */
+    public function renderContentChangesReportsAReferenceToAnotherNodeOfTheSameName(): void
+    {
+        $nodeType = $this->createNodeType('Vendor.Site:Element');
+        $originalNode = $this->createNode($nodeType, [
+            'related' => [$this->createLabelledNode('Kontakt', 'contact-a', '/sites/example/kontakt')],
+        ]);
+        $changedNode = $this->createNode($nodeType, [
+            'related' => [$this->createLabelledNode('Kontakt', 'contact-b', '/sites/example/service/kontakt')],
+        ]);
+
+        $changes = $this->createService($originalNode)->renderContentChanges($changedNode);
+
+        self::assertSame(['related'], array_keys($changes));
+        self::assertSame('VALUE', $changes['related']['kind']);
+        self::assertSame('Kontakt (/sites/example/kontakt)', $changes['related']['original']);
+        self::assertSame('Kontakt (/sites/example/service/kontakt)', $changes['related']['changed']);
+    }
+
+    /** @test */
     public function renderContentChangesCallsARevertedReferenceListIdenticalToTheOriginal(): void
     {
         $nodeType = $this->createNodeType('Vendor.Site:Element');
@@ -705,6 +740,7 @@ class NodeChangeServiceTest extends UnitTestCase
         $node = $this->createMock(NodeInterface::class);
         $node->method('getNodeType')->willReturn($nodeType);
         $node->method('getProperties')->willReturn(new ArrayPropertyCollection($properties));
+        $node->method('getPropertyNames')->willReturn(array_keys($properties));
         $node->method('getProperty')->willReturnCallback(
             static fn($propertyName) => $properties[$propertyName] ?? null
         );
@@ -726,10 +762,12 @@ class NodeChangeServiceTest extends UnitTestCase
      * A node that only has to answer with a label, as a link target or as the
      * value of a reference property.
      */
-    private function createLabelledNode(string $label): NodeInterface
+    private function createLabelledNode(string $label, string $identifier = 'labelled', string $path = '/sites/example/labelled'): NodeInterface
     {
         $node = $this->createMock(NodeInterface::class);
         $node->method('getLabel')->willReturn($label);
+        $node->method('getIdentifier')->willReturn($identifier);
+        $node->method('getPath')->willReturn($path);
         return $node;
     }
 
