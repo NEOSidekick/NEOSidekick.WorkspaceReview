@@ -233,6 +233,13 @@
             <trans-unit id="change.technicalOnly" xml:space="preserve">
                 <source>Changed – the wording is unchanged, please check details in the preview.</source>
             </trans-unit>
+            <trans-unit id="change.technicalOnlyHelp" xml:space="preserve">
+                <source>The stored value of this field changed, but it reads the same as the published version. Possible reasons:
+• Paragraphs, line breaks or lists were split, merged or rearranged
+• Spaces, non-breaking spaces or soft hyphens were added or removed
+• Alignment or other formatting changed that cannot be listed word by word
+• An option was selected that is stored differently but has the same name</source>
+            </trans-unit>
             <trans-unit id="change.identicalToOriginal" xml:space="preserve">
                 <source>Edited, but matching the published version again – no content differences found.</source>
             </trans-unit>

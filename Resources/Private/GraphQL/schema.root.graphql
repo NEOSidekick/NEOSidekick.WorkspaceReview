@@ -114,6 +114,8 @@ type PropertyChange {
   hidden: Boolean
   # VISIBILITY/NOTE
   message: String
+  # NOTE: optional explanation of the message
+  help: String
 }
 
 type MediaRef {

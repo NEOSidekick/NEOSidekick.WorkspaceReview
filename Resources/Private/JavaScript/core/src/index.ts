@@ -18,6 +18,7 @@ export type { BadgeVariant } from './components/Badge';
 export { Pill } from './components/Pill';
 export { Kbd } from './components/Kbd';
 export { SrOnly } from './components/SrOnly';
+export { HelpTip } from './components/HelpTip';
 export { NodeTypeIcon } from './components/NodeTypeIcon';
 export { Dialog } from './components/Dialog';
 export { ErrorBoundary } from './components/ErrorBoundary';

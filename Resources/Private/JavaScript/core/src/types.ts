@@ -43,6 +43,7 @@ export interface PropertyChange {
     changedMedia: MediaRef | null;
     hidden: boolean | null;
     message: string | null;
+    help: string | null;
 }
 
 export interface NodeChange {

@@ -57,6 +57,7 @@ export const WORKSPACE_QUERY = `
                                     changed
                                     hidden
                                     message
+                                    help
                                     originalMedia {
                                         ...MediaRefFields
                                     }

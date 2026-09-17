@@ -42,6 +42,24 @@
 
 /* The label takes the room the badges and date leave and yields to them when the
    header gets tight, so a card header stays one line. */
+/*
+ * The component library resets its icons to white, which the light card
+ * hides, and the backend stylesheet removes the margin of everything with an
+ * "fa-" class, which glues them to the text next to them.
+ */
+.body svg {
+    color: inherit;
+}
+
+.body .meta svg,
+.body .visibility svg {
+    margin-right: 5px;
+}
+
+.body .note svg {
+    margin-left: 6px;
+}
+
 .header {
     display: flex;
     align-items: center;

@@ -1,41 +1,5 @@
-/* The explanation opens below the badge on hover and on keyboard focus. */
 .stale {
-    position: relative;
-    display: inline-block;
     vertical-align: middle;
     margin: -2px 0 0 6px;
     padding: 1px 8px 1px 7px;
-    cursor: help;
-}
-
-.stale::after {
-    content: attr(data-review-help);
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    z-index: var(--review-zIndex-sticky);
-    display: none;
-    width: 320px;
-    box-sizing: border-box;
-    padding: 10px 12px;
-    border: 1px solid var(--theme-grayLight);
-    border-radius: 2px;
-    background: var(--theme-grayDarker);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-    font-size: var(--theme-fontSize-small);
-    font-weight: normal;
-    line-height: 18px;
-    letter-spacing: normal;
-    white-space: normal;
-    color: var(--theme-textOnGray);
-}
-
-.stale:hover::after,
-.stale:focus-visible::after {
-    display: block;
-}
-
-.stale:focus-visible {
-    outline: 2px solid var(--theme-blue);
-    outline-offset: 1px;
 }

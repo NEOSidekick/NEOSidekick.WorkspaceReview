@@ -1,0 +1,40 @@
+.helpTip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.helpTip::after {
+    content: attr(data-review-help);
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: var(--review-zIndex-sticky);
+    display: none;
+    width: 420px;
+    max-width: 80vw;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--theme-grayLight);
+    border-radius: 2px;
+    background: var(--theme-grayDarker);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    font-size: var(--theme-fontSize-small);
+    font-style: normal;
+    font-weight: normal;
+    line-height: 18px;
+    letter-spacing: normal;
+    /* Explanations may list their reasons line by line. */
+    white-space: pre-line;
+    color: var(--theme-textOnGray);
+}
+
+.helpTip:hover::after,
+.helpTip:focus-visible::after {
+    display: block;
+}
+
+.helpTip:focus-visible {
+    outline: 2px solid var(--theme-blue);
+    outline-offset: 1px;
+}

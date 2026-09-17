@@ -271,6 +271,7 @@ class NodeChangeService
             'changedMedia' => null,
             'hidden' => null,
             'message' => null,
+            'help' => null,
         ], $values);
     }
 
@@ -508,6 +509,7 @@ class NodeChangeService
         }
         return [$this->entry('NOTE', $propertyName, $propertyLabel, [
             'message' => $this->translate('change.technicalOnly'),
+            'help' => $this->translate('change.technicalOnlyHelp'),
         ])];
     }
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { Icon } from '@neos-project/react-ui-components';
-import { Pill, useIntl } from '@neosidekick/workspace-review-core';
+import { HelpTip, Pill, useIntl } from '@neosidekick/workspace-review-core';
 import type { MediaRef, NodeChange, PropertyChange } from '@neosidekick/workspace-review-core';
 
 import styles from './ChangeCard.module.css';
@@ -111,7 +111,14 @@ export function PropertyChangeView({ property, change }: PropertyChangeViewProps
                     </span>
                 );
             case 'NOTE':
-                return <span className={styles.note}>{property.message}</span>;
+                return property.help ? (
+                    <HelpTip help={property.help} className={styles.note}>
+                        {property.message}
+                        <Icon icon="info-circle" padded="left" />
+                    </HelpTip>
+                ) : (
+                    <span className={styles.note}>{property.message}</span>
+                );
             default:
                 return null;
         }

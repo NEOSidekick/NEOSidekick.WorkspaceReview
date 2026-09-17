@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from '@neos-project/react-ui-components';
-import { Badge, SrOnly, useIntl, useReviewState } from '@neosidekick/workspace-review-core';
+import { Badge, HelpTip, useIntl, useReviewState } from '@neosidekick/workspace-review-core';
 
 import styles from './StaleBadge.module.css';
 
@@ -14,15 +14,14 @@ export function StaleBadge({ pageId }: { pageId: string }) {
     if (!isStale) return null;
     const help = translate(
         'review.changedSinceReviewHelp',
-        'This page was edited again after you marked it as reviewed. The reviewed mark was therefore removed, so please look through its changes once more.'
+        'This page was edited again after you marked it as reviewed. The reviewed mark was therefore removed, so please look through its changes once more.',
     );
     return (
-        <span className={styles.stale} tabIndex={0} data-review-help={help}>
+        <HelpTip help={help} className={styles.stale}>
             <Badge variant="stale">
                 <Icon icon="question-circle" padded="right" />
                 {translate('review.changedSinceReview', 'Changed since your review')}
-                <SrOnly>. {help}</SrOnly>
             </Badge>
-        </span>
+        </HelpTip>
     );
 }

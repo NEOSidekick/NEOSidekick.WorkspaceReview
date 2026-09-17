@@ -310,6 +310,18 @@
                 <source>Changed – the wording is unchanged, please check details in the preview.</source>
                 <target>Geändert – der Wortlaut ist unverändert, Details bitte in der Vorschau prüfen.</target>
             </trans-unit>
+            <trans-unit id="change.technicalOnlyHelp" xml:space="preserve">
+                <source>The stored value of this field changed, but it reads the same as the published version. Possible reasons:
+• Paragraphs, line breaks or lists were split, merged or rearranged
+• Spaces, non-breaking spaces or soft hyphens were added or removed
+• Alignment or other formatting changed that cannot be listed word by word
+• An option was selected that is stored differently but has the same name</source>
+                <target>Der gespeicherte Wert dieses Feldes hat sich geändert, liest sich aber gleich wie die veröffentlichte Version. Mögliche Gründe:
+• Absätze, Zeilenumbrüche oder Listen wurden geteilt, zusammengeführt oder umgestellt
+• Leerzeichen, geschützte Leerzeichen oder weiche Trennzeichen wurden eingefügt oder entfernt
+• Ausrichtung oder eine andere Formatierung wurde geändert, die sich nicht Wort für Wort auflisten lässt
+• Es wurde eine Option gewählt, die anders gespeichert wird, aber gleich heißt</target>
+            </trans-unit>
             <trans-unit id="change.identicalToOriginal" xml:space="preserve">
                 <source>Edited, but matching the published version again – no content differences found.</source>
                 <target>Bearbeitet, aber wieder auf dem Stand der veröffentlichten Version – keine inhaltlichen Unterschiede gefunden.</target>

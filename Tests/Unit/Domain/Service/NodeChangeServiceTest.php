@@ -268,6 +268,7 @@ class NodeChangeServiceTest extends UnitTestCase
         self::assertSame('NOTE', $changes['text#note']['kind'] ?? null);
         self::assertSame('Text', $changes['text#note']['label'] ?? null);
         self::assertSame('change.technicalOnly', $changes['text#note']['message'] ?? null);
+        self::assertSame('change.technicalOnlyHelp', $changes['text#note']['help'] ?? null);
     }
 
     /** @test */
@@ -531,7 +532,7 @@ class NodeChangeServiceTest extends UnitTestCase
         self::assertSame(
             [
                 'kind', 'property', 'label', 'detail', 'diffHtml', 'diffHtmlFull', 'changedText',
-                'original', 'changed', 'originalMedia', 'changedMedia', 'hidden', 'message',
+                'original', 'changed', 'originalMedia', 'changedMedia', 'hidden', 'message', 'help',
             ],
             array_keys($change)
         );
