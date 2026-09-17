@@ -53,6 +53,8 @@ The card header names the element type next to the node label, because the label
 
 ### Visual compare
 
+Visual comparison currently supports Fusion-rendered websites. Next.js/Zebra frontends need a dedicated preview adapter: the current endpoint can render their structured Neos editing view instead of the public layout, and deleted elements may be missing. On these sites, set `visualCompare: false` in the frontend configuration shown below until an adapter is available. The change list remains usable.
+
 The switch above the review stream, or **D**, toggles between the change list and the visual compare, which renders the reviewed workspace in the site's own layout and adds status labels and outlines to changed elements: green for created, orange for changed, blue for moved, hatched grey for hidden and a red overlay for a deleted element restored from the published rendering. Text edits appear in place when the new wording can be matched to a text element on the page. Changes with no visible matching element are listed below the frame with links to their cards.
 
 ### Keyboard review
