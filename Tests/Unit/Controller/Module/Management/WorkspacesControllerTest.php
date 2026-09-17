@@ -6,6 +6,7 @@ namespace NEOSidekick\WorkspaceReview\Tests\Unit\Controller\Module\Management;
 
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Package\PackageManager;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\FluidAdaptor\View\TemplatePaths;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -13,6 +14,37 @@ use NEOSidekick\WorkspaceReview\Controller\Module\Management\WorkspacesControlle
 
 class WorkspacesControllerTest extends UnitTestCase
 {
+    /**
+     * @test
+     * @dataProvider visualCompareConfigurations
+     */
+    public function resolvesVisualCompareFromPackageDetectionUnlessExplicitlyOverridden($configured, bool $zebra, bool $expected): void
+    {
+        $controller = $this->createController();
+        $packageManager = $this->createMock(PackageManager::class);
+        $packageManager->method('isPackageAvailable')->with('Networkteam.Neos.Next')->willReturn($zebra);
+        $this->inject($controller, 'packageManager', $packageManager);
+        $this->inject($controller, 'frontendConfiguration', [
+            'NEOSidekick.WorkspaceReview' => ['visualCompare' => $configured, 'otherFeature' => 'preserved'],
+        ]);
+
+        self::assertSame([
+            'visualCompare' => $expected,
+            'otherFeature' => 'preserved',
+        ], $controller->getFrontendConfigurationForTest());
+    }
+
+    public function visualCompareConfigurations(): array
+    {
+        return [
+            'automatic Fusion' => [null, false, true],
+            'automatic Zebra' => [null, true, false],
+            'explicit enable on Zebra' => [true, true, true],
+            'explicit disable on Fusion' => [false, false, false],
+            'invalid value uses detection' => ['true', true, false],
+        ];
+    }
+
     /**
      * The bug this guards against: another package's view configuration won and
      * declared no layout root, so Fluid derived the module layout from this
@@ -219,6 +251,11 @@ class WorkspacesControllerTest extends UnitTestCase
             public function completeRootPathsForTest(array $configuredPaths, string $type, bool $includeOwnPath = true): array
             {
                 return $this->completeRootPaths($configuredPaths, $type, $includeOwnPath);
+            }
+
+            public function getFrontendConfigurationForTest(): array
+            {
+                return $this->getFrontendConfiguration();
             }
 
             public function initializeViewForTest(ViewInterface $view): void

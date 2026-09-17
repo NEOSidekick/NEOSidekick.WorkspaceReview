@@ -151,7 +151,13 @@ class WorkspacesController extends NeosWorkspacesController
     protected function getFrontendConfiguration(): array
     {
         $configuration = $this->frontendConfiguration['NEOSidekick.WorkspaceReview'] ?? [];
-        return is_array($configuration) ? $configuration : [];
+        $configuration = is_array($configuration) ? $configuration : [];
+        // Only explicit booleans override automatic detection. The Fusion
+        // preview endpoint cannot render a Zebra frontend faithfully.
+        if (!is_bool($configuration['visualCompare'] ?? null)) {
+            $configuration['visualCompare'] = !$this->packageManager->isPackageAvailable('Networkteam.Neos.Next');
+        }
+        return $configuration;
     }
 
     /**

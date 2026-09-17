@@ -72,7 +72,7 @@ The card header names the element type next to the node label, because the label
 
 ### Visual compare
 
-Visual comparison currently supports Fusion-rendered websites. Next.js/Zebra frontends need a dedicated preview adapter: the current endpoint can render their structured Neos editing view instead of the public layout, and deleted elements may be missing. On these sites, set `visualCompare: false` in the frontend configuration shown below until an adapter is available. The change list remains usable.
+Visual comparison currently supports Fusion-rendered websites. Next.js/Zebra frontends need a dedicated preview adapter: the current endpoint can render their structured Neos editing view instead of the public layout, and deleted elements may be missing. WorkspaceReview automatically disables visual comparison when Flow reports the Zebra integration package `Networkteam.Neos.Next` as available. The change list remains usable. Detection applies to the whole installation; mixed Fusion/Zebra installations can override it explicitly.
 
 The switch above the review stream, or **D**, toggles between the change list and the visual compare, which renders the reviewed workspace in the site's own layout and adds status labels and outlines to changed elements: green for created, orange for changed, blue for moved, hatched grey for hidden and a red overlay for a deleted element restored from the published rendering. Text edits appear in place when the new wording can be matched to a text element on the page. Changes with no visible matching element are listed below the frame with links to their cards.
 
@@ -125,10 +125,14 @@ Neos:
     Ui:
       frontendConfiguration:
         'NEOSidekick.WorkspaceReview':
-          visualCompare: true   # kill switch for the experimental visual compare
+          visualCompare: null   # automatic detection (default)
 ```
 
-`showAction` reads that namespace and renders it into the `data-features` attribute of the application root, which is how a Neos UI setting reaches a backend module.
+With `null` (or no value), visual comparison is enabled unless `Networkteam.Neos.Next` is available. Set `false` to disable it on any installation, or `true` to enable it explicitly, for example after installing a compatible preview adapter. Enabling it alone does not add Zebra rendering support. Use YAML booleans, not quoted strings.
+
+When disabled, the review stays in the change-list view, even if visual comparison was previously selected. The view switch and visual-comparison keyboard shortcut are hidden/disabled.
+
+`showAction` resolves detection, reads that namespace and renders it into the `data-features` attribute of the application root, which is how a Neos UI setting reaches a backend module.
 
 Word-diff thresholds (24 context words, 50 edited words) are constants in `Domain\Diff\WordDiffer`: they shape server-rendered HTML and therefore cannot be client-side flags.
 

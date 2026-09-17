@@ -28,5 +28,6 @@ Neos:
     Ui:
       frontendConfiguration:
         'NEOSidekick.WorkspaceReview':
-          # Kill switch for the experimental visual compare.
-          visualCompare: true
+          # Automatically disable visual compare when Networkteam.Neos.Next is available.
+          # Set true or false to override detection explicitly.
+          visualCompare: null
