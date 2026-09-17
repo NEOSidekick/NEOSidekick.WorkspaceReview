@@ -120,6 +120,12 @@
     align-items: start;
 }
 
+/* A follow-up line belongs to the property above it, so no rule separates them. */
+.propertyContinuation {
+    padding-top: 3px;
+    border-top: 0;
+}
+
 .propertyLabel {
     font-size: var(--theme-fontSize-small);
     color: var(--review-card-textMuted);
@@ -208,17 +214,14 @@
     white-space: normal;
 }
 
-/* Added words are underlined and deleted words struck through, so the kind of
-   change is readable without telling red from green. The selectors are this
+/* Deleted words are struck through like an old value, so the kind of change
+   is readable without telling red from green. The selectors are this
    long to outweigh the rule of the backend stylesheet for <ins> and <del> in
    the workspaces module, which sets its own colours and removes the lines. */
 .card .body .propertyValue .text ins {
     background: var(--review-added-background);
     color: var(--review-added-text);
-    text-decoration: underline;
-    text-decoration-color: var(--review-added-text);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 2px;
+    text-decoration: none;
     padding: 1px 3px;
     border-radius: 3px;
     box-decoration-break: clone;

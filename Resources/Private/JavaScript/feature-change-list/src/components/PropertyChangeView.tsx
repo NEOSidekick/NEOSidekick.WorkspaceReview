@@ -131,7 +131,8 @@ export function PropertyChangeView({ property, change }: PropertyChangeViewProps
             className={classnames(
                 styles.property,
                 isMedia && styles.propertyMedia,
-                property.kind === 'NOTE' && !property.label && styles.propertyNote
+                property.kind === 'NOTE' && !property.label && styles.propertyNote,
+                property.kind !== 'NOTE' && !property.label && styles.propertyContinuation
             )}
             data-review-property={property.property}
             data-review-change-id={change.id}
