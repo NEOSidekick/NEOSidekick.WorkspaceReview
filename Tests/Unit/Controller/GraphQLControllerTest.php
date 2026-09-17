@@ -24,7 +24,6 @@ class GraphQLControllerTest extends UnitTestCase
         class_exists(\GraphQL\Language\SourceLocation::class);
         class_exists(\GraphQL\Language\AST\NodeList::class);
         class_exists(\GraphQL\Type\Definition\Type::class);
-        class_exists(\GraphQL\Validator\Rules\ValuesOfCorrectType::class);
     }
 
     /** @test */
@@ -35,11 +34,15 @@ class GraphQLControllerTest extends UnitTestCase
             ->with(null, ['name' => 'user-editor'])
             ->willReturn(['name' => 'user-editor', 'sites' => [['name' => 'Example', 'dimensions' => []]]]);
         $controller = $this->createController($resolver);
+        $errorReporting = error_reporting();
+        ob_start();
         $result = json_decode($controller->queryAction(
             'query Review($name: String!) { workspace(name: $name) { name sites { name dimensions { hash } } } }',
             ['name' => 'user-editor'],
             'Review'
         ), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('', ob_get_clean(), 'The first query must not emit output before its JSON response.');
+        self::assertSame($errorReporting, error_reporting());
         self::assertSame(['data' => ['workspace' => [
             'name' => 'user-editor', 'sites' => [['name' => 'Example', 'dimensions' => []]],
         ]]], $result);

@@ -40,6 +40,10 @@ class GraphQLController extends ActionController
      */
     public function queryAction(string $query, ?array $variables = null, ?string $operationName = null): string
     {
+        // GraphQL 0.13 emits a PHP 8.2 compile-time deprecation when this rule is first loaded.
+        // Load only that legacy rule quietly so the notice cannot corrupt the JSON response.
+        // Query execution and resolver errors retain the application's normal error handling.
+        @class_exists(\GraphQL\Validator\Rules\ValuesOfCorrectType::class);
         $schema = BuildSchema::build(file_get_contents($this->schemaSource));
         $context = new ReviewContext($this->controllerContext);
         $root = ['workspace' => function ($source, array $arguments, ReviewContext $context): array {
