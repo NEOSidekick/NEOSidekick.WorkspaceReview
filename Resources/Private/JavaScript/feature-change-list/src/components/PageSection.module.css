@@ -49,9 +49,18 @@
 }
 
 .separator {
+    display: inline-flex;
+    align-items: center;
     margin: 0 2px;
-    font-size: var(--theme-fontSize-tiny);
     color: var(--theme-colors-ContrastBright);
+}
+
+/* The backend stylesheet sizes every icon to 14px and the component library
+   resets it to white; a separator is smaller and quieter than the labels. */
+.crumb .separator svg {
+    width: 8px;
+    height: 10px;
+    color: inherit;
 }
 
 .dimensionLabel {

@@ -5,9 +5,9 @@
 /* The class is repeated to outweigh the heading rules of the backend stylesheet. */
 .title.title {
     margin: 0;
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 400;
-    line-height: 30px;
+    line-height: 34px;
     color: var(--theme-textOnGray);
 }
 

@@ -1,11 +1,24 @@
-/* The selectors repeat the class to outweigh the backend stylesheet, which
-   gives the breadcrumb a rule below it and room for a full-width row. */
-.breadcrumb.breadcrumb ul {
+/* The class is repeated to outweigh the backend stylesheet, which gives the
+   breadcrumb a rule below it and the height of a full-width row. */
+.breadcrumb.breadcrumb.breadcrumb ul {
     margin: 0;
-    padding: 0 0 10px;
+    /* The top padding puts the capitals on the height of those of the heading
+       of the review stream, which starts on the same line in a larger size. */
+    padding: 2px 0 10px;
     border: 0;
     font-size: 13px;
     line-height: 20px;
+}
+
+.breadcrumb.breadcrumb.breadcrumb ul li,
+.breadcrumb.breadcrumb.breadcrumb ul a {
+    line-height: 20px;
+}
+
+/* The backend stylesheet sets every icon on the baseline, above the middle of
+   the text next to it. */
+.breadcrumb.breadcrumb.breadcrumb ul i {
+    vertical-align: -3px;
 }
 
 .breadcrumb:empty {

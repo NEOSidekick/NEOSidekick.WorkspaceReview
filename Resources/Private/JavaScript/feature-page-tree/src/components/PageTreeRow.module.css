@@ -67,6 +67,12 @@
     color: var(--theme-textSubtleLight);
 }
 
+/* Two classes to outweigh the backend stylesheet, which sets every icon on
+   the baseline, above the middle of the row. */
+.row .chevron svg {
+    vertical-align: -2px;
+}
+
 .icon {
     flex: 0 0 auto;
     width: 2em;

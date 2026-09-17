@@ -1,5 +1,7 @@
 .badge {
-    display: inline-block;
+    /* Centres an icon on the label, whatever the backend stylesheet aligns it to. */
+    display: inline-flex;
+    align-items: center;
     padding: 2px 7px;
     border-radius: 2px;
     font-size: var(--theme-fontSize-tiny);

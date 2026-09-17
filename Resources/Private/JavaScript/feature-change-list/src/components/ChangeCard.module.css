@@ -80,6 +80,9 @@
 
 .body .note svg {
     margin-left: 6px;
+    /* The backend stylesheet sets icons on the baseline, above the middle of
+       the text; the note may wrap, so the icon stays inline and is lowered. */
+    vertical-align: -2px;
 }
 
 .header {
@@ -129,6 +132,8 @@
 }
 
 .meta {
+    display: inline-flex;
+    align-items: center;
     flex: 0 0 auto;
     margin-left: auto;
     font-size: var(--theme-fontSize-small);
