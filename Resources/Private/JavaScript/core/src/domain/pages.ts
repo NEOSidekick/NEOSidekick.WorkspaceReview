@@ -38,7 +38,69 @@ export function collectTreeRows(workspace: Workspace | null | undefined): TreeRo
     return rows;
 }
 
-/** Clamps a page index to the existing pages, as the keyboard navigation does. */
+/**
+ * The dimension part of a context path ("/path@workspace;language=en"). The
+ * same node path exists once per dimension combination, and each variant is
+ * published on its own.
+ */
+export function dimensionsOf(contextPath: string): string {
+    const separator = contextPath.indexOf(';');
+    return separator === -1 ? '' : contextPath.slice(separator + 1);
+}
+
+/** Narrows the review to one document; without dimensions to all its variants. */
+export interface DocumentFilter {
+    nodePath: string;
+    dimensions: string | null;
+}
+
+/**
+ * Reads the optional "document" argument of the module: the context path of a
+ * document node, or its plain node path. The workspace part is ignored - the
+ * review is about the workspace it was opened for.
+ */
+export function parseDocumentFilter(value: string | null | undefined): DocumentFilter | null {
+    const document = (value || '').trim();
+    if (!document) return null;
+    const separator = document.indexOf('@');
+    if (separator === -1) return { nodePath: document, dimensions: null };
+    return { nodePath: document.slice(0, separator), dimensions: dimensionsOf(document) };
+}
+
+export function matchesDocument(
+    page: { nodePath: string; changes: Pick<NodeChange, 'contextPath'>[] },
+    filter: DocumentFilter,
+): boolean {
+    if (page.nodePath !== filter.nodePath) return false;
+    if (filter.dimensions === null) return true;
+    const sample = page.changes[0]?.contextPath;
+    return sample !== undefined && dimensionsOf(sample) === filter.dimensions;
+}
+
+/**
+ * The rows of the matching pages with the ancestors that lead to them,
+ * numbered anew. An ancestor that has changes of its own is listed like an
+ * unchanged one, because its changes are not part of the narrowed review.
+ */
+export function filterTreeRows(rows: TreeRow[], filter: DocumentFilter): TreeRow[] {
+    const result: TreeRow[] = [];
+    const ancestors: TreeRow[] = [];
+    let pageIndex = 0;
+    rows.forEach((row) => {
+        while (ancestors.length && ancestors[ancestors.length - 1].depth >= row.depth) ancestors.pop();
+        if (row.page && matchesDocument(row.page, filter)) {
+            ancestors.forEach((ancestor) => {
+                if (!result.some((listed) => listed.key === ancestor.key)) {
+                    result.push({ ...ancestor, page: null, pageIndex: -1 });
+                }
+            });
+            result.push({ ...row, pageIndex: pageIndex++ });
+        }
+        ancestors.push(row);
+    });
+    return result;
+}
+
 /**
  * The number of changed elements on the given pages: the distinct context
  * paths that can be published or discarded. An element counts once, however
@@ -50,6 +112,7 @@ export function countChangedNodes(pages: { changes: Pick<NodeChange, 'contextPat
     return contextPaths.size;
 }
 
+/** Clamps a page index to the existing pages, as the keyboard navigation does. */
 export function clampPageIndex(index: number, pageCount: number): number {
     if (pageCount <= 0) return -1;
     return Math.max(0, Math.min(index, pageCount - 1));

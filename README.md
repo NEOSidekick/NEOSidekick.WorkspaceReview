@@ -66,6 +66,16 @@ The switch above the review stream, or **D**, toggles between the change list an
 
 Shortcuts stay off inside form controls, and modifier combinations are left to the browser.
 
+### Review a single page
+
+The review accepts an optional `document` module argument with the context path of a document node:
+
+```
+/neos/management/workspaces/show?moduleArguments[workspace][__identity]=user-admin&moduleArguments[document]=/sites/site/blog/post@user-admin;language=de
+```
+
+Only that page is listed then, with its ancestors in the page tree, and the batch buttons publish or discard only its changes. A plain node path without the `@…` part covers every dimension variant of the page. If other pages have changes too, the footer says so and links to the review of the whole workspace. A new page is published together with the new or moved pages it lives in, as in the full review, even though the filter hides them. After publishing or discarding, the core action returns to the review of the whole workspace.
+
 ## Configuration
 
 ```yaml

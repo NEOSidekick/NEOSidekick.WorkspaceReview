@@ -117,10 +117,17 @@ class WorkspacesController extends NeosWorkspacesController
      * server alone can know: the endpoint, the feature flags and the module
      * URIs that carry the module argument namespace.
      *
+     * With a document the review is narrowed to that page: only its changes
+     * are listed, and the batch actions publish or discard only them. The
+     * value is the context path of the document node, or its node path to
+     * cover every dimension variant. The client applies it, because it needs
+     * the whole review anyway to tell whether other pages have changes too.
+     *
      * @param Workspace $workspace
+     * @param string|null $document
      * @return void
      */
-    public function showAction(Workspace $workspace)
+    public function showAction(Workspace $workspace, ?string $document = null)
     {
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspace,
@@ -133,6 +140,8 @@ class WorkspacesController extends NeosWorkspacesController
             'rebaseUri' => $this->buildModuleUri('rebaseAndRedirect', ['targetWorkspace' => $workspace]),
             'publishWorkspaceUri' => $this->buildModuleUri('publishWorkspace', ['workspace' => $workspace]),
             'discardWorkspaceUri' => $this->buildModuleUri('discardWorkspace', ['workspace' => $workspace]),
+            'document' => (string)$document,
+            'showUri' => $this->buildModuleUri('show', ['workspace' => $workspace]),
         ]);
     }
 

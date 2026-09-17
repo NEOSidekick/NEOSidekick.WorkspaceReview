@@ -29,6 +29,24 @@
     color: var(--theme-textOnGray);
 }
 
+/* Shown while a document filter hides changed pages. The class is repeated to
+   outweigh the link colour of the backend stylesheet. */
+.others {
+    margin-right: var(--theme-spacing-Half);
+    color: var(--theme-textSubtleLight);
+    font-size: var(--theme-fontSize-base);
+}
+
+.others.others a {
+    color: var(--theme-colors-PrimaryBlue);
+}
+
+.others.others a:hover,
+.others.others a:focus-visible {
+    color: var(--theme-colors-PrimaryBlueHover);
+    text-decoration: underline;
+}
+
 .scope {
     color: var(--theme-textSubtleLight);
     font-size: var(--theme-fontSize-base);

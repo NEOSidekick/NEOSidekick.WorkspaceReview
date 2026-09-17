@@ -117,6 +117,8 @@ export interface ModuleUris {
     rebase: string;
     publishWorkspace: string;
     discardWorkspace: string;
+    /** The review of the whole workspace, without a document filter. */
+    showAll: string;
     index: string;
 }
 

@@ -7,23 +7,26 @@ import type { SelectionState } from './selection';
 
 /** Binds the pure selection helpers to the review state. */
 export function useSelection() {
-    const { pages } = useReviewData();
+    // Propagation looks at every page of the workspace, also at those a
+    // document filter hides: a new page cannot be published without them.
+    const { pages, allPages } = useReviewData();
     const { selection, singleAction } = useReviewState();
     const actions = useReviewActions();
 
     const toggleOneChange = useCallback(
-        (change: NodeChange, checked: boolean) => actions.setSelection(toggleChange(pages, change, checked, selection)),
-        [actions, pages, selection]
+        (change: NodeChange, checked: boolean) =>
+            actions.setSelection(toggleChange(allPages, change, checked, selection)),
+        [actions, allPages, selection],
     );
 
     const toggleOnePage = useCallback(
-        (page: ChangedPage, checked: boolean) => actions.setSelection(togglePage(pages, page, checked, selection)),
-        [actions, pages, selection]
+        (page: ChangedPage, checked: boolean) => actions.setSelection(togglePage(allPages, page, checked, selection)),
+        [actions, allPages, selection],
     );
 
     const toggleAll = useCallback(
-        (checked: boolean) => actions.setSelection(selectAll(pages, checked)),
-        [actions, pages]
+        (checked: boolean) => actions.setSelection(selectAll(allPages, pages, checked)),
+        [actions, allPages, pages],
     );
 
     return {

@@ -6,9 +6,13 @@ import {
     clampPageIndex,
     collectTreeRows,
     countChangedNodes,
+    filterTreeRows,
+    matchesDocument,
     moduleIndexUri,
     pageContextPath,
+    parseDocumentFilter,
 } from './pages';
+import type { TreeRow } from './pages';
 import type { Workspace } from '../types';
 
 function node(identifier: string) {
@@ -73,6 +77,61 @@ const workspace: Workspace = {
         },
     ],
 };
+
+describe('document filter', () => {
+    const inLanguage = (nodePath: string, language: string) => ({
+        nodePath,
+        changes: [{ contextPath: `${nodePath}/main/text@user-admin;language=${language}` }],
+    });
+
+    it('reads a context path, a node path and nothing', () => {
+        deepStrictEqual(parseDocumentFilter('/sites/example/a@user-admin;language=en'), {
+            nodePath: '/sites/example/a',
+            dimensions: 'language=en',
+        });
+        deepStrictEqual(parseDocumentFilter('/sites/example/a'), { nodePath: '/sites/example/a', dimensions: null });
+        strictEqual(parseDocumentFilter(''), null);
+        strictEqual(parseDocumentFilter(undefined), null);
+    });
+
+    it('matches the node path and, if given, the dimensions', () => {
+        const english = parseDocumentFilter('/sites/example/a@live;language=en')!;
+        strictEqual(matchesDocument(inLanguage('/sites/example/a', 'en'), english), true);
+        strictEqual(matchesDocument(inLanguage('/sites/example/a', 'de'), english), false);
+        strictEqual(matchesDocument(inLanguage('/sites/example/a/b', 'en'), english), false);
+        strictEqual(
+            matchesDocument(inLanguage('/sites/example/a', 'de'), parseDocumentFilter('/sites/example/a')!),
+            true,
+        );
+    });
+
+    it('keeps the matching page with its ancestors and numbers it anew', () => {
+        const row = (key: string, depth: number, changedPage: TreeRow['page'], pageIndex: number): TreeRow => ({
+            key,
+            node: node(key),
+            depth,
+            hasChildren: true,
+            page: changedPage,
+            pageIndex,
+        });
+        const rows = [
+            row('root', 0, null, -1),
+            row('blog', 1, page('blog', '/sites/example/blog', 1), 0),
+            row('post', 2, page('post', '/sites/example/blog/post', 1), 1),
+            row('other', 1, page('other', '/sites/example/other', 1), 2),
+        ];
+        const filtered = filterTreeRows(rows, parseDocumentFilter('/sites/example/blog/post')!);
+        deepStrictEqual(
+            filtered.map((entry) => [entry.key, entry.page?.id ?? null, entry.pageIndex]),
+            [
+                ['root', null, -1],
+                // A changed ancestor is listed without its own changes.
+                ['blog', null, -1],
+                ['post', 'post', 0],
+            ],
+        );
+    });
+});
 
 describe('page order helpers', () => {
     it('counts every changed node once, over all pages', () => {

@@ -351,6 +351,27 @@
             <trans-unit id="count.elements.many" xml:space="preserve">
                 <source>{0} changed elements</source>
             </trans-unit>
+            <trans-unit id="filter.otherChanges" xml:space="preserve">
+                <source>There are more changes on other pages,</source>
+            </trans-unit>
+            <trans-unit id="filter.showAll" xml:space="preserve">
+                <source>show all</source>
+            </trans-unit>
+            <trans-unit id="filter.noChanges" xml:space="preserve">
+                <source>This page has no unpublished changes.</source>
+            </trans-unit>
+            <trans-unit id="actions.confirmDiscardShown" xml:space="preserve">
+                <source>Really discard all {0} shown changes in “{1}”?</source>
+            </trans-unit>
+            <trans-unit id="actions.discardOne" xml:space="preserve">
+                <source>Discard the change</source>
+            </trans-unit>
+            <trans-unit id="actions.publishOne" xml:space="preserve">
+                <source>Publish the change to “{0}”</source>
+            </trans-unit>
+            <trans-unit id="selection.one" xml:space="preserve">
+                <source>Select the change</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

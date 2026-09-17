@@ -120,8 +120,16 @@ describe('selection propagation', () => {
         ]);
     });
 
+    it('takes the hidden new ancestor pages of a filtered review along', () => {
+        // Only the child page is shown; its new parent has to be published with it.
+        const newChild: SelectablePage = { ...editedPage, isNew: true };
+        const all = selectAll([newParent, newChild, unrelatedPage], [newChild], true);
+        deepStrictEqual([...all].sort(), ['child-a', 'parent-a', 'parent-b']);
+        strictEqual(allSelectionState([newChild], all), 'all');
+    });
+
     it('reports the selection state of a page and of the whole stream', () => {
-        const all = selectAll(pages, true);
+        const all = selectAll(pages, pages, true);
         strictEqual(allSelectionState(pages, all), 'all');
         strictEqual(allSelectionState(pages, new Set()), 'none');
         strictEqual(pageSelectionState(newParent, new Set(['parent-a'])), 'some');

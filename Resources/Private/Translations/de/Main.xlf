@@ -470,6 +470,34 @@
                 <source>{0} changed elements</source>
                 <target>{0} geänderte Elemente</target>
             </trans-unit>
+            <trans-unit id="filter.otherChanges" xml:space="preserve">
+                <source>There are more changes on other pages,</source>
+                <target>Es gibt weitere Änderungen auf anderen Seiten,</target>
+            </trans-unit>
+            <trans-unit id="filter.showAll" xml:space="preserve">
+                <source>show all</source>
+                <target>alle ansehen</target>
+            </trans-unit>
+            <trans-unit id="filter.noChanges" xml:space="preserve">
+                <source>This page has no unpublished changes.</source>
+                <target>Diese Seite hat keine unveröffentlichten Änderungen.</target>
+            </trans-unit>
+            <trans-unit id="actions.confirmDiscardShown" xml:space="preserve">
+                <source>Really discard all {0} shown changes in “{1}”?</source>
+                <target>Wirklich alle {0} angezeigten Änderungen in „{1}“ verwerfen?</target>
+            </trans-unit>
+            <trans-unit id="actions.discardOne" xml:space="preserve">
+                <source>Discard the change</source>
+                <target>Die Änderung verwerfen</target>
+            </trans-unit>
+            <trans-unit id="actions.publishOne" xml:space="preserve">
+                <source>Publish the change to “{0}”</source>
+                <target>Die Änderung nach „{0}“ veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="selection.one" xml:space="preserve">
+                <source>Select the change</source>
+                <target>Die Änderung auswählen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

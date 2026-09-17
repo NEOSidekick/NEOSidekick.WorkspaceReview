@@ -4,6 +4,7 @@ import {
     ReviewApplicationWrapper,
     createTranslate,
     moduleIndexUri,
+    parseDocumentFilter,
     parseFeatureFlags,
 } from '@neosidekick/workspace-review-core';
 import type { ModuleUris } from '@neosidekick/workspace-review-core';
@@ -30,6 +31,7 @@ function bootstrap(): void {
         rebase: root.dataset.uriRebase || '',
         publishWorkspace: root.dataset.uriPublishWorkspace || '',
         discardWorkspace: root.dataset.uriDiscardWorkspace || '',
+        showAll: root.dataset.uriShow || '',
         index: moduleIndexUri(window.location.pathname),
     };
     const notify = (message: string) => (notificationApi ? notificationApi.error(message) : console.error(message));
@@ -40,6 +42,7 @@ function bootstrap(): void {
                 graphQlUri={root.dataset.graphql || ''}
                 workspaceName={workspaceName}
                 features={parseFeatureFlags(root.dataset.features)}
+                documentFilter={parseDocumentFilter(root.dataset.document)}
                 uris={uris}
                 notify={notify}
             />

@@ -15,7 +15,11 @@ export function SelectAllCheckbox() {
             checked={state === 'all'}
             indeterminate={state === 'some'}
             disabled={disabled}
-            label={translate('selection.all', 'Select all {0} changes', [countChangedNodes(pages)])}
+            label={
+                countChangedNodes(pages) === 1
+                    ? translate('selection.one', 'Select the change')
+                    : translate('selection.all', 'Select all {0} changes', [countChangedNodes(pages)])
+            }
             onChange={toggleAll}
             visibleLabel
         />

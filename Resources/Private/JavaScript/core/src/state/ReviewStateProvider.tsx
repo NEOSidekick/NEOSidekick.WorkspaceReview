@@ -2,9 +2,9 @@ import * as React from 'react';
 import { createContext, useCallback, useContext, useMemo, useReducer, useRef } from 'react';
 
 import { MODE_STORAGE_KEY } from '../constants';
-import { clampPageIndex, collectTreeRows } from '../domain/pages';
+import { clampPageIndex, collectTreeRows, filterTreeRows } from '../domain/pages';
 import { focusWithoutScroll, pageElement, scrollIntoView, sidebarLinkElement } from '../dom';
-import type { TreeRow } from '../domain/pages';
+import type { DocumentFilter, TreeRow } from '../domain/pages';
 import { readViewMode, safeLocalStorage } from '../domain/viewMode';
 import type { StorageLike } from '../domain/viewMode';
 import { createInitialState, reviewReducer } from './reducer';
@@ -13,7 +13,12 @@ import type { ChangedPage, FeatureFlags, ModuleUris, PublishingAction, ViewMode,
 
 export interface ReviewData {
     workspace: Workspace;
+    /** The pages the review shows: all of them, or those of the document filter. */
     pages: ChangedPage[];
+    /** Every changed page of the workspace, whatever the review shows. */
+    allPages: ChangedPage[];
+    /** True while a document filter narrows the review. */
+    isFiltered: boolean;
     treeRows: TreeRow[];
     features: FeatureFlags;
     uris: ModuleUris;
@@ -35,25 +40,31 @@ const StateContext = createContext<ReviewState | null>(null);
 const ActionsContext = createContext<ReviewActions | null>(null);
 const DataContext = createContext<ReviewData | null>(null);
 
-interface ProviderProps extends Omit<ReviewData, 'pages' | 'treeRows'> {
+interface ProviderProps extends Pick<ReviewData, 'workspace' | 'features' | 'uris'> {
+    documentFilter: DocumentFilter | null;
     children: React.ReactNode;
 }
 
-export function ReviewStateProvider({ workspace, features, uris, children }: ProviderProps) {
+const changedPagesOf = (rows: TreeRow[]): ChangedPage[] =>
+    rows.filter((row): row is TreeRow & { page: ChangedPage } => row.page !== null).map((row) => row.page);
+
+export function ReviewStateProvider({ workspace, features, uris, documentFilter, children }: ProviderProps) {
     const storageRef = useRef<StorageLike | null>(null);
     if (storageRef.current === null) storageRef.current = safeLocalStorage();
     const storage = storageRef.current;
 
-    const treeRows = useMemo(() => collectTreeRows(workspace), [workspace]);
-    const pages = useMemo(
-        () => treeRows.filter((row): row is TreeRow & { page: ChangedPage } => row.page !== null).map((row) => row.page),
-        [treeRows]
+    const allTreeRows = useMemo(() => collectTreeRows(workspace), [workspace]);
+    const allPages = useMemo(() => changedPagesOf(allTreeRows), [allTreeRows]);
+    const treeRows = useMemo(
+        () => (documentFilter ? filterTreeRows(allTreeRows, documentFilter) : allTreeRows),
+        [allTreeRows, documentFilter],
     );
+    const pages = useMemo(() => changedPagesOf(treeRows), [treeRows]);
 
     const [state, dispatch] = useReducer(
         reviewReducer,
         readViewMode(storage, features.visualCompare),
-        createInitialState
+        createInitialState,
     );
 
     const actions = useMemo<ReviewActions>(() => {
@@ -98,8 +109,8 @@ export function ReviewStateProvider({ workspace, features, uris, children }: Pro
     }, [storage]);
 
     const data = useMemo<ReviewData>(
-        () => ({ workspace, pages, treeRows, features, uris }),
-        [workspace, pages, treeRows, features, uris]
+        () => ({ workspace, pages, allPages, isFiltered: documentFilter !== null, treeRows, features, uris }),
+        [workspace, pages, allPages, documentFilter, treeRows, features, uris],
     );
 
     return (
@@ -145,6 +156,6 @@ export function useJumpToPage(): (index: number, focusPage: boolean) => void {
             focusWithoutScroll(focusPage ? pageElement(target) : sidebarLinkElement(target));
             scrollIntoView(pageElement(target), 'start');
         },
-        [actions, pages.length]
+        [actions, pages.length],
     );
 }

@@ -1,3 +1,7 @@
+// The module itself, not the package index: the index also loads the
+// components with their stylesheets, which the specs of these pure helpers
+// cannot run.
+import { dimensionsOf } from '@neosidekick/workspace-review-core/src/domain/pages';
 import type { ChangedPage, NodeChange } from '@neosidekick/workspace-review-core';
 
 export type Selection = ReadonlySet<string>;
@@ -13,16 +17,6 @@ function withChanges(selection: Selection, page: SelectablePage, checked: boolea
         else next.delete(change.contextPath);
     });
     return next;
-}
-
-/**
- * The dimension part of a context path ("/path@workspace;language=en"). The
- * same node path exists once per dimension combination, and each variant is
- * published on its own.
- */
-export function dimensionsOf(contextPath: string): string {
-    const separator = contextPath.indexOf(';');
-    return separator === -1 ? '' : contextPath.slice(separator + 1);
 }
 
 /**
@@ -76,12 +70,14 @@ export function togglePage(
     return propagateUpwards(pages, page.nodePath, dimensionsOf(page.changes[0].contextPath), checked, next);
 }
 
-/** The toolbar checkbox above the stream. */
-export function selectAll(pages: SelectablePage[], checked: boolean): Set<string> {
-    const next = new Set<string>();
-    if (!checked) return next;
-    pages.forEach((page) => page.changes.forEach((change) => next.add(change.contextPath)));
-    return next;
+/**
+ * The toolbar checkbox above the stream: every change of the shown pages. A
+ * document filter may hide the new or moved pages a shown page lives in, so
+ * each page propagates over all pages and takes those ancestors along.
+ */
+export function selectAll(allPages: SelectablePage[], shownPages: SelectablePage[], checked: boolean): Set<string> {
+    if (!checked) return new Set<string>();
+    return shownPages.reduce((next, page) => togglePage(allPages, page, true, next), new Set<string>());
 }
 
 export type SelectionState = 'none' | 'some' | 'all';
@@ -94,8 +90,16 @@ export function pageSelectionState(page: SelectablePage, selection: Selection): 
 }
 
 export function allSelectionState(pages: SelectablePage[], selection: Selection): SelectionState {
-    const total = pages.reduce((sum, page) => sum + page.changes.length, 0);
-    if (!total) return 'none';
-    if (selection.size === 0) return 'none';
-    return selection.size >= total ? 'all' : 'some';
+    // Counted over the given pages only: the selection may hold changes of
+    // pages a document filter hides.
+    let total = 0;
+    let selected = 0;
+    pages.forEach((page) =>
+        page.changes.forEach((change) => {
+            total++;
+            if (selection.has(change.contextPath)) selected++;
+        }),
+    );
+    if (!total || !selected) return 'none';
+    return selected === total ? 'all' : 'some';
 }

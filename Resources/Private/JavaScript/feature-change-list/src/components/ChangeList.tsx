@@ -18,7 +18,7 @@ import { PageSection } from './PageSection';
 /** The review stream: the toolbar and one section per changed page. */
 export function ChangeList() {
     const translate = useIntl();
-    const { pages, features, workspace } = useReviewData();
+    const { pages, features, workspace, isFiltered } = useReviewData();
     const { viewMode } = useReviewState();
 
     // What is published where, and how much of it. A dimension variant of a
@@ -43,7 +43,9 @@ export function ChangeList() {
             <div className={styles.stream}>
                 {heading}
                 <p className={styles.empty}>
-                    {translate('review.noChanges', 'This workspace has no unpublished changes.')}
+                    {isFiltered
+                        ? translate('filter.noChanges', 'This page has no unpublished changes.')
+                        : translate('review.noChanges', 'This workspace has no unpublished changes.')}
                 </p>
             </div>
         );

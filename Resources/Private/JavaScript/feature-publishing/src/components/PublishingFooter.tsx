@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Icon } from '@neos-project/react-ui-components';
 import {
     ACTION_FIELD_NAME,
@@ -15,9 +15,10 @@ import {
 } from '@neosidekick/workspace-review-core';
 
 import styles from './PublishingFooter.module.css';
+import { selectAll } from '../selection';
 import { useSelection } from '../useSelection';
 
-type Confirmation = 'none' | 'selected' | 'workspace';
+type Confirmation = 'none' | 'selected' | 'workspace' | 'shown';
 
 /**
  * The module footer. Every button posts to an inherited core controller action;
@@ -26,7 +27,7 @@ type Confirmation = 'none' | 'selected' | 'workspace';
  */
 export function PublishingFooter() {
     const translate = useIntl();
-    const { workspace, uris, pages } = useReviewData();
+    const { workspace, uris, pages, allPages, isFiltered } = useReviewData();
     const reviewActions = useReviewActions();
     const { singleAction } = useReviewState();
     const { selection, toggleAll } = useSelection();
@@ -46,7 +47,23 @@ export function PublishingFooter() {
     }, [reviewActions, singleAction]);
 
     const hasSelection = selection.size > 0;
-    const changeCount = countChangedNodes(pages);
+    // A document filter narrows the batch actions to the shown pages. The core
+    // actions for the whole workspace would publish or discard the hidden pages
+    // too, so everything shown goes through the batch form as if it were
+    // selected - with the new or moved pages it lives in, which may be hidden.
+    const shownScope = useMemo(
+        () => (isFiltered ? [...selectAll(allPages, pages, true)] : []),
+        [isFiltered, allPages, pages],
+    );
+    const shownContextPaths = useMemo(() => {
+        const contextPaths = new Set<string>();
+        pages.forEach((page) => page.changes.forEach((change) => contextPaths.add(change.contextPath)));
+        return contextPaths;
+    }, [pages]);
+    // Selected changes of hidden pages have no checkbox that could post them.
+    const hiddenSelection = [...selection].filter((contextPath) => !shownContextPaths.has(contextPath));
+    const changeCount = isFiltered ? shownScope.length : countChangedNodes(pages);
+    const hasOtherChanges = isFiltered && allPages.length > pages.length;
     // While a card publishes or discards itself, the form carries its node
     // alone; a batch submit would post that single node under another action.
     const isPending = singleAction !== null;
@@ -59,6 +76,12 @@ export function PublishingFooter() {
                 </a>
             </div>
             <div className={styles.group}>
+                {hasOtherChanges && (
+                    <span className={styles.others}>
+                        {translate('filter.otherChanges', 'There are more changes on other pages,')}{' '}
+                        <a href={uris.showAll}>{translate('filter.showAll', 'show all')}</a>
+                    </span>
+                )}
                 {/* The buttons act on the selection, or on everything without one.
                     Their labels say so; a selection is counted in front of them. */}
                 <span className={styles.scope} aria-live="polite">
@@ -66,7 +89,12 @@ export function PublishingFooter() {
                         translate('selection.count', '{0} of {1} changes selected', [selection.size, changeCount])}
                 </span>
                 {hasSelection && (
-                    <button type="button" className={styles.clear} disabled={isPending} onClick={() => toggleAll(false)}>
+                    <button
+                        type="button"
+                        className={styles.clear}
+                        disabled={isPending}
+                        onClick={() => toggleAll(false)}
+                    >
                         {translate('selection.clear', 'Clear selection')}
                     </button>
                 )}
@@ -100,16 +128,18 @@ export function PublishingFooter() {
                             </Button>
                         )}
                     </>
-                ) : (
+                ) : changeCount === 0 ? null : (
                     <>
                         <Button
                             style="error"
                             hoverStyle="error"
                             disabled={isPending}
-                            onClick={() => setConfirmation('workspace')}
+                            onClick={() => setConfirmation(isFiltered ? 'shown' : 'workspace')}
                         >
                             <Icon icon="trash-alt" />
-                            {translate('actions.discardAllCount', 'Discard all {0} changes', [changeCount])}
+                            {changeCount === 1
+                                ? translate('actions.discardOne', 'Discard the change')
+                                : translate('actions.discardAllCount', 'Discard all {0} changes', [changeCount])}
                         </Button>
                         {workspace.canPublishToBase && (
                             <Button
@@ -117,19 +147,38 @@ export function PublishingFooter() {
                                 style="success"
                                 hoverStyle="success"
                                 disabled={isPending}
-                                form={POST_HELPER_FORM_ID}
-                                formAction={uris.publishWorkspace}
+                                {...(isFiltered
+                                    ? { form: PUBLISH_FORM_ID, name: ACTION_FIELD_NAME, value: 'publish' }
+                                    : { form: POST_HELPER_FORM_ID, formAction: uris.publishWorkspace })}
                             >
                                 <Icon icon="check-double" />
-                                {translate('actions.publishAllCount', 'Publish all {0} changes to “{1}”', [
-                                    changeCount,
-                                    workspace.baseWorkspaceTitle,
-                                ])}
+                                {changeCount === 1
+                                    ? translate('actions.publishOne', 'Publish the change to “{0}”', [
+                                          workspace.baseWorkspaceTitle,
+                                      ])
+                                    : translate('actions.publishAllCount', 'Publish all {0} changes to “{1}”', [
+                                          changeCount,
+                                          workspace.baseWorkspaceTitle,
+                                      ])}
                             </Button>
                         )}
                     </>
                 )}
             </div>
+
+            {/* What no checkbox posts: without a selection everything a document
+                filter shows, with one the selected changes of hidden pages. Not
+                while a card posts itself, when the form carries its node alone. */}
+            {!singleAction &&
+                (hasSelection ? hiddenSelection : shownScope).map((contextPath) => (
+                    <input
+                        key={contextPath}
+                        type="hidden"
+                        form={PUBLISH_FORM_ID}
+                        name={NODES_FIELD_NAME}
+                        value={contextPath}
+                    />
+                ))}
 
             {singleAction && (
                 <>
@@ -158,9 +207,9 @@ export function PublishingFooter() {
                 type="error"
                 style="narrow"
                 title={
-                    confirmation === 'workspace'
-                        ? translate('actions.discardAll', 'Discard all changes')
-                        : translate('actions.discardSelected', 'Discard selected changes')
+                    confirmation === 'selected'
+                        ? translate('actions.discardSelected', 'Discard selected changes')
+                        : translate('actions.discardAll', 'Discard all changes')
                 }
                 onRequestClose={() => setConfirmation('none')}
                 actions={[
@@ -190,7 +239,9 @@ export function PublishingFooter() {
                             value="discard"
                         >
                             <Icon icon="trash-alt" />
-                            {translate('actions.discardSelected', 'Discard selected changes')}
+                            {confirmation === 'shown'
+                                ? translate('actions.discardAll', 'Discard all changes')
+                                : translate('actions.discardSelected', 'Discard selected changes')}
                         </Button>
                     ),
                 ]}
@@ -199,9 +250,14 @@ export function PublishingFooter() {
                     ? translate('actions.confirmDiscardAll', 'Really discard every change in “{0}”?', [
                           workspace.title || workspace.name,
                       ])
-                    : translate('actions.confirmDiscardSelected', 'Really discard the selected changes in “{0}”?', [
-                          workspace.title || workspace.name,
-                      ])}
+                    : confirmation === 'shown'
+                      ? translate('actions.confirmDiscardShown', 'Really discard all {0} shown changes in “{1}”?', [
+                            changeCount,
+                            workspace.title || workspace.name,
+                        ])
+                      : translate('actions.confirmDiscardSelected', 'Really discard the selected changes in “{0}”?', [
+                            workspace.title || workspace.name,
+                        ])}
             </Dialog>
         </div>
     );

@@ -8,7 +8,7 @@ import {
     useIntl,
     useWorkspaceQuery,
 } from '@neosidekick/workspace-review-core';
-import type { FeatureFlags, ModuleUris } from '@neosidekick/workspace-review-core';
+import type { DocumentFilter, FeatureFlags, ModuleUris } from '@neosidekick/workspace-review-core';
 
 import styles from './App.module.css';
 import { App } from './App';
@@ -17,12 +17,13 @@ interface ReviewRootProps {
     graphQlUri: string;
     workspaceName: string;
     features: FeatureFlags;
+    documentFilter: DocumentFilter | null;
     uris: ModuleUris;
     notify: (message: string) => void;
 }
 
 /** Loads the single review query and hands its result to the state provider. */
-export function ReviewRoot({ graphQlUri, workspaceName, features, uris, notify }: ReviewRootProps) {
+export function ReviewRoot({ graphQlUri, workspaceName, features, documentFilter, uris, notify }: ReviewRootProps) {
     const translate = useIntl();
     const { data, loading, failed, refetch } = useWorkspaceQuery(graphQlUri, workspaceName, notify);
 
@@ -48,7 +49,7 @@ export function ReviewRoot({ graphQlUri, workspaceName, features, uris, notify }
     }
 
     return (
-        <ReviewStateProvider workspace={data.workspace} features={features} uris={uris}>
+        <ReviewStateProvider workspace={data.workspace} features={features} uris={uris} documentFilter={documentFilter}>
             <App />
         </ReviewStateProvider>
     );
