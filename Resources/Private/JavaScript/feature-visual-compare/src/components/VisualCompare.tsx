@@ -85,6 +85,7 @@ export function VisualCompare({ page, hidden }: VisualCompareProps) {
                 classNames: {
                     iframe: styles.iframe,
                     status: styles.status,
+                    statusLoading: styles.statusLoading,
                     banner: styles.banner,
                     bannerNew: styles.bannerNew,
                     bannerRemoved: styles.bannerRemoved,

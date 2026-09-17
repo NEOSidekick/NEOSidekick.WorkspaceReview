@@ -24,6 +24,38 @@
     color: var(--theme-colors-ContrastBright);
 }
 
+/* A rendered page takes a moment, more so with the content cache switched
+   off for the preview, so the wait is shown as one. */
+.statusLoading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.statusLoading::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    border: 2px solid var(--theme-grayLight);
+    border-top-color: var(--theme-colors-PrimaryBlue);
+    border-radius: 50%;
+    animation: reviewSpin 0.8s linear infinite;
+}
+
+@keyframes reviewSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .statusLoading::before {
+        animation-duration: 2.4s;
+    }
+}
+
 .banner {
     margin: 0;
     padding: var(--theme-spacing-Half) var(--theme-spacing-Full);

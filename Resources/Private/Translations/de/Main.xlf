@@ -498,6 +498,10 @@
                 <source>Select the change</source>
                 <target>Die Änderung auswählen</target>
             </trans-unit>
+            <trans-unit id="filter.showAllChanges" xml:space="preserve">
+                <source>Show all changes of the workspace</source>
+                <target>Alle Änderungen des Arbeitsbereichs ansehen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

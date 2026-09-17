@@ -372,6 +372,9 @@
             <trans-unit id="selection.one" xml:space="preserve">
                 <source>Select the change</source>
             </trans-unit>
+            <trans-unit id="filter.showAllChanges" xml:space="preserve">
+                <source>Show all changes of the workspace</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

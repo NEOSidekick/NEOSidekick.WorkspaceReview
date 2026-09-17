@@ -37,6 +37,7 @@ export interface FrameLabels {
 export interface FrameClassNames {
     iframe: string;
     status: string;
+    statusLoading: string;
     banner: string;
     bannerNew: string;
     bannerRemoved: string;
@@ -102,17 +103,22 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
     let overlay: HTMLElement | null = null;
     let resizeObserver: ResizeObserver | null = null;
 
+    // While the page loads the status carries a spinner; a failure drops it.
     const status = host.ownerDocument.createElement('p');
-    status.className = classNames.status;
+    status.className = `${classNames.status} ${classNames.statusLoading}`;
     status.textContent = labels.loading;
     host.appendChild(status);
+    const showUnavailable = () => {
+        status.className = classNames.status;
+        status.textContent = labels.unavailable;
+    };
 
     // A deleted page only exists in the base workspace and is shown as published.
     const mainUri = options.isRemoved ? options.basePreviewUri : options.previewUri;
     const transplantUri = options.isRemoved ? null : options.basePreviewUri;
 
     if (!mainUri) {
-        status.textContent = labels.unavailable;
+        showUnavailable();
         return { step: () => undefined, clearCursor: () => undefined, destroy: () => undefined };
     }
 
@@ -365,7 +371,7 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
         renderNotes([]);
         doc = frameDocument(iframe);
         if (!doc) {
-            status.textContent = labels.unavailable;
+            showUnavailable();
             if (!status.isConnected) host.insertBefore(status, iframe);
             iframe.hidden = true;
             return;

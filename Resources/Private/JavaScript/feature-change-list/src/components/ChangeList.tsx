@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from '@neos-project/react-ui-components';
 import {
     ReviewHeading,
     SrOnly,
@@ -18,7 +19,7 @@ import { PageSection } from './PageSection';
 /** The review stream: the toolbar and one section per changed page. */
 export function ChangeList() {
     const translate = useIntl();
-    const { pages, features, workspace, isFiltered } = useReviewData();
+    const { pages, allPages, features, workspace, isFiltered, uris } = useReviewData();
     const { viewMode } = useReviewState();
 
     // What is published where, and how much of it. A dimension variant of a
@@ -42,11 +43,23 @@ export function ChangeList() {
         return (
             <div className={styles.stream}>
                 {heading}
-                <p className={styles.empty}>
-                    {isFiltered
-                        ? translate('filter.noChanges', 'This page has no unpublished changes.')
-                        : translate('review.noChanges', 'This workspace has no unpublished changes.')}
-                </p>
+                {isFiltered ? (
+                    <p className={styles.notice} role="status">
+                        <Icon icon="info-circle" />
+                        <span>
+                            {translate('filter.noChanges', 'This page has no unpublished changes.')}{' '}
+                            {allPages.length > 0 && (
+                                <a href={uris.showAll}>
+                                    {translate('filter.showAllChanges', 'Show all changes of the workspace')}
+                                </a>
+                            )}
+                        </span>
+                    </p>
+                ) : (
+                    <p className={styles.empty}>
+                        {translate('review.noChanges', 'This workspace has no unpublished changes.')}
+                    </p>
+                )}
             </div>
         );
     }

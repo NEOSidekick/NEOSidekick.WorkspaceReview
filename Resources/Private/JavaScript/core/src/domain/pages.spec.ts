@@ -90,6 +90,11 @@ describe('document filter', () => {
             dimensions: 'language=en',
         });
         deepStrictEqual(parseDocumentFilter('/sites/example/a'), { nodePath: '/sites/example/a', dimensions: null });
+        // What is left of a context path whose ";" was not URL-encoded.
+        deepStrictEqual(parseDocumentFilter('/sites/example/a@user-admin'), {
+            nodePath: '/sites/example/a',
+            dimensions: null,
+        });
         strictEqual(parseDocumentFilter(''), null);
         strictEqual(parseDocumentFilter(undefined), null);
     });

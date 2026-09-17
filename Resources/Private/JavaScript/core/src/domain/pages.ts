@@ -64,7 +64,10 @@ export function parseDocumentFilter(value: string | null | undefined): DocumentF
     if (!document) return null;
     const separator = document.indexOf('@');
     if (separator === -1) return { nodePath: document, dimensions: null };
-    return { nodePath: document.slice(0, separator), dimensions: dimensionsOf(document) };
+    // No dimension part: a site without dimensions, or a link whose ";" was
+    // not encoded - query strings end an argument there, which cuts it off.
+    const dimensions = document.includes(';') ? dimensionsOf(document) : null;
+    return { nodePath: document.slice(0, separator), dimensions };
 }
 
 export function matchesDocument(

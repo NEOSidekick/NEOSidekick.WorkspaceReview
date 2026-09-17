@@ -71,10 +71,10 @@ Shortcuts stay off inside form controls, and modifier combinations are left to t
 The review accepts an optional `document` module argument with the context path of a document node:
 
 ```
-/neos/management/workspaces/show?moduleArguments[workspace][__identity]=user-admin&moduleArguments[document]=/sites/site/blog/post@user-admin;language=de
+/neos/management/workspaces/show?moduleArguments[workspace][__identity]=user-admin&moduleArguments[document]=/sites/site/blog/post@user-admin%3Blanguage=de
 ```
 
-Only that page is listed then, with its ancestors in the page tree, and the batch buttons publish or discard only its changes. A plain node path without the `@…` part covers every dimension variant of the page. If other pages have changes too, the footer says so and links to the review of the whole workspace. A new page is published together with the new or moved pages it lives in, as in the full review, even though the filter hides them. After publishing or discarding, the core action returns to the review of the whole workspace.
+Only that page is listed then, with its ancestors in the page tree, and the batch buttons publish or discard only its changes. The `;` of the context path has to be URL-encoded as `%3B`, because a query string ends an argument at a plain `;`. A value without a dimension part – a plain node path, or a context path cut off at an unencoded `;` – covers every dimension variant of the page. A page without changes shows a notice instead of an empty list. If other pages have changes too, the footer says so and links to the review of the whole workspace. A new page is published together with the new or moved pages it lives in, as in the full review, even though the filter hides them. After publishing or discarding, the core action returns to the review of the whole workspace.
 
 ## Configuration
 

@@ -23,6 +23,38 @@
     flex: 1 1 auto;
 }
 
+/* The highlight box of a filtered review whose page has no changes: a notice
+   in the backend's blue, not an error. */
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    padding: 14px var(--theme-spacing-Full);
+    border-left: 3px solid var(--theme-colors-PrimaryBlue);
+    background: var(--theme-grayMedium);
+    font-size: var(--theme-fontSize-base);
+    line-height: 20px;
+    color: var(--theme-textOnGray);
+}
+
+/* The backend stylesheet removes icon margins and the library resets the colour. */
+.notice.notice svg {
+    flex: 0 0 auto;
+    margin-top: 3px;
+    color: var(--theme-colors-PrimaryBlue);
+}
+
+.notice.notice a {
+    color: var(--theme-colors-PrimaryBlue);
+}
+
+.notice.notice a:hover,
+.notice.notice a:focus-visible {
+    color: var(--theme-colors-PrimaryBlueHover);
+    text-decoration: underline;
+}
+
 .empty {
     padding: var(--theme-spacing-Full);
     color: var(--theme-textSubtleLight);
