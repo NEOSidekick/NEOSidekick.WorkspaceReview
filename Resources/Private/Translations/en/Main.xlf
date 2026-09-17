@@ -143,14 +143,8 @@
             <trans-unit id="selection.count" xml:space="preserve">
                 <source>{0} of {1} changes selected</source>
             </trans-unit>
-            <trans-unit id="actions.publishSelected" xml:space="preserve">
-                <source>Publish selected changes to “{0}”</source>
-            </trans-unit>
             <trans-unit id="actions.discardSelected" xml:space="preserve">
                 <source>Discard selected changes</source>
-            </trans-unit>
-            <trans-unit id="actions.publishAll" xml:space="preserve">
-                <source>Publish all changes to “{0}”</source>
             </trans-unit>
             <trans-unit id="actions.discardAll" xml:space="preserve">
                 <source>Discard all changes</source>
@@ -309,18 +303,6 @@
             <trans-unit id="review.publishesTo" xml:space="preserve">
                 <source>publishes to</source>
             </trans-unit>
-            <trans-unit id="count.page" xml:space="preserve">
-                <source>1 page</source>
-            </trans-unit>
-            <trans-unit id="count.pages" xml:space="preserve">
-                <source>{0} pages</source>
-            </trans-unit>
-            <trans-unit id="count.change" xml:space="preserve">
-                <source>1 change</source>
-            </trans-unit>
-            <trans-unit id="count.changes" xml:space="preserve">
-                <source>{0} changes</source>
-            </trans-unit>
             <trans-unit id="selection.none" xml:space="preserve">
                 <source>Nothing selected – the actions apply to all {0} changes</source>
             </trans-unit>
@@ -350,6 +332,27 @@
             </trans-unit>
             <trans-unit id="visibility.stateHidden" xml:space="preserve">
                 <source>Hidden</source>
+            </trans-unit>
+            <trans-unit id="review.heading" xml:space="preserve">
+                <source>Review changes</source>
+            </trans-unit>
+            <trans-unit id="count.pages.zero" xml:space="preserve">
+                <source>no pages</source>
+            </trans-unit>
+            <trans-unit id="count.pages.one" xml:space="preserve">
+                <source>1 page</source>
+            </trans-unit>
+            <trans-unit id="count.pages.many" xml:space="preserve">
+                <source>{0} pages</source>
+            </trans-unit>
+            <trans-unit id="count.elements.zero" xml:space="preserve">
+                <source>no changed elements</source>
+            </trans-unit>
+            <trans-unit id="count.elements.one" xml:space="preserve">
+                <source>1 changed element</source>
+            </trans-unit>
+            <trans-unit id="count.elements.many" xml:space="preserve">
+                <source>{0} changed elements</source>
             </trans-unit>
         </body>
     </file>

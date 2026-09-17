@@ -1,7 +1,13 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { Button } from '@neos-project/react-ui-components';
-import { ReviewStateProvider, theme, useIntl, useWorkspaceQuery } from '@neosidekick/workspace-review-core';
+import {
+    ReviewHeading,
+    ReviewStateProvider,
+    theme,
+    useIntl,
+    useWorkspaceQuery,
+} from '@neosidekick/workspace-review-core';
 import type { FeatureFlags, ModuleUris } from '@neosidekick/workspace-review-core';
 
 import styles from './App.module.css';
@@ -23,6 +29,7 @@ export function ReviewRoot({ graphQlUri, workspaceName, features, uris, notify }
     if (loading) {
         return (
             <div className={classnames(theme.workspaceReviewTheme, styles.state)}>
+                <ReviewHeading />
                 {translate('review.loading', 'Loading the changes…')}
             </div>
         );
@@ -31,6 +38,7 @@ export function ReviewRoot({ graphQlUri, workspaceName, features, uris, notify }
     if (failed || !data) {
         return (
             <div className={classnames(theme.workspaceReviewTheme, styles.state, styles.error)} role="alert">
+                <ReviewHeading />
                 <p>{translate('review.loadingFailed', 'The changes of this workspace could not be loaded.')}</p>
                 <Button style="lighter" onClick={refetch}>
                     {translate('review.retry', 'Try again')}

@@ -4,6 +4,8 @@ import {
     PAGE_ATTRIBUTE,
     POST_HELPER_FORM_ID,
     appendQueryArgument,
+    countChangedNodes,
+    elementCountLabel,
     pageContextPath,
     useIntl,
     useReviewActions,
@@ -41,9 +43,7 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
                     <div className={styles.title}>
                         {page.node.label}
                         <span className={styles.changeCount}>
-                            {page.changes.length === 1
-                                ? translate('count.change', '1 change')
-                                : translate('count.changes', '{0} changes', [page.changes.length])}
+                            {elementCountLabel(translate, countChangedNodes([page]))}
                         </span>
                     </div>
                     <div className={styles.path}>

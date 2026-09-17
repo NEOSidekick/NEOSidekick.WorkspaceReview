@@ -5,7 +5,7 @@ import {
     appendQueryArgument,
     clampPageIndex,
     collectTreeRows,
-    countChanges,
+    countChangedNodes,
     moduleIndexUri,
     pageContextPath,
 } from './pages';
@@ -75,8 +75,18 @@ const workspace: Workspace = {
 };
 
 describe('page order helpers', () => {
-    it('counts the changes of all pages', () => {
-        strictEqual(countChanges([{ changes: [] }, { changes: [{}, {}] as never[] }, { changes: [{}] as never[] }]), 3);
+    it('counts every changed node once, over all pages', () => {
+        const change = (contextPath: string) => ({ contextPath });
+        strictEqual(countChangedNodes([]), 0);
+        strictEqual(countChangedNodes([{ changes: [] }]), 0);
+        strictEqual(
+            countChangedNodes([
+                { changes: [change('/a@user;language=de'), change('/b@user;language=de')] },
+                // The same path in another dimension is a node of its own.
+                { changes: [change('/a@user;language=en'), change('/a@user;language=de')] },
+            ]),
+            3,
+        );
     });
 
     it('numbers the changed pages across dimensions and keeps the unchanged ancestors', () => {

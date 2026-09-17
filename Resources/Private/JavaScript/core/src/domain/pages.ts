@@ -1,4 +1,4 @@
-import type { ChangedPage, NodeRef, Workspace } from '../types';
+import type { ChangedPage, NodeChange, NodeRef, Workspace } from '../types';
 
 /** One row of the page tree sidebar, flattened over sites and dimensions. */
 export interface TreeRow {
@@ -39,9 +39,15 @@ export function collectTreeRows(workspace: Workspace | null | undefined): TreeRo
 }
 
 /** Clamps a page index to the existing pages, as the keyboard navigation does. */
-/** The number of changed elements the review lists, over all pages. */
-export function countChanges(pages: Pick<ChangedPage, 'changes'>[]): number {
-    return pages.reduce((sum, page) => sum + page.changes.length, 0);
+/**
+ * The number of changed elements on the given pages: the distinct context
+ * paths that can be published or discarded. An element counts once, however
+ * many of its properties changed.
+ */
+export function countChangedNodes(pages: { changes: Pick<NodeChange, 'contextPath'>[] }[]): number {
+    const contextPaths = new Set<string>();
+    pages.forEach((page) => page.changes.forEach((change) => contextPaths.add(change.contextPath)));
+    return contextPaths.size;
 }
 
 export function clampPageIndex(index: number, pageCount: number): number {

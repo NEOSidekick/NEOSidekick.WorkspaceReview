@@ -7,7 +7,7 @@ import {
     NODES_FIELD_NAME,
     POST_HELPER_FORM_ID,
     PUBLISH_FORM_ID,
-    countChanges,
+    countChangedNodes,
     useIntl,
     useReviewActions,
     useReviewData,
@@ -46,7 +46,7 @@ export function PublishingFooter() {
     }, [reviewActions, singleAction]);
 
     const hasSelection = selection.size > 0;
-    const changeCount = countChanges(pages);
+    const changeCount = countChangedNodes(pages);
     // While a card publishes or discards itself, the form carries its node
     // alone; a batch submit would post that single node under another action.
     const isPending = singleAction !== null;
