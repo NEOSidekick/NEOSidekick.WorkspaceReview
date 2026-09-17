@@ -63,13 +63,9 @@ export function ShortcutsDialog() {
                         <Kbd>Esc</Kbd>
                     </dt>
                     <dd>{translate('shortcuts.backToPage', 'back to the page heading')}</dd>
-                    <dt className={styles.heading}>{translate('shortcuts.groupReview', 'Review')}</dt>
-                    <dt>
-                        <Kbd>V</Kbd>
-                    </dt>
-                    <dd>{translate('shortcuts.toggleReviewed', 'mark the page as reviewed / not reviewed')}</dd>
                     {features.visualCompare && (
                         <>
+                            <dt className={styles.heading}>{translate('shortcuts.groupReview', 'Review')}</dt>
                             <dt>
                                 <Kbd>D</Kbd>
                             </dt>

@@ -1,11 +1,9 @@
 import * as React from 'react';
-import classnames from 'classnames';
 import { Button, Icon } from '@neos-project/react-ui-components';
 import {
     PAGE_ATTRIBUTE,
     POST_HELPER_FORM_ID,
     appendQueryArgument,
-    isReviewed,
     pageContextPath,
     useIntl,
     useReviewActions,
@@ -14,7 +12,6 @@ import {
 } from '@neosidekick/workspace-review-core';
 import type { ChangedPage } from '@neosidekick/workspace-review-core';
 import { PageCheckbox } from '@neosidekick/workspace-review-publishing';
-import { ReviewedToggle, StaleBadge } from '@neosidekick/workspace-review-review-progress';
 import { VisualCompare } from '@neosidekick/workspace-review-visual-compare';
 
 import styles from './PageSection.module.css';
@@ -31,21 +28,17 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
     const translate = useIntl();
     const actions = useReviewActions();
     const { uris, features } = useReviewData();
-    const { collapsed, marks, viewMode } = useReviewState();
+    const { collapsed, viewMode } = useReviewState();
     const isCollapsed = collapsed[page.id] === true;
-    const reviewed = isReviewed(marks, page.id);
     const contextPath = pageContextPath(page);
     const markers = { [PAGE_ATTRIBUTE]: pageIndex };
 
     return (
-        <section className={classnames(styles.page, reviewed && styles.reviewed)} id={`page-${page.id}`}>
+        <section className={styles.page} id={`page-${page.id}`}>
             <div {...markers} className={styles.header} tabIndex={-1}>
                 <PageCheckbox page={page} />
                 <div className={styles.text}>
-                    <div className={styles.title}>
-                        {page.node.label}
-                        <StaleBadge pageId={page.id} />
-                    </div>
+                    <div className={styles.title}>{page.node.label}</div>
                     <div className={styles.path}>
                         <Breadcrumb nodes={page.breadcrumb} />
                         {page.node.dimensionLabel && (
@@ -54,7 +47,6 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
                     </div>
                 </div>
                 <div className={styles.actions}>
-                    <ReviewedToggle page={page} pageIndex={pageIndex} />
                     {!page.isRemoved && page.openUri && (
                         <a
                             className={styles.iconLink}

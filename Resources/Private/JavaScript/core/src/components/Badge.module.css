@@ -30,8 +30,3 @@
     background: var(--review-neutral-background);
     color: var(--review-neutral-text);
 }
-
-.stale {
-    background: var(--theme-orange);
-    color: var(--theme-grayDarker);
-}

@@ -15,8 +15,8 @@ export interface TreeRow {
 /**
  * Flattens the tree entries of every site and dimension into the order the
  * server produced them, numbering the changed pages as the review stream shows
- * them. Both lists must stay in step: keyboard navigation, the progress bar and
- * the current-page tracking address pages by that index.
+ * them. Both lists must stay in step: keyboard navigation and the current-page
+ * tracking address pages by that index.
  */
 export function collectTreeRows(workspace: Workspace | null | undefined): TreeRow[] {
     const rows: TreeRow[] = [];

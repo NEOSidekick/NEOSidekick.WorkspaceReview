@@ -29,10 +29,6 @@
     color: var(--theme-textOnGray);
 }
 
-.reviewed .title {
-    color: var(--theme-textSubtleLight);
-}
-
 .path {
     display: flex;
     flex-wrap: wrap;

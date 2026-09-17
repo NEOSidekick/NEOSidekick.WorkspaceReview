@@ -87,35 +87,6 @@
     text-overflow: ellipsis;
 }
 
-/* A reviewed page reads as done: muted label, check mark at the row end. */
-.state {
-    flex: 0 0 auto;
-    display: none;
-    width: var(--review-treeIndent);
-    margin-left: 6px;
-    font-size: var(--theme-fontSize-tiny);
-    text-align: center;
-    color: var(--theme-green);
-}
-
-.reviewed {
-    border-left-color: var(--theme-green);
-}
-
-.reviewed .state {
-    display: inline-block;
-}
-
-.reviewed .label,
-.reviewed .icon {
-    color: var(--theme-colors-ContrastBright);
-}
-
-.reviewed:hover .label,
-.reviewed[aria-current] .label {
-    color: var(--theme-colors-PrimaryBlue);
-}
-
 .dimensions {
     flex: 0 0 auto;
     margin-left: auto;

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { Kbd, revealInScroller, sidebarLinkElement, useIntl, useReviewActions, useReviewData, useReviewState } from '@neosidekick/workspace-review-core';
-import { ProgressBar, ProgressCount } from '@neosidekick/workspace-review-review-progress';
 
 import styles from './PageTree.module.css';
 import { PageTreeRow } from './PageTreeRow';
@@ -33,9 +32,7 @@ export function PageTree() {
                 <h2 className={styles.title} id={TITLE_ID}>
                     {translate('navigation.pages', 'Changed pages')}
                 </h2>
-                <ProgressCount labelledBy={TITLE_ID} />
             </div>
-            <ProgressBar labelledBy={TITLE_ID} />
             <ul className={styles.list} ref={listRef}>
                 {treeRows.map((row) => (
                     <PageTreeRow key={row.key} row={row} />

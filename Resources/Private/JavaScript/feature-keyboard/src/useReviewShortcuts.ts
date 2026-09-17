@@ -3,7 +3,6 @@ import {
     changeElement,
     changeElements,
     focusWithoutScroll,
-    isReviewed,
     pageElement,
     scrollIntoView,
     sidebarLinkElement,
@@ -117,15 +116,6 @@ export function useReviewShortcuts(): void {
                     else if (context.change === 0) jumpTo(context.index, true);
                     else if (context.change > 0) focusChange(context.index, context.change - 1);
                     return;
-                case 'v': {
-                    event.preventDefault();
-                    const reviewed = page !== undefined && isReviewed(state.marks, page.id);
-                    // Collapsing hides the focused card, which would drop the
-                    // focus to the body; the page heading takes it instead.
-                    if (!reviewed && context.change !== -1) focusWithoutScroll(pageElement(context.index));
-                    actions.setReviewed(context.index, !reviewed);
-                    return;
-                }
                 case 'd':
                     if (!features.visualCompare) return;
                     event.preventDefault();

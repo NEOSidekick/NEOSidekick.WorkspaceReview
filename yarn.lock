@@ -497,7 +497,6 @@ __metadata:
   dependencies:
     "@neosidekick/workspace-review-core": "workspace:*"
     "@neosidekick/workspace-review-publishing": "workspace:*"
-    "@neosidekick/workspace-review-review-progress": "workspace:*"
     "@neosidekick/workspace-review-visual-compare": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -529,7 +528,6 @@ __metadata:
     "@neosidekick/workspace-review-keyboard": "workspace:*"
     "@neosidekick/workspace-review-page-tree": "workspace:*"
     "@neosidekick/workspace-review-publishing": "workspace:*"
-    "@neosidekick/workspace-review-review-progress": "workspace:*"
     "@neosidekick/workspace-review-visual-compare": "workspace:*"
     "@types/react": "npm:^16.14.62"
     "@types/react-dom": "npm:^16.9.24"
@@ -548,21 +546,12 @@ __metadata:
   resolution: "@neosidekick/workspace-review-page-tree@workspace:Resources/Private/JavaScript/feature-page-tree"
   dependencies:
     "@neosidekick/workspace-review-core": "workspace:*"
-    "@neosidekick/workspace-review-review-progress": "workspace:*"
   languageName: unknown
   linkType: soft
 
 "@neosidekick/workspace-review-publishing@workspace:*, @neosidekick/workspace-review-publishing@workspace:Resources/Private/JavaScript/feature-publishing":
   version: 0.0.0-use.local
   resolution: "@neosidekick/workspace-review-publishing@workspace:Resources/Private/JavaScript/feature-publishing"
-  dependencies:
-    "@neosidekick/workspace-review-core": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"@neosidekick/workspace-review-review-progress@workspace:*, @neosidekick/workspace-review-review-progress@workspace:Resources/Private/JavaScript/feature-review-progress":
-  version: 0.0.0-use.local
-  resolution: "@neosidekick/workspace-review-review-progress@workspace:Resources/Private/JavaScript/feature-review-progress"
   dependencies:
     "@neosidekick/workspace-review-core": "workspace:*"
   languageName: unknown

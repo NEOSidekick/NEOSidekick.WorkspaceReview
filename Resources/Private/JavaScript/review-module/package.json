@@ -18,7 +18,6 @@
         "@neosidekick/workspace-review-keyboard": "workspace:*",
         "@neosidekick/workspace-review-page-tree": "workspace:*",
         "@neosidekick/workspace-review-publishing": "workspace:*",
-        "@neosidekick/workspace-review-review-progress": "workspace:*",
         "@neosidekick/workspace-review-visual-compare": "workspace:*",
         "classnames": "^2.5.1",
         "notosans-fontface": "^1.3.0",

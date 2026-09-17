@@ -8,8 +8,6 @@ export * from './visualRegistry';
 export * from './ReviewApplicationWrapper';
 export * from './domain/features';
 export * from './domain/pages';
-export * from './domain/signature';
-export * from './domain/reviewedMarks';
 export * from './domain/viewMode';
 export * from './state/reducer';
 export * from './state/ReviewStateProvider';

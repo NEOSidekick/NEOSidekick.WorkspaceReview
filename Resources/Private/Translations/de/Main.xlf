@@ -22,26 +22,6 @@
                 <source>Current page</source>
                 <target>Aktuelle Seite</target>
             </trans-unit>
-            <trans-unit id="review.reviewed" xml:space="preserve">
-                <source>Reviewed</source>
-                <target>Geprüft</target>
-            </trans-unit>
-            <trans-unit id="review.markReviewed" xml:space="preserve">
-                <source>Mark page as reviewed and collapse it</source>
-                <target>Seite als geprüft markieren und einklappen</target>
-            </trans-unit>
-            <trans-unit id="review.progress" xml:space="preserve">
-                <source>{0}/{1} reviewed</source>
-                <target>{0}/{1} geprüft</target>
-            </trans-unit>
-            <trans-unit id="review.changedSinceReview" xml:space="preserve">
-                <source>Changed since your review</source>
-                <target>Seit der Prüfung geändert</target>
-            </trans-unit>
-            <trans-unit id="review.changedSinceReviewHelp" xml:space="preserve">
-                <source>This page was edited again after you marked it as reviewed. The reviewed mark was therefore removed, so please look through its changes once more.</source>
-                <target>Diese Seite wurde nach der Markierung als geprüft erneut bearbeitet. Die Markierung wurde deshalb entfernt – bitte die Änderungen noch einmal durchsehen.</target>
-            </trans-unit>
             <trans-unit id="review.expand" xml:space="preserve">
                 <source>Show the changes of this page</source>
                 <target>Änderungen dieser Seite anzeigen</target>
@@ -113,10 +93,6 @@
             <trans-unit id="shortcuts.groupReview" xml:space="preserve">
                 <source>Review</source>
                 <target>Prüfung</target>
-            </trans-unit>
-            <trans-unit id="shortcuts.toggleReviewed" xml:space="preserve">
-                <source>mark the page as reviewed / not reviewed</source>
-                <target>Seite als geprüft / ungeprüft markieren</target>
             </trans-unit>
             <trans-unit id="shortcuts.toggleMode" xml:space="preserve">
                 <source>switch between change list and visual compare</source>

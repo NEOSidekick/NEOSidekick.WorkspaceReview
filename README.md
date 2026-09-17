@@ -2,13 +2,12 @@
 
 **Understand exactly what will change before publishing a Neos workspace.**
 
-The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, reviewer progress, keyboard review and a visual compare of the rendered page. Publishing, discarding and the module path keep their existing behavior. The preview requires backend access and checks read access to private workspaces.
+The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, keyboard review and a visual compare of the rendered page. Publishing, discarding and the module path keep their existing behavior. The preview requires backend access and checks read access to private workspaces.
 
 ## Improvements at a glance
 
 - **See changes on the page.** A view switch shows either the change list or a visual compare: the page rendered as it will look, with created, changed, moved, hidden and deleted elements marked in place and the changed words highlighted in the text. Deleted elements are taken from the published page and shown with a red overlay.
-- **Track review progress.** Mark a page as reviewed to collapse it; the sidebar counts reviewed pages and remembers them per workspace, and flags a page that changed after it was reviewed.
-- **Review from the keyboard.** J/K move between pages, [ / ] step through changes, V toggles the reviewed mark and D switches views. **?** opens the shortcut overview.
+- **Review from the keyboard.** J/K move between pages, [ / ] step through changes and D switches views. **?** opens the shortcut overview.
 - **Jump between changed pages.** A sticky left sidebar lists the changed pages as a tree styled like the backend page tree, with their content dimension. The current page stays highlighted as you scroll, and each page is a separate block in the review.
 - **Read changes in page order.** Within each page, cards follow the content tree's order, with containers before their children. Each card explains the individual change directly.
 - **Configurations become visible.** Select boxes, toggles and references use translated editor labels instead of raw stored values.
@@ -49,12 +48,6 @@ The card header names the element type next to the node label, because the label
 - **Position and status**: a moved node shows its place among siblings, such as `3 of 3 → 1 of 3`. An index changed only by sibling renumbering is identified as internal re-sorting.
 - **Changes without a visible diff** use three distinct notes: "Changed – the wording is unchanged, please check details in the preview.", "Edited, but matching the published version again – no content differences found." and "No visible changes (internal update)."
 
-### Reviewed pages and progress
-
-Every page header has a **Reviewed** toggle. Marking a page collapses its changes and advances the progress bar in the sidebar header. Reviewed marks are stored in the browser per workspace, together with a signature of the page's changes (which nodes, last modified when). If that signature changes after review, the mark is dropped on the next load and the page carries a **"Changed since your review"** badge.
-
-These marks are personal progress notes in that browser, not a shared approval workflow. They neither select changes for publishing nor prevent any action.
-
 ### Visual compare
 
 The switch above the review stream, or **D**, toggles between the change list and the visual compare, which renders the reviewed workspace in the site's own layout and adds status labels and outlines to changed elements: green for created, orange for changed, blue for moved, hatched grey for hidden and a red overlay for a deleted element restored from the published rendering. Text edits appear in place when the new wording can be matched to a text element on the page. Changes with no visible matching element are listed below the frame with links to their cards.
@@ -67,7 +60,6 @@ The switch above the review stream, or **D**, toggles between the change list an
 | **Home / End** | first / last page |
 | **Enter** | focus the page in the review stream (from the sidebar) |
 | **]** / **[** | next / previous change on the page |
-| **V** | mark the page as reviewed / not reviewed |
 | **D** | switch between change list and visual compare |
 | **Esc** | one step back, or close the overlay |
 

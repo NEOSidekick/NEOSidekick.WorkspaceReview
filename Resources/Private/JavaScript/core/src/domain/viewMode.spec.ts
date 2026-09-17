@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { MODE_STORAGE_KEY } from '../constants';
 import { readViewMode } from './viewMode';
-import type { StorageLike } from './reviewedMarks';
+import type { StorageLike } from './viewMode';
 
 function storageWith(mode: string | null): StorageLike {
     return {

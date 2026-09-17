@@ -7,7 +7,6 @@
     "dependencies": {
         "@neosidekick/workspace-review-core": "workspace:*",
         "@neosidekick/workspace-review-publishing": "workspace:*",
-        "@neosidekick/workspace-review-review-progress": "workspace:*",
         "@neosidekick/workspace-review-visual-compare": "workspace:*"
     }
 }

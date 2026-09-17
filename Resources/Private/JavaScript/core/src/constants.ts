@@ -1,10 +1,7 @@
 import type { NodeChange } from './types';
 
-/** Reviewed marks and the view mode are stored per browser, per workspace. */
+/** The view mode is stored per browser. */
 export const STORAGE_PREFIX = 'neosidekick-workspace-review:';
-export const LEGACY_STORAGE_PREFIX = 'codeq-workspace-review:';
-/** CodeQ.WorkspaceReview keyed its marks by the DOM id of the page row. */
-export const LEGACY_ENTRY_PREFIX = 'review-page-';
 export const MODE_STORAGE_KEY = STORAGE_PREFIX + 'mode';
 
 /** Screen-reader-only text; the rule lives in the global diff.css (§4.3). */

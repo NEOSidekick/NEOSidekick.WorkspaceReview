@@ -4,8 +4,6 @@ import { Icon } from '@neos-project/react-ui-components';
 import {
     LINK_ATTRIBUTE,
     NodeTypeIcon,
-    SrOnly,
-    isReviewed,
     useIntl,
     useJumpToPage,
     useReviewState,
@@ -30,7 +28,7 @@ function RowContent({ row }: { row: TreeRow }) {
 export function PageTreeRow({ row }: { row: TreeRow }) {
     const translate = useIntl();
     const jumpTo = useJumpToPage();
-    const { activePageIndex, marks } = useReviewState();
+    const { activePageIndex } = useReviewState();
     const style = { '--review-depth': row.depth } as React.CSSProperties;
 
     if (!row.page) {
@@ -46,14 +44,13 @@ export function PageTreeRow({ row }: { row: TreeRow }) {
         );
     }
 
-    const reviewed = isReviewed(marks, row.page.id);
     const linkAttributes = { [LINK_ATTRIBUTE]: row.pageIndex };
 
     return (
         <li className={styles.item} style={style}>
             <a
                 {...linkAttributes}
-                className={classnames(styles.row, styles.link, reviewed && styles.reviewed)}
+                className={classnames(styles.row, styles.link)}
                 href={`#page-${row.page.id}`}
                 aria-current={activePageIndex === row.pageIndex ? 'location' : undefined}
                 title={activePageIndex === row.pageIndex ? translate('navigation.currentPage', 'Current page') : undefined}
@@ -70,10 +67,6 @@ export function PageTreeRow({ row }: { row: TreeRow }) {
                         <span className={styles.dimensionLabel}>{row.node.dimensionLabel}</span>
                     </span>
                 )}
-                <span className={styles.state}>
-                    <Icon icon="check" />
-                    <SrOnly>{translate('review.reviewed', 'Reviewed')}</SrOnly>
-                </span>
             </a>
         </li>
     );

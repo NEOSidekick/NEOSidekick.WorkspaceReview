@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import styles from './Badge.module.css';
 
-export type BadgeVariant = 'created' | 'deleted' | 'moved' | 'hidden' | 'stale';
+export type BadgeVariant = 'created' | 'deleted' | 'moved' | 'hidden';
 
 interface BadgeProps {
     variant: BadgeVariant;

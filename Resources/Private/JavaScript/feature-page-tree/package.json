@@ -5,7 +5,6 @@
     "private": true,
     "main": "src/index.ts",
     "dependencies": {
-        "@neosidekick/workspace-review-core": "workspace:*",
-        "@neosidekick/workspace-review-review-progress": "workspace:*"
+        "@neosidekick/workspace-review-core": "workspace:*"
     }
 }

@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
+import { createContext, useCallback, useContext, useMemo, useReducer, useRef } from 'react';
 
 import { MODE_STORAGE_KEY } from '../constants';
 import { clampPageIndex, collectTreeRows } from '../domain/pages';
 import { focusWithoutScroll, pageElement, scrollIntoView, sidebarLinkElement } from '../dom';
 import type { TreeRow } from '../domain/pages';
-import { pageSignature } from '../domain/signature';
-import { importLegacyMarks, readMarks, restoreMarks, safeLocalStorage, writeMarks } from '../domain/reviewedMarks';
-import type { StorageLike } from '../domain/reviewedMarks';
-import { readViewMode } from '../domain/viewMode';
+import { readViewMode, safeLocalStorage } from '../domain/viewMode';
+import type { StorageLike } from '../domain/viewMode';
 import { createInitialState, reviewReducer } from './reducer';
 import type { ReviewState, SingleAction } from './reducer';
 import type { ChangedPage, FeatureFlags, ModuleUris, PublishingAction, ViewMode, Workspace } from '../types';
@@ -25,7 +23,6 @@ export interface ReviewActions {
     setViewMode(mode: ViewMode): void;
     setActivePage(index: number): void;
     setCollapsed(pageId: string, collapsed: boolean): void;
-    setReviewed(pageIndex: number, reviewed: boolean): void;
     setSelection(selection: ReadonlySet<string>): void;
     setShortcutsOpen(open: boolean): void;
     showChangeInList(changeId: string): void;
@@ -59,25 +56,6 @@ export function ReviewStateProvider({ workspace, features, uris, children }: Pro
         createInitialState
     );
 
-    // The stored marks are matched against this load once: a page edited since
-    // the review loses its mark and is flagged instead. The import deletes the
-    // legacy key, so its marks are written under the new one in the same step.
-    useEffect(() => {
-        if (state.marksRestored) return;
-        const restored = restoreMarks(
-            importLegacyMarks(storage, workspace.name, readMarks(storage, workspace.name)),
-            pages
-        );
-        writeMarks(storage, workspace.name, restored.marks);
-        dispatch({ type: 'restoreMarks', marks: restored.marks, stale: restored.stale });
-    }, [storage, workspace.name, pages, state.marksRestored]);
-
-    // The browser storage mirrors the marks of the state; writing starts only
-    // once they have been restored, so an empty initial state clears nothing.
-    useEffect(() => {
-        if (state.marksRestored) writeMarks(storage, workspace.name, state.marks);
-    }, [storage, workspace.name, state.marks, state.marksRestored]);
-
     const actions = useMemo<ReviewActions>(() => {
         const persistViewMode = (mode: ViewMode) => {
             try {
@@ -96,11 +74,6 @@ export function ReviewStateProvider({ workspace, features, uris, children }: Pro
             },
             setCollapsed(pageId, collapsed) {
                 dispatch({ type: 'setCollapsed', pageId, collapsed });
-            },
-            setReviewed(pageIndex, reviewed) {
-                const page = pages[pageIndex];
-                if (!page) return;
-                dispatch({ type: 'setReviewed', pageId: page.id, signature: reviewed ? pageSignature(page) : null });
             },
             setSelection(selection) {
                 dispatch({ type: 'setSelection', selection });
@@ -122,7 +95,7 @@ export function ReviewStateProvider({ workspace, features, uris, children }: Pro
                 dispatch({ type: 'setSingleAction', singleAction: null });
             },
         };
-    }, [pages, storage]);
+    }, [storage]);
 
     const data = useMemo<ReviewData>(
         () => ({ workspace, pages, treeRows, features, uris }),
