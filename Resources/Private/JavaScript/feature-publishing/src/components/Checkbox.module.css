@@ -1,0 +1,68 @@
+.wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    /* The backend module stylesheet sizes every input; min-* wins over its
+       width and height regardless of selector specificity. */
+    min-width: 16px;
+    min-height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+    flex: 0 0 16px;
+    margin: 0;
+    border: 1px solid var(--theme-grayLight);
+    border-radius: 1px;
+    background: var(--theme-grayDarker);
+    cursor: pointer;
+}
+
+.input:checked::after,
+.input:indeterminate::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: var(--theme-blue);
+}
+
+.input:indeterminate::after {
+    inset: 6px 3px;
+}
+
+.input:focus-visible {
+    outline: 2px solid var(--theme-blue);
+    outline-offset: 1px;
+}
+
+.input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* On the light change card the dark backend checkbox would disappear. */
+.onCard .input {
+    border-color: #c4c4c4;
+    background: #fff;
+}
+
+.withLabel {
+    width: auto;
+    gap: var(--theme-spacing-Half);
+    padding-right: var(--theme-spacing-Half);
+}
+
+.label {
+    font-size: var(--theme-fontSize-small);
+    color: var(--theme-textSubtleLight);
+}

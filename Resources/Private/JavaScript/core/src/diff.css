@@ -1,0 +1,26 @@
+/**
+ * Global classes emitted by the server inside `diffHtml`. This file is excluded
+ * from the CSS-modules transformation (see review-module/esbuild.js), so the two
+ * names below stay exactly as the PHP side writes them.
+ */
+
+/* The "added:" / "deleted:" label at the start of an edited run: read by screen
+   readers, invisible otherwise. */
+.neosidekick-review-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+/* Marks a collapsed run of unchanged words inside a word diff. */
+.neosidekick-review-ellipsis {
+    color: #9a9a9a;
+    padding: 0 5px;
+    letter-spacing: 0.1em;
+}

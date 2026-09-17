@@ -1,0 +1,7 @@
+{
+    "name": "@neosidekick/workspace-review-core",
+    "version": "1.0.0",
+    "license": "GPL-3.0-or-later",
+    "private": true,
+    "main": "src/index.ts"
+}

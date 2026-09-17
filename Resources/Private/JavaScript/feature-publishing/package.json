@@ -1,0 +1,10 @@
+{
+    "name": "@neosidekick/workspace-review-publishing",
+    "version": "1.0.0",
+    "license": "GPL-3.0-or-later",
+    "private": true,
+    "main": "src/index.ts",
+    "dependencies": {
+        "@neosidekick/workspace-review-core": "workspace:*"
+    }
+}

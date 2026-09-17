@@ -1,0 +1,81 @@
+.frame {
+    position: relative;
+    border: 1px solid var(--theme-grayLight);
+    background: var(--theme-grayDark);
+}
+
+.frame[hidden] {
+    display: none;
+}
+
+.new {
+    border-color: var(--theme-green);
+}
+
+.removed {
+    border-color: var(--theme-warning);
+}
+
+.status {
+    margin: 0;
+    padding: 20px var(--theme-spacing-Full);
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--theme-colors-ContrastBright);
+}
+
+.banner {
+    margin: 0;
+    padding: var(--theme-spacing-Half) var(--theme-spacing-Full);
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--theme-textOnGray);
+}
+
+.bannerNew {
+    background: var(--theme-green);
+}
+
+.bannerRemoved {
+    background: var(--theme-warning);
+}
+
+/* The page keeps its own scrollbar: a frame sized to its content would grow
+   without end on pages with viewport-high sections. */
+.iframe {
+    display: block;
+    width: 100%;
+    height: min(80vh, 960px);
+    min-height: 420px;
+    border: 0;
+    background: #fff;
+}
+
+.notes {
+    margin: 0;
+    padding: 10px var(--theme-spacing-Full);
+    border-top: 1px solid var(--theme-grayLight);
+    font-size: var(--theme-fontSize-small);
+    line-height: 18px;
+    color: var(--theme-textSubtleLight);
+}
+
+.notes ul {
+    margin: var(--theme-spacing-Quarter) 0 0;
+    padding: 0 0 0 var(--review-treeIndent);
+}
+
+.notes button {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--theme-colors-PrimaryBlue);
+    cursor: pointer;
+}
+
+.notes button:hover {
+    text-decoration: underline;
+}

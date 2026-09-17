@@ -1,0 +1,38 @@
+.pill {
+    display: inline-block;
+    max-width: 34ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: var(--theme-fontSize-small);
+    font-weight: 500;
+    background: var(--review-neutral-background);
+    color: var(--review-neutral-text);
+}
+
+.old {
+    background: var(--review-removed-background);
+    color: var(--review-removed-text);
+    text-decoration: line-through;
+    text-decoration-color: rgba(150, 38, 43, 0.55);
+}
+
+.new {
+    background: var(--review-added-background);
+    color: var(--review-added-text);
+    text-decoration: none;
+}
+
+/* URLs have no spaces to break at, so a link pill wraps anywhere instead of
+   hiding most of the target behind an ellipsis. */
+.wrapping {
+    max-width: 100%;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+}

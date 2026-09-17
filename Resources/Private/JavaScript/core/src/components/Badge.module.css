@@ -1,0 +1,37 @@
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: var(--theme-fontSize-tiny);
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    background: var(--review-neutral-background);
+    color: var(--review-neutral-text);
+}
+
+.created {
+    background: var(--review-added-background);
+    color: var(--review-added-text);
+}
+
+.deleted {
+    background: var(--review-removed-background);
+    color: var(--review-removed-text);
+}
+
+.moved {
+    background: var(--review-moved-background);
+    color: var(--review-moved-text);
+}
+
+.hidden {
+    background: var(--review-neutral-background);
+    color: var(--review-neutral-text);
+}
+
+.stale {
+    background: var(--theme-orange);
+    color: var(--theme-grayDarker);
+}

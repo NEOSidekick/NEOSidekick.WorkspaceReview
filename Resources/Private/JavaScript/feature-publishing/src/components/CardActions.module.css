@@ -1,0 +1,12 @@
+.actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: var(--theme-spacing-Quarter);
+    align-self: flex-start;
+}
+
+.actions button {
+    height: 32px;
+    min-width: 32px;
+    padding: 0 10px;
+}

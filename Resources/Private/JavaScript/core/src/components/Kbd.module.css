@@ -1,0 +1,11 @@
+.kbd {
+    display: inline-block;
+    min-width: 12px;
+    padding: 0 5px;
+    border: 1px solid #5b5b5b;
+    border-radius: 3px;
+    background: var(--theme-grayDarker);
+    font: 11px/18px 'Noto Sans', sans-serif;
+    text-align: center;
+    color: var(--theme-textOnGray);
+}

@@ -197,6 +197,9 @@
             <trans-unit id="actions.back" xml:space="preserve">
                 <source>Back</source>
             </trans-unit>
+            <trans-unit id="actions.confirmDiscardAll" xml:space="preserve">
+                <source>Really discard every change in this workspace?</source>
+            </trans-unit>
             <trans-unit id="actions.cancel" xml:space="preserve">
                 <source>Cancel</source>
             </trans-unit>

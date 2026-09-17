@@ -1,0 +1,36 @@
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--theme-spacing-Half) var(--theme-spacing-Full);
+    flex-wrap: wrap;
+    min-height: 72px;
+    margin-top: var(--theme-spacing-Full);
+    padding: var(--theme-spacing-Full);
+    border-top: 1px solid var(--theme-grayLight);
+    background: var(--theme-grayDark);
+}
+
+.group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--theme-spacing-Half);
+}
+
+.back {
+    color: var(--theme-textSubtleLight);
+    font-size: var(--theme-fontSize-base);
+    text-decoration: none;
+}
+
+.back:hover,
+.back:focus-visible {
+    color: var(--theme-textOnGray);
+}
+
+.count {
+    color: var(--theme-textSubtleLight);
+    font-size: var(--theme-fontSize-small);
+    font-variant-numeric: tabular-nums;
+}

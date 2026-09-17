@@ -1,0 +1,13 @@
+{
+    "name": "@neosidekick/workspace-review-change-list",
+    "version": "1.0.0",
+    "license": "GPL-3.0-or-later",
+    "private": true,
+    "main": "src/index.ts",
+    "dependencies": {
+        "@neosidekick/workspace-review-core": "workspace:*",
+        "@neosidekick/workspace-review-publishing": "workspace:*",
+        "@neosidekick/workspace-review-review-progress": "workspace:*",
+        "@neosidekick/workspace-review-visual-compare": "workspace:*"
+    }
+}

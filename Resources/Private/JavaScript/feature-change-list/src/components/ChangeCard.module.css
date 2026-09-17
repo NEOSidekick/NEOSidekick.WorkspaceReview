@@ -1,0 +1,223 @@
+.card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--theme-spacing-Half);
+    padding: 10px var(--theme-spacing-Full) 10px var(--theme-spacing-Half);
+    background: var(--review-card-background);
+    color: var(--review-card-text);
+}
+
+.card + .card {
+    border-top: 1px solid var(--review-card-rule);
+}
+
+.card:focus-visible {
+    outline: 2px solid var(--theme-blue);
+    outline-offset: -2px;
+}
+
+/* A change opened from the visual compare flashes in the list. */
+.highlight {
+    animation: reviewFlash 1.6s ease-out;
+}
+
+@keyframes reviewFlash {
+    0%,
+    30% {
+        box-shadow: inset 0 0 0 3px var(--theme-blue);
+    }
+    100% {
+        box-shadow: inset 0 0 0 3px transparent;
+    }
+}
+
+.body {
+    flex: 1 1 auto;
+    min-width: 0;
+    line-height: 20px;
+}
+
+/* The label takes the room the badges and date leave and yields to them when the
+   header gets tight, so a card header stays one line. */
+.header {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 10px;
+    padding: 0 0 var(--theme-spacing-Half);
+}
+
+.label {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: var(--theme-fontSize-base);
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--review-card-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Names the element type ("Headline"), because the label is usually the
+   element's own text and does not say what kind of element changed. */
+.type {
+    flex: 0 0 auto;
+    padding: 1px var(--theme-spacing-Half);
+    border: 1px solid #d2d2d2;
+    border-radius: 10px;
+    font-size: var(--theme-fontSize-tiny);
+    line-height: 16px;
+    color: var(--review-card-textSubtle);
+    white-space: nowrap;
+}
+
+.dimensions {
+    flex: 0 0 auto;
+    font-size: var(--theme-fontSize-small);
+    color: var(--review-card-textMuted);
+}
+
+.meta {
+    flex: 0 0 auto;
+    margin-left: auto;
+    font-size: var(--theme-fontSize-small);
+    color: var(--review-card-textMuted);
+    white-space: nowrap;
+}
+
+.property {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr);
+    gap: var(--theme-spacing-Quarter) var(--review-treeIndent);
+    align-items: baseline;
+    padding: 7px 0;
+    border-top: 1px solid var(--review-card-rule);
+}
+
+.propertyMedia {
+    align-items: start;
+}
+
+.propertyLabel {
+    font-size: var(--theme-fontSize-small);
+    color: var(--review-card-textMuted);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* A follow-up line of the same property carries no label of its own. It stays in
+   the value column so it reads as a continuation of the labelled line above. */
+.propertyValue {
+    grid-column: 2;
+    min-width: 0;
+    max-width: 78ch;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+    overflow-wrap: anywhere;
+}
+
+/* A card-level note belongs to no property and uses the full row instead. */
+.propertyNote .propertyValue {
+    grid-column: 1 / -1;
+}
+
+/* Names the link or passage a change refers to. */
+.detail {
+    margin-bottom: 3px;
+    font-size: var(--theme-fontSize-tiny);
+    line-height: 1.5;
+    color: #a8a8a8;
+    overflow-wrap: anywhere;
+}
+
+.arrow {
+    margin: 0 var(--theme-spacing-Half);
+    color: #b0b0b0;
+    vertical-align: middle;
+}
+
+.media {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mediaItem {
+    min-width: 0;
+}
+
+.mediaItem img {
+    max-width: 100%;
+    max-height: 170px;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 3px;
+    border: 1px solid var(--review-card-border);
+}
+
+.mediaOld img {
+    opacity: 0.55;
+}
+
+.visibility {
+    color: var(--review-moved-text);
+}
+
+.note {
+    color: var(--review-card-textMuted);
+    font-style: italic;
+}
+
+.text {
+    white-space: normal;
+}
+
+/* Added words are underlined and deleted words struck through, so the kind of
+   change is readable without telling red from green. */
+.text ins {
+    background: var(--review-added-background);
+    color: var(--review-added-text);
+    text-decoration: underline;
+    text-decoration-color: var(--review-added-text);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    padding: 1px 3px;
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.text del {
+    background: var(--review-removed-background);
+    color: var(--review-removed-text);
+    text-decoration: line-through;
+    text-decoration-color: var(--review-removed-text);
+    text-decoration-thickness: 1.5px;
+    padding: 1px 3px;
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.badges {
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 6px;
+}
+
+@media (max-width: 900px) {
+    .property {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .propertyValue {
+        grid-column: 1;
+    }
+
+    .header {
+        flex-wrap: wrap;
+    }
+}

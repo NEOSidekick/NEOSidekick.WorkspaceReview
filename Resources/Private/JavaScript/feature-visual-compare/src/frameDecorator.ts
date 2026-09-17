@@ -1,0 +1,368 @@
+import { NODE_ATTRIBUTE } from '@neosidekick/workspace-review-core';
+import type { ChangeStatus, VisualFrameHandle } from '@neosidekick/workspace-review-core';
+
+import { FRAME_STYLES } from './frameStyles';
+
+/** Block elements a text diff must not flatten into a single line. */
+const BLOCK_SELECTOR =
+    'p, div, section, article, aside, ul, ol, li, table, blockquote, h1, h2, h3, h4, h5, h6, figure, header, footer, nav';
+
+export interface FrameTextDiff {
+    text: string;
+    html: string;
+}
+
+export interface FrameChange {
+    /** Node identifier, matching the Fusion marker attribute. */
+    identifier: string;
+    /** Id of the change card this marker links back to. */
+    changeId: string;
+    status: ChangeStatus;
+    label: string;
+    type: string;
+    textDiffs: FrameTextDiff[];
+}
+
+export interface FrameLabels {
+    unavailable: string;
+    newPage: string;
+    removedPage: string;
+    unplaced: string;
+    unlocated: string;
+    showInList: string;
+    statuses: Record<ChangeStatus, string>;
+}
+
+export interface FrameClassNames {
+    iframe: string;
+    status: string;
+    banner: string;
+    bannerNew: string;
+    bannerRemoved: string;
+    notes: string;
+}
+
+export interface FrameOptions {
+    /** The element the iframe, banner and notes are rendered into. */
+    host: HTMLElement;
+    title: string;
+    previewUri: string | null;
+    basePreviewUri: string | null;
+    isNew: boolean;
+    isRemoved: boolean;
+    changes: FrameChange[];
+    labels: FrameLabels;
+    classNames: FrameClassNames;
+    onShowInList(changeId: string): void;
+}
+
+interface Mark {
+    element: Element;
+    change: FrameChange;
+    halo: HTMLElement;
+}
+
+export interface VisualFrame extends VisualFrameHandle {
+    destroy(): void;
+}
+
+function frameDocument(iframe: HTMLIFrameElement): Document | null {
+    try {
+        const doc = iframe.contentDocument;
+        return doc && doc.body ? doc : null;
+    } catch (error) {
+        // A frame from another origin cannot be decorated.
+        return null;
+    }
+}
+
+function findNode(doc: Document, identifier: string): Element | null {
+    return doc.querySelector(`[${NODE_ATTRIBUTE}="${identifier.replace(/["\\]/g, '\\$&')}"]`);
+}
+
+function normalizeText(text: string | null): string {
+    return (text || '').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Renders one page for the visual compare and marks its changes in place. The
+ * iframe document is manipulated imperatively: it belongs to the site, so React
+ * never owns it.
+ */
+export function createVisualFrame(options: FrameOptions): VisualFrame {
+    const { host, labels, classNames } = options;
+    const marks: Mark[] = [];
+    const unlocated: FrameChange[] = [];
+    let notes: HTMLElement | null = null;
+    let doc: Document | null = null;
+    let overlay: HTMLElement | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+
+    const status = host.ownerDocument.createElement('p');
+    status.className = classNames.status;
+    status.textContent = labels.unavailable;
+    host.appendChild(status);
+
+    // A deleted page only exists in the base workspace and is shown as published.
+    const mainUri = options.isRemoved ? options.basePreviewUri : options.previewUri;
+    const transplantUri = options.isRemoved ? null : options.basePreviewUri;
+
+    if (!mainUri) {
+        return { step: () => undefined, clearCursor: () => undefined, destroy: () => undefined };
+    }
+
+    if (options.isRemoved || options.isNew) {
+        const banner = host.ownerDocument.createElement('p');
+        banner.className = `${classNames.banner} ${options.isRemoved ? classNames.bannerRemoved : classNames.bannerNew}`;
+        banner.textContent = options.isRemoved ? labels.removedPage : labels.newPage;
+        host.insertBefore(banner, status);
+    }
+
+    const iframe = host.ownerDocument.createElement('iframe');
+    iframe.className = classNames.iframe;
+    iframe.setAttribute('title', options.title);
+    iframe.hidden = true;
+
+    function prepareDocument(target: Document): HTMLElement {
+        const style = target.createElement('style');
+        style.textContent = FRAME_STYLES;
+        target.head.appendChild(style);
+        // The frame is for looking, not for browsing: links and forms stay put.
+        target.addEventListener(
+            'click',
+            (event) => {
+                const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
+                if (anchor) event.preventDefault();
+            },
+            true
+        );
+        target.addEventListener('submit', (event) => event.preventDefault(), true);
+        const element = target.createElement('div');
+        element.className = 'neosidekick-review-overlay';
+        target.documentElement.appendChild(element);
+        return element;
+    }
+
+    /**
+     * Changes with no visible place on the rendered page are listed below the
+     * frame, each opening its card in the change list.
+     */
+    function noteUnlocated(change: FrameChange) {
+        if (unlocated.includes(change)) return;
+        unlocated.push(change);
+        if (!notes) {
+            notes = host.ownerDocument.createElement('div');
+            notes.className = classNames.notes;
+            notes.appendChild(host.ownerDocument.createTextNode(`${labels.unlocated}:`));
+            notes.appendChild(host.ownerDocument.createElement('ul'));
+            host.appendChild(notes);
+        }
+        const item = host.ownerDocument.createElement('li');
+        const button = host.ownerDocument.createElement('button');
+        button.type = 'button';
+        button.textContent = [labels.statuses[change.status] || change.status, change.type, change.label]
+            .filter(Boolean)
+            .join(' · ');
+        button.title = labels.showInList;
+        button.addEventListener('click', () => options.onShowInList(change.changeId));
+        item.appendChild(button);
+        notes.querySelector('ul')?.appendChild(item);
+    }
+
+    function createHalo(target: Document, into: HTMLElement, change: FrameChange): HTMLElement {
+        const halo = target.createElement('div');
+        halo.className = `neosidekick-review-halo neosidekick-review-halo--${change.status}`;
+        const chip = target.createElement('button');
+        chip.type = 'button';
+        chip.className = 'neosidekick-review-halo__label';
+        chip.textContent = (labels.statuses[change.status] || change.status) + (change.type ? ` · ${change.type}` : '');
+        chip.title = (change.label ? `${change.label} – ` : '') + labels.showInList;
+        chip.addEventListener('click', (event) => {
+            event.preventDefault();
+            options.onShowInList(change.changeId);
+        });
+        halo.appendChild(chip);
+        into.appendChild(halo);
+        return halo;
+    }
+
+    function addMark(element: Element, change: FrameChange) {
+        if (!doc || !overlay) return;
+        marks.push({ element, change, halo: createHalo(doc, overlay, change) });
+        marks.sort((a, b) =>
+            a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
+        );
+    }
+
+    // Halos are absolutely positioned in the page document, so they follow its
+    // own scrolling; only size changes need a new layout.
+    function layoutMarks() {
+        if (!doc) return;
+        const scrollTop = doc.documentElement.scrollTop || doc.body.scrollTop || 0;
+        const scrollLeft = doc.documentElement.scrollLeft || doc.body.scrollLeft || 0;
+        marks.forEach((mark) => {
+            const rect = mark.element.getBoundingClientRect();
+            const visible = rect.width > 0 && rect.height > 0;
+            mark.halo.style.display = visible ? '' : 'none';
+            if (!visible) {
+                noteUnlocated(mark.change);
+                return;
+            }
+            mark.halo.style.top = `${rect.top + scrollTop - 4}px`;
+            mark.halo.style.left = `${rect.left + scrollLeft - 4}px`;
+            mark.halo.style.width = `${rect.width + 8}px`;
+            mark.halo.style.height = `${rect.height + 8}px`;
+        });
+    }
+
+    /**
+     * The card's word diff replaces the new wording where it appears on the page:
+     * the innermost element with exactly that text and no block structure of its
+     * own, so paragraphs are not flattened into one.
+     */
+    function applyTextDiffs(element: Element, textDiffs: FrameTextDiff[]) {
+        textDiffs.forEach((diff) => {
+            const wanted = normalizeText(diff.text);
+            if (!wanted || !diff.html) return;
+            const candidates = [element, ...Array.from(element.querySelectorAll('*'))].filter(
+                (candidate) => normalizeText(candidate.textContent) === wanted
+            );
+            const target = candidates
+                .reverse()
+                .find((candidate) => !candidates.some((other) => other !== candidate && candidate.contains(other)));
+            if (!target || target.querySelector(BLOCK_SELECTOR)) return;
+            target.innerHTML = diff.html;
+            target.classList.add('neosidekick-review-diff');
+        });
+    }
+
+    /**
+     * Moves the base-workspace rendering of a deleted element to where it stood,
+     * next to a neighbour that still exists. Without such a neighbour it is
+     * listed at the end of the page.
+     */
+    function transplantDeleted(target: Document, baseDoc: Document, identifier: string): Element | null {
+        const baseElement = findNode(baseDoc, identifier);
+        if (!baseElement) return null;
+        const clone = target.importNode(baseElement, true) as Element;
+        clone.classList.add('neosidekick-review-deleted-clone');
+        for (let sibling = baseElement.previousElementSibling; sibling; sibling = sibling.previousElementSibling) {
+            const neighbour = sibling.hasAttribute(NODE_ATTRIBUTE)
+                ? findNode(target, sibling.getAttribute(NODE_ATTRIBUTE) as string)
+                : null;
+            if (neighbour) {
+                neighbour.insertAdjacentElement('afterend', clone);
+                return clone;
+            }
+        }
+        for (let sibling = baseElement.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
+            const neighbour = sibling.hasAttribute(NODE_ATTRIBUTE)
+                ? findNode(target, sibling.getAttribute(NODE_ATTRIBUTE) as string)
+                : null;
+            if (neighbour) {
+                neighbour.insertAdjacentElement('beforebegin', clone);
+                return clone;
+            }
+        }
+        let unplaced = target.querySelector('.neosidekick-review-unplaced');
+        if (!unplaced) {
+            unplaced = target.createElement('section');
+            unplaced.className = 'neosidekick-review-unplaced';
+            const heading = target.createElement('p');
+            heading.className = 'neosidekick-review-unplaced__title';
+            heading.textContent = labels.unplaced;
+            unplaced.appendChild(heading);
+            target.body.appendChild(unplaced);
+        }
+        unplaced.appendChild(clone);
+        return clone;
+    }
+
+    // Deleted elements no longer exist in the workspace rendering; the base
+    // rendering is loaded out of sight to take them from.
+    function loadBaseRendering(uri: string, done: (baseDoc: Document | null) => void) {
+        const hiddenFrame = host.ownerDocument.createElement('iframe');
+        hiddenFrame.className = classNames.iframe;
+        hiddenFrame.setAttribute('aria-hidden', 'true');
+        hiddenFrame.tabIndex = -1;
+        hiddenFrame.style.cssText =
+            'position:absolute;top:0;left:0;height:0;min-height:0;visibility:hidden;pointer-events:none';
+        hiddenFrame.addEventListener('load', () => {
+            done(frameDocument(hiddenFrame));
+            hiddenFrame.remove();
+        });
+        hiddenFrame.src = uri;
+        host.appendChild(hiddenFrame);
+    }
+
+    function decorate() {
+        if (!doc) return;
+        const deleted: FrameChange[] = [];
+        options.changes.forEach((change) => {
+            const element = findNode(doc as Document, change.identifier);
+            if (!element) {
+                if (change.status === 'deleted' && transplantUri) deleted.push(change);
+                else noteUnlocated(change);
+                return;
+            }
+            if (change.status !== 'deleted') applyTextDiffs(element, change.textDiffs);
+            addMark(element, change);
+        });
+        layoutMarks();
+        const view = doc.defaultView;
+        if (view && typeof view.ResizeObserver !== 'undefined') {
+            resizeObserver = new view.ResizeObserver(() => layoutMarks());
+            resizeObserver.observe(doc.documentElement);
+        }
+        // Deleted elements arrive with the base rendering; the page is usable in
+        // the meantime.
+        if (!deleted.length || !transplantUri) return;
+        loadBaseRendering(transplantUri, (baseDoc) => {
+            deleted.forEach((change) => {
+                const element = baseDoc && doc ? transplantDeleted(doc, baseDoc, change.identifier) : null;
+                if (element) addMark(element, change);
+                else noteUnlocated(change);
+            });
+            layoutMarks();
+        });
+    }
+
+    iframe.addEventListener('load', () => {
+        doc = frameDocument(iframe);
+        if (!doc) {
+            status.textContent = labels.unavailable;
+            return;
+        }
+        overlay = prepareDocument(doc);
+        status.remove();
+        iframe.hidden = false;
+        decorate();
+    });
+    iframe.src = mainUri;
+    host.appendChild(iframe);
+
+    return {
+        // ] and [ walk the marked elements of the page in the visual compare.
+        step(direction) {
+            const visibleMarks = marks.filter((mark) => mark.halo.style.display !== 'none');
+            if (!visibleMarks.length) return;
+            const current = visibleMarks.findIndex((mark) =>
+                mark.halo.classList.contains('neosidekick-review-halo--active')
+            );
+            const next = Math.max(0, Math.min(current + direction, visibleMarks.length - 1));
+            if (next === current) return;
+            visibleMarks.forEach((mark, markIndex) =>
+                mark.halo.classList.toggle('neosidekick-review-halo--active', markIndex === next)
+            );
+            visibleMarks[next].element.scrollIntoView({ block: 'center', behavior: 'instant' as ScrollBehavior });
+        },
+        clearCursor() {
+            marks.forEach((mark) => mark.halo.classList.remove('neosidekick-review-halo--active'));
+        },
+        destroy() {
+            resizeObserver?.disconnect();
+            iframe.remove();
+            notes?.remove();
+        },
+    };
+}

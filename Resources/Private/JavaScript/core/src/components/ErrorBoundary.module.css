@@ -1,0 +1,16 @@
+.error {
+    margin: var(--theme-spacing-Full);
+    padding: var(--theme-spacing-Full);
+    border: 1px solid var(--theme-colors-Error);
+    background: var(--theme-grayDark);
+    color: var(--theme-textOnGray);
+    font-size: var(--theme-fontSize-base);
+    line-height: 20px;
+}
+
+.message {
+    margin: var(--theme-spacing-Half) 0 0;
+    color: var(--theme-textSubtleLight);
+    font-family: monospace;
+    overflow-wrap: anywhere;
+}

@@ -1,0 +1,29 @@
+.layout {
+    display: grid;
+    grid-template-columns: var(--review-sidebarWidth) minmax(0, 1fr);
+    gap: var(--theme-spacing-Full) 24px;
+    align-items: start;
+    margin-top: var(--theme-spacing-Quarter);
+}
+
+.footer {
+    grid-column: 1 / -1;
+}
+
+.state {
+    grid-column: 1 / -1;
+    padding: var(--theme-spacing-Full);
+    color: var(--theme-textSubtleLight);
+    font-size: var(--theme-fontSize-base);
+}
+
+.error {
+    color: var(--theme-warning);
+}
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--theme-spacing-Full);
+    }
+}

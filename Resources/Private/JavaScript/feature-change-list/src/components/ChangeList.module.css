@@ -1,0 +1,25 @@
+.stream {
+    min-width: 0;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--theme-spacing-Full);
+    margin-bottom: var(--theme-spacing-Half);
+    padding: var(--theme-spacing-Quarter) var(--theme-spacing-Full) var(--theme-spacing-Quarter)
+        var(--theme-spacing-Half);
+    border: 1px solid var(--theme-grayLight);
+    background: var(--theme-grayDark);
+    color: var(--theme-textSubtleLight);
+    font-size: var(--theme-fontSize-small);
+}
+
+.selectAll {
+    flex: 1 1 auto;
+}
+
+.empty {
+    padding: var(--theme-spacing-Full);
+    color: var(--theme-textSubtleLight);
+}
