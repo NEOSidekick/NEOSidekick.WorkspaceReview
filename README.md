@@ -4,6 +4,25 @@
 
 The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, keyboard review, a visual compare of the rendered page and a review narrowed to a single page. Publishing, discarding and the module path keep their existing behavior. The preview requires backend access and checks read access to private workspaces.
 
+## Preview
+
+A real local Neos backend, with an autumn-program example in German. The annotated previews highlight the differences an editor needs to review.
+
+![Annotated change list: single-page review, page hierarchy and dimension, readable configuration and link changes, word-level diffs, and page-scoped publishing.](Documentation/workspace-review-changes.png)
+
+![Annotated visual comparison: text edits in the rendered page, a deleted image restored for review, and labels for moved, changed, hidden and newly created content.](Documentation/workspace-review-visual.png)
+
+<details>
+<summary>Media, batch actions, publishing scope and keyboard navigation</summary>
+
+![Annotated media review: published and replacement images side by side, gallery and boolean changes, two selected changes across pages, and publishing controls.](Documentation/workspace-review-media.png)
+
+![Annotated help dialogs: native recursive publishing and discarding scope, plus keyboard shortcuts for pages, changes and views.](Documentation/workspace-review-workflow.png)
+
+</details>
+
+[Original screenshots and demo setup](Documentation/Showcase.md). Visual comparison requires a Fusion-rendered frontend; the change list also works with Next.js/Zebra sites.
+
 ## Improvements at a glance
 
 - **See changes on the page.** A view switch shows either the change list or a visual compare: the page rendered as it will look, with created, changed, moved, hidden and deleted elements marked in place and the changed words highlighted in the text. Deleted elements are taken from the published page and shown with a red overlay.
