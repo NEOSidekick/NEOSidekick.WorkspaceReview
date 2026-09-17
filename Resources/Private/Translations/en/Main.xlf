@@ -303,9 +303,6 @@
             <trans-unit id="review.publishesTo" xml:space="preserve">
                 <source>publishes to</source>
             </trans-unit>
-            <trans-unit id="selection.none" xml:space="preserve">
-                <source>Nothing selected – the actions apply to all {0} changes</source>
-            </trans-unit>
             <trans-unit id="selection.clear" xml:space="preserve">
                 <source>Clear selection</source>
             </trans-unit>

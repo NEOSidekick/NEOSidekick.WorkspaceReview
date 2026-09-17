@@ -406,10 +406,6 @@
                 <source>publishes to</source>
                 <target>veröffentlicht nach</target>
             </trans-unit>
-            <trans-unit id="selection.none" xml:space="preserve">
-                <source>Nothing selected – the actions apply to all {0} changes</source>
-                <target>Nichts ausgewählt – die Aktionen gelten für alle {0} Änderungen</target>
-            </trans-unit>
             <trans-unit id="selection.clear" xml:space="preserve">
                 <source>Clear selection</source>
                 <target>Auswahl aufheben</target>

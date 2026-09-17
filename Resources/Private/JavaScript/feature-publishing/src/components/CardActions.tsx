@@ -23,6 +23,16 @@ export function CardActions({ change }: { change: NodeChange }) {
 
     return (
         <div className={styles.actions}>
+            <Button
+                style="lighter"
+                hoverStyle="error"
+                disabled={isPending}
+                title={translate('actions.discardChange', 'Discard this change')}
+                onClick={() => actions.runSingleAction(change.contextPath, 'discard')}
+            >
+                <Icon icon="trash-alt" />
+                {translate('actions.discard', 'Discard')}
+            </Button>
             {workspace.canPublishToBase && (
                 <Button
                     style="lighter"
@@ -42,16 +52,6 @@ export function CardActions({ change }: { change: NodeChange }) {
                     {translate('actions.publish', 'Publish')}
                 </Button>
             )}
-            <Button
-                style="lighter"
-                hoverStyle="error"
-                disabled={isPending}
-                title={translate('actions.discardChange', 'Discard this change')}
-                onClick={() => actions.runSingleAction(change.contextPath, 'discard')}
-            >
-                <Icon icon="trash-alt" />
-                {translate('actions.discard', 'Discard')}
-            </Button>
         </div>
     );
 }

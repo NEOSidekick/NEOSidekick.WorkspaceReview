@@ -59,14 +59,11 @@ export function PublishingFooter() {
                 </a>
             </div>
             <div className={styles.group}>
-                {/* The buttons act on the selection, or on everything without one;
-                    the line in front of them says which of the two applies. */}
+                {/* The buttons act on the selection, or on everything without one.
+                    Their labels say so; a selection is counted in front of them. */}
                 <span className={styles.scope} aria-live="polite">
-                    {hasSelection
-                        ? translate('selection.count', '{0} of {1} changes selected', [selection.size, changeCount])
-                        : translate('selection.none', 'Nothing selected – the actions apply to all {0} changes', [
-                              changeCount,
-                          ])}
+                    {hasSelection &&
+                        translate('selection.count', '{0} of {1} changes selected', [selection.size, changeCount])}
                 </span>
                 {hasSelection && (
                     <button type="button" className={styles.clear} disabled={isPending} onClick={() => toggleAll(false)}>
