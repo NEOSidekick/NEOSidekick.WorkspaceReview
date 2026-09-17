@@ -28,7 +28,9 @@ class PositionService
 
     /**
      * Describes a changed sorting index as the node's position among its
-     * siblings. Returns null when no position can be stated honestly.
+     * siblings. The answer is already a PropertyChange of the SDL, so no
+     * mapping sits between this service and the API. Returns null when no
+     * position can be stated honestly.
      *
      * @return array<string, mixed>|null
      */
@@ -67,14 +69,14 @@ class PositionService
             // so a node can get a new index while keeping the place the reader
             // sees it in relative to the elements that already existed.
             return [
-                'type' => 'note',
-                'propertyLabel' => $propertyLabel,
+                'kind' => 'NOTE',
+                'label' => $propertyLabel,
                 'message' => $this->propertyLabelService->translate('position.internalOnly'),
             ];
         }
         return [
-            'type' => 'value',
-            'propertyLabel' => $propertyLabel,
+            'kind' => 'VALUE',
+            'label' => $propertyLabel,
             'original' => $this->propertyLabelService->translate('position.ordinalOfTotal', [$originalPosition['ordinal'], $originalPosition['total']]),
             'changed' => $this->propertyLabelService->translate('position.ordinalOfTotal', [$changedPosition['ordinal'], $changedPosition['total']]),
         ];
@@ -89,8 +91,8 @@ class PositionService
     protected function renderRawPositionChange(NodeInterface $originalNode, NodeInterface $changedNode): array
     {
         return [
-            'type' => 'value',
-            'propertyLabel' => $this->propertyLabelService->translate('system.position'),
+            'kind' => 'VALUE',
+            'label' => $this->propertyLabelService->translate('system.position'),
             'original' => (string)$originalNode->getIndex(),
             'changed' => (string)$changedNode->getIndex(),
         ];

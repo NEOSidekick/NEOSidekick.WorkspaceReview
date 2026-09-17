@@ -8,6 +8,7 @@ import {
     POST_HELPER_FORM_ID,
     PUBLISH_FORM_ID,
     useIntl,
+    useReviewActions,
     useReviewData,
     useReviewState,
 } from '@neosidekick/workspace-review-core';
@@ -25,6 +26,7 @@ type Confirmation = 'none' | 'selected' | 'workspace';
 export function PublishingFooter() {
     const translate = useIntl();
     const { workspace, uris } = useReviewData();
+    const reviewActions = useReviewActions();
     const { singleAction } = useReviewState();
     const { selection } = useSelection();
     const [confirmation, setConfirmation] = useState<Confirmation>('none');
@@ -33,10 +35,19 @@ export function PublishingFooter() {
     // The card actions set the node first and submit afterwards, so the form
     // carries exactly one hidden field while every checkbox is disabled.
     useEffect(() => {
-        if (singleAction) singleActionButton.current?.click();
-    }, [singleAction]);
+        if (!singleAction) return;
+        singleActionButton.current?.click();
+        // The submit navigates away. If it did not - an aborted navigation, a
+        // blocked submit - the latch would leave the module disabled until a
+        // reload, so it is released again.
+        const timer = window.setTimeout(() => reviewActions.clearSingleAction(), 15000);
+        return () => window.clearTimeout(timer);
+    }, [reviewActions, singleAction]);
 
     const hasSelection = selection.size > 0;
+    // While a card publishes or discards itself, the form carries its node
+    // alone; a batch submit would post that single node under another action.
+    const isPending = singleAction !== null;
 
     return (
         <div className={styles.footer}>
@@ -56,10 +67,11 @@ export function PublishingFooter() {
                         <Button
                             style="error"
                             hoverStyle="error"
+                            disabled={isPending}
                             onClick={() => setConfirmation('selected')}
                             title={translate('actions.discardSelected', 'Discard selected changes')}
                         >
-                            <Icon icon="trash-alt" padded="right" />
+                            <Icon icon="trash-alt" />
                             {translate('actions.discardSelected', 'Discard selected changes')}
                         </Button>
                         {workspace.canPublishToBase && (
@@ -67,11 +79,12 @@ export function PublishingFooter() {
                                 type="submit"
                                 style="success"
                                 hoverStyle="success"
+                                disabled={isPending}
                                 form={PUBLISH_FORM_ID}
                                 name={ACTION_FIELD_NAME}
                                 value="publish"
                             >
-                                <Icon icon="check" padded="right" />
+                                <Icon icon="check" />
                                 {translate('actions.publishSelected', 'Publish selected changes to “{0}”', [
                                     workspace.baseWorkspaceTitle,
                                 ])}
@@ -80,8 +93,13 @@ export function PublishingFooter() {
                     </>
                 ) : (
                     <>
-                        <Button style="error" hoverStyle="error" onClick={() => setConfirmation('workspace')}>
-                            <Icon icon="trash-alt" padded="right" />
+                        <Button
+                            style="error"
+                            hoverStyle="error"
+                            disabled={isPending}
+                            onClick={() => setConfirmation('workspace')}
+                        >
+                            <Icon icon="trash-alt" />
                             {translate('actions.discardAll', 'Discard all changes')}
                         </Button>
                         {workspace.canPublishToBase && (
@@ -89,10 +107,11 @@ export function PublishingFooter() {
                                 type="submit"
                                 style="success"
                                 hoverStyle="success"
+                                disabled={isPending}
                                 form={POST_HELPER_FORM_ID}
                                 formAction={uris.publishWorkspace}
                             >
-                                <Icon icon="check-double" padded="right" />
+                                <Icon icon="check-double" />
                                 {translate('actions.publishAll', 'Publish all changes to “{0}”', [
                                     workspace.baseWorkspaceTitle,
                                 ])}
@@ -147,7 +166,7 @@ export function PublishingFooter() {
                             form={POST_HELPER_FORM_ID}
                             formAction={uris.discardWorkspace}
                         >
-                            <Icon icon="trash-alt" padded="right" />
+                            <Icon icon="trash-alt" />
                             {translate('actions.discardAll', 'Discard all changes')}
                         </Button>
                     ) : (
@@ -160,15 +179,19 @@ export function PublishingFooter() {
                             name={ACTION_FIELD_NAME}
                             value="discard"
                         >
-                            <Icon icon="trash-alt" padded="right" />
+                            <Icon icon="trash-alt" />
                             {translate('actions.discardSelected', 'Discard selected changes')}
                         </Button>
                     ),
                 ]}
             >
                 {confirmation === 'workspace'
-                    ? translate('actions.confirmDiscardAll', 'Really discard every change in this workspace?')
-                    : translate('actions.confirmDiscardSelected', 'Really discard the selected changes?')}
+                    ? translate('actions.confirmDiscardAll', 'Really discard every change in “{0}”?', [
+                          workspace.title || workspace.name,
+                      ])
+                    : translate('actions.confirmDiscardSelected', 'Really discard the selected changes in “{0}”?', [
+                          workspace.title || workspace.name,
+                      ])}
             </Dialog>
         </div>
     );

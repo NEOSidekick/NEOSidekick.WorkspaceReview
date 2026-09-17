@@ -1,4 +1,7 @@
-.wrapper {
+/* The class is repeated to outweigh the backend module stylesheet's
+   `.neos label { display: block }`, which would drop the flex layout and with
+   it the gap between the box and its label. */
+.wrapper.wrapper {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -56,7 +59,8 @@
     background: #fff;
 }
 
-.withLabel {
+/* Paired with .wrapper, so it outweighs the repeated class above. */
+.wrapper.withLabel {
     width: auto;
     gap: var(--theme-spacing-Half);
     padding-right: var(--theme-spacing-Half);

@@ -76,32 +76,28 @@ export function importLegacyMarks(storage: StorageLike | null, workspaceName: st
 
 export interface RestoredMarks {
     marks: MarkStore;
-    reviewed: Record<string, boolean>;
     stale: Record<string, boolean>;
-    /** True when marks were dropped and the store needs to be written back. */
-    changed: boolean;
 }
 
 /**
  * Matches the stored signatures against the pages of this load. A page whose
- * signature moved on loses its mark and is flagged instead.
+ * signature moved on loses its mark and is flagged instead; holding a mark is
+ * what "reviewed" means, so nothing else has to be tracked.
  */
 export function restoreMarks(marks: MarkStore, pages: ChangedPage[]): RestoredMarks {
     const nextMarks: MarkStore = { ...marks };
-    const reviewed: Record<string, boolean> = {};
     const stale: Record<string, boolean> = {};
-    let changed = false;
     pages.forEach((page) => {
-        if (!(page.id in nextMarks)) return;
-        if (nextMarks[page.id] === pageSignature(page)) {
-            reviewed[page.id] = true;
-            return;
-        }
+        if (!(page.id in nextMarks) || nextMarks[page.id] === pageSignature(page)) return;
         delete nextMarks[page.id];
         stale[page.id] = true;
-        changed = true;
     });
-    return { marks: nextMarks, reviewed, stale, changed };
+    return { marks: nextMarks, stale };
+}
+
+/** A page counts as reviewed exactly while a mark of its own is held. */
+export function isReviewed(marks: MarkStore, pageId: string): boolean {
+    return marks[pageId] !== undefined;
 }
 
 /** Browser storage that throws on access is treated as absent. */

@@ -19,7 +19,7 @@ export function ModeSwitch() {
                 title={translate('mode.unifiedHelp', 'Every change as a card with the changed words')}
                 onClick={() => actions.setViewMode('list')}
             >
-                <Icon icon="list-ul" padded="right" />
+                <Icon icon="list-ul" />
                 {translate('mode.unified', 'Change list')}
             </button>
             <button
@@ -29,7 +29,7 @@ export function ModeSwitch() {
                 title={translate('mode.visualHelp', 'The page as it will look, with the changes marked in place')}
                 onClick={() => actions.setViewMode('visual')}
             >
-                <Icon icon="eye" padded="right" />
+                <Icon icon="eye" />
                 {translate('mode.visual', 'Visual compare')}
             </button>
         </div>

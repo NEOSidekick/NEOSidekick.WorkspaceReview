@@ -59,6 +59,8 @@ type ChangedPage {
 
 type NodeChange {
   id: ID!
+  # the node's own identifier; the visual compare matches it against the marker
+  identifier: ID!
   # value of the moduleArguments[nodes][] checkbox
   contextPath: String!
   # absolute node path

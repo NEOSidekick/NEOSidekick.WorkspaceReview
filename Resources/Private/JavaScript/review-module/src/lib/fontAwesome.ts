@@ -1,13 +1,45 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { fab } from '@fortawesome/free-brands-svg-icons';
-import { far } from '@fortawesome/free-regular-svg-icons';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCaretDown,
+    faCheck,
+    faCheckDouble,
+    faChevronDown,
+    faChevronRight,
+    faChevronUp,
+    faClock,
+    faExternalLinkAlt,
+    faEye,
+    faEyeSlash,
+    faListUl,
+    faLongArrowAltRight,
+    faPencilAlt,
+    faQuestionCircle,
+    faTrashAlt,
+} from '@fortawesome/free-solid-svg-icons';
 
 /**
- * The component library's Icon resolves names through the FontAwesome library.
- * Node type icons come from the NodeTypes configuration, so every pack has to be
- * available; the backend's own icon font is not used inside the React module.
+ * The component library's Icon resolves names through the FontAwesome library,
+ * so every icon the module's own interface names has to be registered. Node
+ * type icons are not among them: they come from the NodeTypes configuration in
+ * class notation and are rendered with the icon font of the backend page, which
+ * keeps the three icon packs out of the bundle.
  */
 export function loadIconLibrary(): void {
-    library.add(fas, far, fab);
+    library.add(
+        faCaretDown,
+        faCheck,
+        faCheckDouble,
+        faChevronDown,
+        faChevronRight,
+        faChevronUp,
+        faClock,
+        faExternalLinkAlt,
+        faEye,
+        faEyeSlash,
+        faListUl,
+        faLongArrowAltRight,
+        faPencilAlt,
+        faQuestionCircle,
+        faTrashAlt
+    );
 }

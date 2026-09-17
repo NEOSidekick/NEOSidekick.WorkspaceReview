@@ -1,7 +1,7 @@
 import { deepStrictEqual, strictEqual } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { appendQueryArgument, clampPageIndex, collectChangedPages, collectTreeRows, countChanges, moduleIndexUri, pageContextPath } from './pages';
+import { appendQueryArgument, clampPageIndex, collectTreeRows, moduleIndexUri, pageContextPath } from './pages';
 import type { Workspace } from '../types';
 
 function node(identifier: string) {
@@ -22,6 +22,7 @@ function page(id: string, nodePath: string, changeCount: number) {
         openUri: null,
         changes: Array.from({ length: changeCount }, (_unused, index) => ({
             id: `${id}-change-${index}`,
+            identifier: `${id}-c${index}`,
             contextPath: `${nodePath}/main/c${index}@user-admin;language=de`,
             nodePath: `${nodePath}/main/c${index}`,
             label: 'c',
@@ -72,15 +73,10 @@ describe('page order helpers', () => {
             [-1, 0, 1]
         );
         strictEqual(rows[0].page, null);
-        strictEqual(rows[1].dimensionHash, 'de');
-    });
-
-    it('lists the changed pages in the same order', () => {
         deepStrictEqual(
-            collectChangedPages(workspace).map((changedPage) => changedPage.id),
+            rows.filter((row) => row.page !== null).map((row) => row.page?.id),
             ['a-de', 'a-en']
         );
-        strictEqual(countChanges(collectChangedPages(workspace)), 3);
     });
 
     it('survives an empty workspace', () => {
@@ -108,6 +104,6 @@ describe('page order helpers', () => {
 
     it('derives the module index from the show URI', () => {
         strictEqual(moduleIndexUri('/neos/management/workspaces/show'), '/neos/management/workspaces');
-        strictEqual(moduleIndexUri('/neos/management/workspaces/show', '/given'), '/given');
+        strictEqual(moduleIndexUri('/neos/management/workspaces'), '/neos/management/workspaces');
     });
 });

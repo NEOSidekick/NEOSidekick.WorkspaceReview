@@ -47,6 +47,7 @@ export interface PropertyChange {
 
 export interface NodeChange {
     id: string;
+    identifier: string;
     contextPath: string;
     nodePath: string;
     label: string;

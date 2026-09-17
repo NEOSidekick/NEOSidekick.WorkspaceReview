@@ -10,7 +10,6 @@ export interface TreeRow {
     page: ChangedPage | null;
     /** Index into the ordered list of changed pages; -1 for an unchanged ancestor. */
     pageIndex: number;
-    dimensionHash: string;
 }
 
 /**
@@ -32,23 +31,11 @@ export function collectTreeRows(workspace: Workspace | null | undefined): TreeRo
                     hasChildren: entry.hasChildren,
                     page: entry.page,
                     pageIndex: entry.page ? pageIndex++ : -1,
-                    dimensionHash: dimension.hash,
                 });
             });
         });
     });
     return rows;
-}
-
-/** The changed pages in review order; the index is the one used everywhere. */
-export function collectChangedPages(workspace: Workspace | null | undefined): ChangedPage[] {
-    return collectTreeRows(workspace)
-        .filter((row): row is TreeRow & { page: ChangedPage } => row.page !== null)
-        .map((row) => row.page);
-}
-
-export function countChanges(pages: ChangedPage[]): number {
-    return pages.reduce((total, page) => total + page.changes.length, 0);
 }
 
 /** Clamps a page index to the existing pages, as the keyboard navigation does. */
@@ -76,11 +63,10 @@ export function appendQueryArgument(uri: string, name: string, value: string): s
 }
 
 /**
- * The module index, for the footer's back link. `showAction` builds no index URI,
- * so it is derived from the current location unless the template provides one.
+ * The module index, for the footer's back link. `showAction` builds no index
+ * URI, so it is derived from the current location.
  */
-export function moduleIndexUri(pathname: string, provided?: string | null): string {
-    if (provided) return provided;
+export function moduleIndexUri(pathname: string): string {
     const index = pathname.replace(/\/show\/*$/, '');
     return index || '/';
 }

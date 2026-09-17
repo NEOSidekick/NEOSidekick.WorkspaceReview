@@ -33,17 +33,12 @@ let cachedLocale: string | null = null;
 /**
  * The language the Neos backend renders in. Its `<html lang>` stays "en"
  * whatever the user's interface language is, so the locale is read from the
- * XLIFF catalogue the backend loads for `NeosCMS.I18n`.
+ * XLIFF catalogue link the module layout emits (Neos.Neos Module/Index.html),
+ * whose "locale" argument is the interface language.
  */
 export function backendLocale(): string {
     if (cachedLocale) return cachedLocale;
-    const catalogue =
-        typeof performance === 'undefined'
-            ? undefined
-            : performance
-                  .getEntriesByType('resource')
-                  .map((entry) => entry.name)
-                  .find((name) => name.includes('/neos/xliff.json'));
+    const catalogue = document.querySelector<HTMLLinkElement>('link[rel="neos-xliff"]')?.href;
     const match = catalogue ? /[?&]locale=([a-zA-Z_-]+)/.exec(catalogue) : null;
     cachedLocale = match ? match[1].replace(/_/g, '-') : document.documentElement.lang || 'en';
     return cachedLocale;

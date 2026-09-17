@@ -1,7 +1,7 @@
 import { deepStrictEqual, strictEqual } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { importLegacyMarks, readMarks, restoreMarks, writeMarks } from './reviewedMarks';
+import { importLegacyMarks, isReviewed, readMarks, restoreMarks, writeMarks } from './reviewedMarks';
 import type { StorageLike } from './reviewedMarks';
 import { pageSignature } from './signature';
 
@@ -40,10 +40,10 @@ describe('reviewed signature', () => {
             page('b', [['/sites/b/main/c1', 20]]),
         ] as never as Parameters<typeof restoreMarks>[1];
         const restored = restoreMarks({ a: '/sites/a/main/c1@17', b: '/sites/b/main/c1@19' }, pages);
-        deepStrictEqual(restored.reviewed, { a: true });
         deepStrictEqual(restored.stale, { b: true });
         deepStrictEqual(restored.marks, { a: '/sites/a/main/c1@17' });
-        strictEqual(restored.changed, true);
+        strictEqual(isReviewed(restored.marks, 'a'), true);
+        strictEqual(isReviewed(restored.marks, 'b'), false);
     });
 });
 

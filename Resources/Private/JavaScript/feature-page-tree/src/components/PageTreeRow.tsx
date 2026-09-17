@@ -1,7 +1,15 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { Icon } from '@neos-project/react-ui-components';
-import { LINK_ATTRIBUTE, SrOnly, useIntl, useJumpToPage, useReviewState } from '@neosidekick/workspace-review-core';
+import {
+    LINK_ATTRIBUTE,
+    NodeTypeIcon,
+    SrOnly,
+    isReviewed,
+    useIntl,
+    useJumpToPage,
+    useReviewState,
+} from '@neosidekick/workspace-review-core';
 import type { TreeRow } from '@neosidekick/workspace-review-core';
 
 import styles from './PageTreeRow.module.css';
@@ -12,7 +20,7 @@ function RowContent({ row }: { row: TreeRow }) {
         <>
             <span className={styles.chevron}>{row.hasChildren && <Icon icon="caret-down" />}</span>
             <span className={styles.icon}>
-                <Icon icon={row.node.icon || 'fas fa-file'} />
+                <NodeTypeIcon icon={row.node.icon} />
             </span>
             <span className={styles.label}>{row.node.label}</span>
         </>
@@ -22,7 +30,7 @@ function RowContent({ row }: { row: TreeRow }) {
 export function PageTreeRow({ row }: { row: TreeRow }) {
     const translate = useIntl();
     const jumpTo = useJumpToPage();
-    const { activePageIndex, reviewed } = useReviewState();
+    const { activePageIndex, marks } = useReviewState();
     const style = { '--review-depth': row.depth } as React.CSSProperties;
 
     if (!row.page) {
@@ -38,14 +46,14 @@ export function PageTreeRow({ row }: { row: TreeRow }) {
         );
     }
 
-    const isReviewed = reviewed[row.page.id] === true;
+    const reviewed = isReviewed(marks, row.page.id);
     const linkAttributes = { [LINK_ATTRIBUTE]: row.pageIndex };
 
     return (
         <li className={styles.item} style={style}>
             <a
                 {...linkAttributes}
-                className={classnames(styles.row, styles.link, isReviewed && styles.reviewed)}
+                className={classnames(styles.row, styles.link, reviewed && styles.reviewed)}
                 href={`#page-${row.page.id}`}
                 aria-current={activePageIndex === row.pageIndex ? 'location' : undefined}
                 title={activePageIndex === row.pageIndex ? translate('navigation.currentPage', 'Current page') : undefined}

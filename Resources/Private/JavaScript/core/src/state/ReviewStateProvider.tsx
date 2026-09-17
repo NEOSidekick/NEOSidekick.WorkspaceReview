@@ -6,14 +6,9 @@ import { clampPageIndex, collectTreeRows } from '../domain/pages';
 import { focusWithoutScroll, pageElement, scrollIntoView, sidebarLinkElement } from '../dom';
 import type { TreeRow } from '../domain/pages';
 import { pageSignature } from '../domain/signature';
-import {
-    importLegacyMarks,
-    readMarks,
-    restoreMarks,
-    safeLocalStorage,
-    writeMarks,
-} from '../domain/reviewedMarks';
-import type { MarkStore, StorageLike } from '../domain/reviewedMarks';
+import { importLegacyMarks, readMarks, restoreMarks, safeLocalStorage, writeMarks } from '../domain/reviewedMarks';
+import type { StorageLike } from '../domain/reviewedMarks';
+import { readViewMode } from '../domain/viewMode';
 import { createInitialState, reviewReducer } from './reducer';
 import type { ReviewState, SingleAction } from './reducer';
 import type { ChangedPage, FeatureFlags, ModuleUris, PublishingAction, ViewMode, Workspace } from '../types';
@@ -36,19 +31,12 @@ export interface ReviewActions {
     showChangeInList(changeId: string): void;
     clearHighlight(): void;
     runSingleAction(contextPath: string, action: PublishingAction): void;
+    clearSingleAction(): void;
 }
 
 const StateContext = createContext<ReviewState | null>(null);
 const ActionsContext = createContext<ReviewActions | null>(null);
 const DataContext = createContext<ReviewData | null>(null);
-
-function readViewMode(storage: StorageLike | null): ViewMode {
-    try {
-        return storage?.getItem(MODE_STORAGE_KEY) === 'visual' ? 'visual' : 'list';
-    } catch (error) {
-        return 'list';
-    }
-}
 
 interface ProviderProps extends Omit<ReviewData, 'pages' | 'treeRows'> {
     children: React.ReactNode;
@@ -65,18 +53,30 @@ export function ReviewStateProvider({ workspace, features, uris, children }: Pro
         [treeRows]
     );
 
-    const [state, dispatch] = useReducer(reviewReducer, readViewMode(storage), createInitialState);
-    const marksRef = useRef<MarkStore>({});
+    const [state, dispatch] = useReducer(
+        reviewReducer,
+        readViewMode(storage, features.visualCompare),
+        createInitialState
+    );
 
     // The stored marks are matched against this load once: a page edited since
-    // the review loses its mark and is flagged instead.
+    // the review loses its mark and is flagged instead. The import deletes the
+    // legacy key, so its marks are written under the new one in the same step.
     useEffect(() => {
-        const stored = importLegacyMarks(storage, workspace.name, readMarks(storage, workspace.name));
-        const restored = restoreMarks(stored, pages);
-        marksRef.current = restored.marks;
-        if (restored.changed || stored !== restored.marks) writeMarks(storage, workspace.name, restored.marks);
-        dispatch({ type: 'restoreReviewed', reviewed: restored.reviewed, stale: restored.stale });
-    }, [storage, workspace.name, pages]);
+        if (state.marksRestored) return;
+        const restored = restoreMarks(
+            importLegacyMarks(storage, workspace.name, readMarks(storage, workspace.name)),
+            pages
+        );
+        writeMarks(storage, workspace.name, restored.marks);
+        dispatch({ type: 'restoreMarks', marks: restored.marks, stale: restored.stale });
+    }, [storage, workspace.name, pages, state.marksRestored]);
+
+    // The browser storage mirrors the marks of the state; writing starts only
+    // once they have been restored, so an empty initial state clears nothing.
+    useEffect(() => {
+        if (state.marksRestored) writeMarks(storage, workspace.name, state.marks);
+    }, [storage, workspace.name, state.marks, state.marksRestored]);
 
     const actions = useMemo<ReviewActions>(() => {
         const persistViewMode = (mode: ViewMode) => {
@@ -100,12 +100,7 @@ export function ReviewStateProvider({ workspace, features, uris, children }: Pro
             setReviewed(pageIndex, reviewed) {
                 const page = pages[pageIndex];
                 if (!page) return;
-                const marks = { ...marksRef.current };
-                if (reviewed) marks[page.id] = pageSignature(page);
-                else delete marks[page.id];
-                marksRef.current = marks;
-                writeMarks(storage, workspace.name, marks);
-                dispatch({ type: 'setReviewed', pageId: page.id, reviewed });
+                dispatch({ type: 'setReviewed', pageId: page.id, signature: reviewed ? pageSignature(page) : null });
             },
             setSelection(selection) {
                 dispatch({ type: 'setSelection', selection });
@@ -123,8 +118,11 @@ export function ReviewStateProvider({ workspace, features, uris, children }: Pro
             runSingleAction(contextPath, action) {
                 dispatch({ type: 'setSingleAction', singleAction: { contextPath, action } satisfies SingleAction });
             },
+            clearSingleAction() {
+                dispatch({ type: 'setSingleAction', singleAction: null });
+            },
         };
-    }, [pages, storage, workspace.name]);
+    }, [pages, storage]);
 
     const data = useMemo<ReviewData>(
         () => ({ workspace, pages, treeRows, features, uris }),
@@ -156,11 +154,6 @@ export function useReviewActions(): ReviewActions {
 
 export function useReviewData(): ReviewData {
     return useRequiredContext(DataContext, 'useReviewData');
-}
-
-/** True when the page is collapsed, which hides both the cards and the frame. */
-export function useIsCollapsed(pageId: string): boolean {
-    return useReviewState().collapsed[pageId] === true;
 }
 
 /**

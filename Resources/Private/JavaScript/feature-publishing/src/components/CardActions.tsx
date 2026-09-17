@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Icon } from '@neos-project/react-ui-components';
-import { useIntl, useReviewActions, useReviewData } from '@neosidekick/workspace-review-core';
+import { useIntl, useReviewActions, useReviewData, useReviewState } from '@neosidekick/workspace-review-core';
 import type { NodeChange } from '@neosidekick/workspace-review-core';
 
 import styles from './CardActions.module.css';
@@ -14,6 +14,8 @@ export function CardActions({ change }: { change: NodeChange }) {
     const translate = useIntl();
     const actions = useReviewActions();
     const { workspace } = useReviewData();
+    // A second action while the first one is posting would abort its navigation.
+    const isPending = useReviewState().singleAction !== null;
 
     return (
         <div className={styles.actions}>
@@ -21,7 +23,7 @@ export function CardActions({ change }: { change: NodeChange }) {
                 <Button
                     style="success"
                     hoverStyle="success"
-                    disabled={!change.publishable}
+                    disabled={isPending || !change.publishable}
                     title={
                         change.publishable
                             ? translate('actions.publishChange', 'Publish this change')
@@ -38,6 +40,7 @@ export function CardActions({ change }: { change: NodeChange }) {
             <Button
                 style="error"
                 hoverStyle="error"
+                disabled={isPending}
                 title={translate('actions.discardChange', 'Discard this change')}
                 onClick={() => actions.runSingleAction(change.contextPath, 'discard')}
             >

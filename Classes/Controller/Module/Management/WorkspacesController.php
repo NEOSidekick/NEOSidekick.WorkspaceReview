@@ -122,17 +122,9 @@ class WorkspacesController extends NeosWorkspacesController
      */
     public function showAction(Workspace $workspace)
     {
-        $baseWorkspace = $workspace->getBaseWorkspace();
-
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspace,
             'selectedWorkspaceLabel' => $workspace->getTitle() ?: $workspace->getName(),
-            'baseWorkspaceName' => $baseWorkspace === null ? '' : $baseWorkspace->getName(),
-            'baseWorkspaceLabel' => $baseWorkspace === null
-                ? ''
-                : ($baseWorkspace->getTitle() ?: $baseWorkspace->getName()),
-            'canPublishToBaseWorkspace' => $baseWorkspace !== null
-                && $this->userService->currentUserCanPublishToWorkspace($baseWorkspace),
             // Only whether there is anything to review; what changed is
             // answered by the GraphQL query, not by this request.
             'hasChanges' => $this->publishingService->getUnpublishedNodesCount($workspace) > 0,

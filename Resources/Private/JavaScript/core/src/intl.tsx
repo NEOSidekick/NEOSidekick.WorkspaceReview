@@ -9,7 +9,7 @@ const IntlContext = createContext<Translate | null>(null);
 /**
  * Every label goes through the backend's XLIFF catalogue with an English
  * fallback inline, so the module stays readable when a translation is missing.
- * The ids are listed in Resources/Private/JavaScript/TRANSLATION_IDS.md.
+ * The catalogue itself is Resources/Private/Translations/<language>/Main.xlf.
  */
 export function createTranslate(i18n: NeosI18n | undefined): Translate {
     return (id, fallback, args) => {

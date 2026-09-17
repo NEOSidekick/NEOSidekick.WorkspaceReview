@@ -444,24 +444,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/free-brands-svg-icons@npm:^5.15.4":
-  version: 5.15.4
-  resolution: "@fortawesome/free-brands-svg-icons@npm:5.15.4"
-  dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:^0.2.36"
-  checksum: 10c0/138c9c427d9d81fda1ebbe740df6d6dcd6a02cd63cf1b6bd4c6f1d79e91a4f8ee31b604781659521173f8d6fa325f6dd37ab1409557c21d5bae4797612307c90
-  languageName: node
-  linkType: hard
-
-"@fortawesome/free-regular-svg-icons@npm:^5.15.4":
-  version: 5.15.4
-  resolution: "@fortawesome/free-regular-svg-icons@npm:5.15.4"
-  dependencies:
-    "@fortawesome/fontawesome-common-types": "npm:^0.2.36"
-  checksum: 10c0/2b13b95666c4cff0f654ce3db3afa4cd0a7067238833cda7dbe756b2a2172a3573ee4418b71c9f46d783a767f5865ee47fd9b94779cd72684987bed7a30e66b7
-  languageName: node
-  linkType: hard
-
 "@fortawesome/free-solid-svg-icons@npm:^5.15.4":
   version: 5.15.4
   resolution: "@fortawesome/free-solid-svg-icons@npm:5.15.4"
@@ -514,7 +496,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neos-project/react-ui-components@npm:^8.3.0":
+"@neos-project/react-ui-components@npm:^8.4.0":
   version: 8.4.4
   resolution: "@neos-project/react-ui-components@npm:8.4.4"
   dependencies:
@@ -585,11 +567,9 @@ __metadata:
   dependencies:
     "@apollo/client": "npm:^3.13.0"
     "@fortawesome/fontawesome-svg-core": "npm:^1.2.36"
-    "@fortawesome/free-brands-svg-icons": "npm:^5.15.4"
-    "@fortawesome/free-regular-svg-icons": "npm:^5.15.4"
     "@fortawesome/free-solid-svg-icons": "npm:^5.15.4"
     "@friendsofreactjs/react-css-themr": "npm:~4.2.0"
-    "@neos-project/react-ui-components": "npm:^8.3.0"
+    "@neos-project/react-ui-components": "npm:^8.4.0"
     "@neosidekick/workspace-review-change-list": "workspace:*"
     "@neosidekick/workspace-review-core": "workspace:*"
     "@neosidekick/workspace-review-keyboard": "workspace:*"
@@ -1331,10 +1311,6 @@ __metadata:
   dependencies:
     "@neosidekick/workspace-review-module": "workspace:*"
     "@types/node": "npm:^22.10.5"
-    "@types/react": "npm:^16.14.62"
-    "@types/react-dom": "npm:^16.9.24"
-    esbuild: "npm:^0.25.0"
-    lightningcss: "npm:^1.29.1"
     prettier: "npm:^3.4.2"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.7.3"

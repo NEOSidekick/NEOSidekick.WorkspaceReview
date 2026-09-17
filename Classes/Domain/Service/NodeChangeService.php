@@ -117,6 +117,7 @@ class NodeChangeService
     {
         return [
             'id' => $node->getIdentifier() . '-' . $dimensionHash,
+            'identifier' => $node->getIdentifier(),
             'contextPath' => $node->getContextPath(),
             'nodePath' => $node->getPath(),
             'label' => $this->propertyLabelService->cleanLabel((string)$node->getLabel()),
@@ -313,7 +314,9 @@ class NodeChangeService
             if ($propertyName === '_index') {
                 $positionChange = $this->positionService->renderPositionChange($originalNode, $changedNode);
                 if ($positionChange !== null) {
-                    $changes['_index'] = $this->fromPositionChange($positionChange);
+                    // The service answers in SDL vocabulary; only the defaults
+                    // of an entry are filled in here.
+                    $changes['_index'] = $this->entry($positionChange['kind'], '_index', $positionChange['label'], $positionChange);
                 }
                 continue;
             }
@@ -332,26 +335,6 @@ class NodeChangeService
             ]);
         }
         return $changes;
-    }
-
-    /**
-     * The position service answers in the vocabulary of the review card, which
-     * is turned into the SDL entry here.
-     *
-     * @param array<string, mixed> $positionChange
-     * @return array<string, mixed>
-     */
-    protected function fromPositionChange(array $positionChange): array
-    {
-        if ($positionChange['type'] === 'note') {
-            return $this->entry('NOTE', '_index', $positionChange['propertyLabel'], [
-                'message' => $positionChange['message'],
-            ]);
-        }
-        return $this->entry('VALUE', '_index', $positionChange['propertyLabel'], [
-            'original' => $positionChange['original'],
-            'changed' => $positionChange['changed'],
-        ]);
     }
 
     /**

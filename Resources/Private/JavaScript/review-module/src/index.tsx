@@ -31,14 +31,14 @@ function bootstrap(): void {
         rebase: root.dataset.uriRebase || '',
         publishWorkspace: root.dataset.uriPublishWorkspace || '',
         discardWorkspace: root.dataset.uriDiscardWorkspace || '',
-        index: moduleIndexUri(window.location.pathname, root.dataset.uriIndex),
+        index: moduleIndexUri(window.location.pathname),
     };
     const client = createApolloClient(root.dataset.graphql || '', (message) =>
         notificationApi ? notificationApi.error(message) : console.error(message)
     );
 
     render(
-        <ReviewApplicationWrapper client={client} translate={translate} notificationApi={notificationApi}>
+        <ReviewApplicationWrapper client={client} translate={translate}>
             <ReviewRoot workspaceName={workspaceName} features={parseFeatureFlags(root.dataset.features)} uris={uris} />
         </ReviewApplicationWrapper>,
         root

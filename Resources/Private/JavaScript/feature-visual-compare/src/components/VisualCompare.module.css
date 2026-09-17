@@ -52,6 +52,12 @@
     background: #fff;
 }
 
+/* The frame is hidden until its document is decorated, and again when it could
+   not be rendered; `display: block` above would otherwise keep its space. */
+.iframe[hidden] {
+    display: none;
+}
+
 .notes {
     margin: 0;
     padding: 10px var(--theme-spacing-Full);

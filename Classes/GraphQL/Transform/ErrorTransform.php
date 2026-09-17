@@ -24,8 +24,12 @@ use Neos\Flow\Log\ThrowableStorageInterface;
  * to the client. Both are wrong for a denied read: an editor opening a
  * workspace they may not see would flood the log and learn why. Errors that
  * declare themselves client safe therefore pass through untouched and
- * unlogged, while everything else is logged and answered with one generic
- * sentence.
+ * unlogged, while everything else is logged before it is handed on.
+ *
+ * The message the client reads for such an error is graphql-php's own
+ * "Internal server error": an Error whose previous is not client safe is
+ * serialised that way (Error::getMessage() is only used when the error is
+ * client safe), so a message set here would never reach the response.
  */
 class ErrorTransform implements Transform
 {
@@ -35,32 +39,21 @@ class ErrorTransform implements Transform
      */
     protected $throwableStorage;
 
-    protected const GENERIC_MESSAGE = 'An internal error occurred while building the workspace review.';
-
     public function transformResult(ExecutionResult $result): ExecutionResult
     {
-        $result->errors = array_map(function (Error $error): Error {
+        foreach ($result->errors as $error) {
             $previousError = $error->getPrevious();
             if ($previousError === null || $previousError instanceof Error) {
                 // A GraphQL error of its own (validation, a null on a non-null
                 // field) already carries a message meant for the client.
-                return $error;
+                continue;
             }
             if ($previousError instanceof ClientAware && $previousError->isClientSafe()) {
-                return $error;
+                continue;
             }
 
             $this->throwableStorage->logThrowable($previousError);
-
-            return new Error(
-                self::GENERIC_MESSAGE,
-                $error->getNodes(),
-                $error->getSource(),
-                $error->getPositions(),
-                $error->getPath(),
-                $previousError
-            );
-        }, $result->errors);
+        }
 
         return $result;
     }

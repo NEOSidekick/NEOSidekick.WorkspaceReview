@@ -114,6 +114,11 @@
     border-top: 1px solid var(--theme-grayLight);
 }
 
+/* A hidden card must not be laid out, but its checkbox stays in the form. */
+.cards[hidden] {
+    display: none;
+}
+
 @media (max-width: 900px) {
     .header {
         flex-wrap: wrap;

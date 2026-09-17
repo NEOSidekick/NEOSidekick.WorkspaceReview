@@ -1,0 +1,5 @@
+/* The library's dialog body has no inset of its own, so its content would sit
+   flush against the border; the title's 16px are the measure to match. */
+.body {
+    padding: 0 var(--theme-spacing-Full) var(--theme-spacing-Full);
+}

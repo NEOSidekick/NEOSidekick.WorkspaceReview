@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NEOSidekick\WorkspaceReview\Tests\Unit\GraphQL;
 
 use GraphQL\Error\Error;
+use GraphQL\Error\FormattedError;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\ExecutionResult;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -23,6 +24,7 @@ class ErrorTransformTest extends UnitTestCase
         class_exists(Error::class);
         class_exists(UserError::class);
         class_exists(ExecutionResult::class);
+        class_exists(FormattedError::class);
     }
 
     /**
@@ -40,7 +42,7 @@ class ErrorTransformTest extends UnitTestCase
 
         $result = $this->transform($throwableStorage, [$error]);
 
-        self::assertSame([$error], $result->errors);
+        self::assertSame(['No reviewable workspace "live" is available.'], $this->clientMessages($result));
     }
 
     /**
@@ -58,9 +60,7 @@ class ErrorTransformTest extends UnitTestCase
 
         $result = $this->transform($throwableStorage, [$error]);
 
-        self::assertCount(1, $result->errors);
-        self::assertStringNotContainsString('SQLSTATE', $result->errors[0]->getMessage());
-        self::assertSame($previous, $result->errors[0]->getPrevious());
+        self::assertSame(['Internal server error'], $this->clientMessages($result));
     }
 
     /**
@@ -77,7 +77,18 @@ class ErrorTransformTest extends UnitTestCase
 
         $result = $this->transform($throwableStorage, [$error]);
 
-        self::assertSame([$error], $result->errors);
+        self::assertSame(['Cannot query field "nope" on type "Query".'], $this->clientMessages($result));
+    }
+
+    /**
+     * What the client actually receives: graphql-php formats the errors of a
+     * result, and only a client-safe error keeps its own message there.
+     *
+     * @return string[]
+     */
+    private function clientMessages(ExecutionResult $result): array
+    {
+        return array_column($result->toArray()['errors'] ?? [], 'message');
     }
 
     /**

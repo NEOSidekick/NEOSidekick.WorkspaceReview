@@ -23,9 +23,6 @@
             <trans-unit id="review.markReviewed" xml:space="preserve">
                 <source>Mark page as reviewed and collapse it</source>
             </trans-unit>
-            <trans-unit id="review.unmarkReviewed" xml:space="preserve">
-                <source>Remove the reviewed mark from this page</source>
-            </trans-unit>
             <trans-unit id="review.progress" xml:space="preserve">
                 <source>{0}/{1} reviewed</source>
             </trans-unit>
@@ -137,9 +134,6 @@
             <trans-unit id="visual.legend" xml:space="preserve">
                 <source>Marker colours</source>
             </trans-unit>
-            <trans-unit id="visual.disabled" xml:space="preserve">
-                <source>The visual compare is switched off in this installation.</source>
-            </trans-unit>
             <trans-unit id="status.created" xml:space="preserve">
                 <source>created</source>
             </trans-unit>
@@ -198,13 +192,13 @@
                 <source>Back</source>
             </trans-unit>
             <trans-unit id="actions.confirmDiscardAll" xml:space="preserve">
-                <source>Really discard every change in this workspace?</source>
+                <source>Really discard every change in “{0}”?</source>
             </trans-unit>
             <trans-unit id="actions.cancel" xml:space="preserve">
                 <source>Cancel</source>
             </trans-unit>
             <trans-unit id="actions.confirmDiscardSelected" xml:space="preserve">
-                <source>Really discard the selected changes?</source>
+                <source>Really discard the selected changes in “{0}”?</source>
             </trans-unit>
             <trans-unit id="value.yes" xml:space="preserve">
                 <source>Yes</source>

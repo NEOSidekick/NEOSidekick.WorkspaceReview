@@ -24,6 +24,7 @@ export interface FrameChange {
 }
 
 export interface FrameLabels {
+    loading: string;
     unavailable: string;
     newPage: string;
     removedPage: string;
@@ -92,15 +93,18 @@ function normalizeText(text: string | null): string {
 export function createVisualFrame(options: FrameOptions): VisualFrame {
     const { host, labels, classNames } = options;
     const marks: Mark[] = [];
-    const unlocated: FrameChange[] = [];
+    /** Changes with no element of their own; they can never become visible. */
+    const missing: FrameChange[] = [];
     let notes: HTMLElement | null = null;
+    /** The changes the notes currently list, to keep an untouched list alive. */
+    let notesKey = '';
     let doc: Document | null = null;
     let overlay: HTMLElement | null = null;
     let resizeObserver: ResizeObserver | null = null;
 
     const status = host.ownerDocument.createElement('p');
     status.className = classNames.status;
-    status.textContent = labels.unavailable;
+    status.textContent = labels.loading;
     host.appendChild(status);
 
     // A deleted page only exists in the base workspace and is shown as published.
@@ -108,6 +112,7 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
     const transplantUri = options.isRemoved ? null : options.basePreviewUri;
 
     if (!mainUri) {
+        status.textContent = labels.unavailable;
         return { step: () => undefined, clearCursor: () => undefined, destroy: () => undefined };
     }
 
@@ -145,28 +150,41 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
 
     /**
      * Changes with no visible place on the rendered page are listed below the
-     * frame, each opening its card in the change list.
+     * frame, each opening its card in the change list. The list is rebuilt from
+     * the current layout: an element measured while the frame was still hidden
+     * would otherwise stay listed as invisible for good.
      */
-    function noteUnlocated(change: FrameChange) {
-        if (unlocated.includes(change)) return;
-        unlocated.push(change);
+    function renderNotes(unlocated: FrameChange[]) {
+        // Every layout would otherwise rebuild the list and take the focus off a
+        // note button the reviewer is about to press.
+        const key = unlocated.map((change) => change.changeId).join('|');
+        if (key === notesKey) return;
+        notesKey = key;
+        if (!unlocated.length) {
+            notes?.remove();
+            notes = null;
+            return;
+        }
         if (!notes) {
             notes = host.ownerDocument.createElement('div');
             notes.className = classNames.notes;
-            notes.appendChild(host.ownerDocument.createTextNode(`${labels.unlocated}:`));
-            notes.appendChild(host.ownerDocument.createElement('ul'));
             host.appendChild(notes);
         }
-        const item = host.ownerDocument.createElement('li');
-        const button = host.ownerDocument.createElement('button');
-        button.type = 'button';
-        button.textContent = [labels.statuses[change.status] || change.status, change.type, change.label]
-            .filter(Boolean)
-            .join(' · ');
-        button.title = labels.showInList;
-        button.addEventListener('click', () => options.onShowInList(change.changeId));
-        item.appendChild(button);
-        notes.querySelector('ul')?.appendChild(item);
+        notes.textContent = `${labels.unlocated}:`;
+        const list = host.ownerDocument.createElement('ul');
+        unlocated.forEach((change) => {
+            const item = host.ownerDocument.createElement('li');
+            const button = host.ownerDocument.createElement('button');
+            button.type = 'button';
+            button.textContent = [labels.statuses[change.status] || change.status, change.type, change.label]
+                .filter(Boolean)
+                .join(' · ');
+            button.title = labels.showInList;
+            button.addEventListener('click', () => options.onShowInList(change.changeId));
+            item.appendChild(button);
+            list.appendChild(item);
+        });
+        notes.appendChild(list);
     }
 
     function createHalo(target: Document, into: HTMLElement, change: FrameChange): HTMLElement {
@@ -197,15 +215,18 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
     // Halos are absolutely positioned in the page document, so they follow its
     // own scrolling; only size changes need a new layout.
     function layoutMarks() {
-        if (!doc) return;
+        // A frame laid out while it is hidden measures everything as zero-sized;
+        // the ResizeObserver lays the marks out once it is shown.
+        if (!doc || iframe.clientWidth === 0) return;
         const scrollTop = doc.documentElement.scrollTop || doc.body.scrollTop || 0;
         const scrollLeft = doc.documentElement.scrollLeft || doc.body.scrollLeft || 0;
+        const unlocated = [...missing];
         marks.forEach((mark) => {
             const rect = mark.element.getBoundingClientRect();
             const visible = rect.width > 0 && rect.height > 0;
             mark.halo.style.display = visible ? '' : 'none';
             if (!visible) {
-                noteUnlocated(mark.change);
+                unlocated.push(mark.change);
                 return;
             }
             mark.halo.style.top = `${rect.top + scrollTop - 4}px`;
@@ -213,6 +234,7 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
             mark.halo.style.width = `${rect.width + 8}px`;
             mark.halo.style.height = `${rect.height + 8}px`;
         });
+        renderNotes(unlocated);
     }
 
     /**
@@ -230,7 +252,7 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
             const target = candidates
                 .reverse()
                 .find((candidate) => !candidates.some((other) => other !== candidate && candidate.contains(other)));
-            if (!target || target.querySelector(BLOCK_SELECTOR)) return;
+            if (!target || target.querySelector(BLOCK_SELECTOR) || target.querySelector(`[${NODE_ATTRIBUTE}]`)) return;
             target.innerHTML = diff.html;
             target.classList.add('neosidekick-review-diff');
         });
@@ -298,13 +320,19 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
     function decorate() {
         if (!doc) return;
         const deleted: FrameChange[] = [];
+        const located: Array<{ element: Element; change: FrameChange }> = [];
+        // Every node is looked up first: a text diff replaces the markup of its
+        // target, which would destroy a marked element nested inside it.
         options.changes.forEach((change) => {
             const element = findNode(doc as Document, change.identifier);
             if (!element) {
                 if (change.status === 'deleted' && transplantUri) deleted.push(change);
-                else noteUnlocated(change);
+                else missing.push(change);
                 return;
             }
+            located.push({ element, change });
+        });
+        located.forEach(({ element, change }) => {
             if (change.status !== 'deleted') applyTextDiffs(element, change.textDiffs);
             addMark(element, change);
         });
@@ -321,16 +349,25 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
             deleted.forEach((change) => {
                 const element = baseDoc && doc ? transplantDeleted(doc, baseDoc, change.identifier) : null;
                 if (element) addMark(element, change);
-                else noteUnlocated(change);
+                else missing.push(change);
             });
             layoutMarks();
         });
     }
 
     iframe.addEventListener('load', () => {
+        // A navigation inside the frame replaces the document, so everything
+        // collected for the previous one is dropped first.
+        resizeObserver?.disconnect();
+        resizeObserver = null;
+        marks.length = 0;
+        missing.length = 0;
+        renderNotes([]);
         doc = frameDocument(iframe);
         if (!doc) {
             status.textContent = labels.unavailable;
+            if (!status.isConnected) host.insertBefore(status, iframe);
+            iframe.hidden = true;
             return;
         }
         overlay = prepareDocument(doc);
@@ -361,8 +398,11 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
         },
         destroy() {
             resizeObserver?.disconnect();
-            iframe.remove();
-            notes?.remove();
+            // Status, banner and any hidden base frame are children of the host
+            // as well, and a re-run of the effect would duplicate them.
+            while (host.firstChild) host.removeChild(host.firstChild);
+            notes = null;
+            notesKey = '';
         },
     };
 }

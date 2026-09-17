@@ -10,27 +10,25 @@ import { absoluteDate, backendLocale } from '../relativeDate';
 
 interface PropertyChangeViewProps {
     property: PropertyChange;
-    /** A deleted element has no "after": no arrow and no new value. */
-    isRemoved: boolean;
     change: NodeChange;
 }
 
+/**
+ * One asset of a media change. The name of the replaced or deleted file is
+ * struck through, so a list of file names still reads as before and after.
+ */
 function Media({ media, variant }: { media: MediaRef; variant: 'old' | 'new' }) {
-    if (media.thumbnailUri) {
-        return (
-            <div className={classnames(styles.mediaItem, variant === 'old' && styles.mediaOld)}>
-                <img src={media.thumbnailUri} alt={media.label} />
-            </div>
-        );
-    }
+    const name = media.filename || media.label;
     return (
         <div className={classnames(styles.mediaItem, variant === 'old' && styles.mediaOld)}>
-            {media.uri ? (
+            {media.thumbnailUri ? (
+                <img src={media.thumbnailUri} alt={media.label} />
+            ) : media.uri ? (
                 <a href={media.uri} target="_blank" rel="noreferrer">
-                    {media.filename || media.label}
+                    {name}
                 </a>
             ) : (
-                media.filename || media.label
+                name
             )}
         </div>
     );
@@ -41,9 +39,11 @@ function Arrow() {
 }
 
 /** One statement about what publishing this element would change. */
-export function PropertyChangeView({ property, isRemoved, change }: PropertyChangeViewProps) {
+export function PropertyChangeView({ property, change }: PropertyChangeViewProps) {
     const translate = useIntl();
     const locale = backendLocale();
+    // A deleted element has no "after": no arrow and no new value.
+    const isRemoved = change.isRemoved;
 
     const value = (() => {
         switch (property.kind) {

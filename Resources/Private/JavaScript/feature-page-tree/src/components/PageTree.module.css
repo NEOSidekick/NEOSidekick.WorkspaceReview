@@ -60,10 +60,14 @@
     cursor: pointer;
 }
 
-.shortcuts:hover,
+.shortcuts:hover {
+    color: var(--theme-textOnGray);
+}
+
 .shortcuts:focus-visible {
     color: var(--theme-textOnGray);
-    outline: none;
+    outline: 2px solid var(--theme-blue);
+    outline-offset: 1px;
 }
 
 @media (max-width: 900px) {

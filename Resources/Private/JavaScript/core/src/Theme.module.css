@@ -9,33 +9,18 @@
     --theme-grayDark: var(--grayDark, #222);
     --theme-grayMedium: var(--grayMedium, #323232);
     --theme-grayLight: var(--grayLight, #3f3f3f);
-    --theme-grayLighter: var(--grayLighter, #eee);
-    --theme-textOnWhite: var(--textOnWhite, #252525);
-    --theme-textContrast: var(--textContrast, #2d2d2d);
     --theme-textOnGray: var(--textOnGray, #fff);
-    --theme-textSubtle: var(--textSubtle, #5b5b5b);
     --theme-textSubtleLight: var(--textSubtleLight, #adadad);
     --theme-blue: var(--blue, #00b5ff);
-    --theme-blueLight: var(--blueLight, #39c6ff);
-    --theme-blueDark: var(--blueDark, #007fb2);
     --theme-green: var(--green, #00a338);
     --theme-warning: var(--warning, #ff460d);
     --theme-orange: var(--orange, #ff8700);
 
     --theme-colors-PrimaryBlue: var(--colors-PrimaryBlue, #00adee);
     --theme-colors-PrimaryBlueHover: var(--colors-PrimaryBlueHover, #35c3f8);
-    --theme-colors-ContrastDarkest: var(--colors-ContrastDarkest, var(--theme-grayDarker));
-    --theme-colors-ContrastDarker: var(--colors-ContrastDarker, var(--theme-grayDark));
-    --theme-colors-ContrastDark: var(--colors-ContrastDark, var(--theme-grayLight));
-    --theme-colors-ContrastNeutral: var(--colors-ContrastNeutral, var(--theme-grayMedium));
     --theme-colors-ContrastBright: var(--colors-ContrastBright, #8c8c8c);
-    --theme-colors-ContrastBrighter: var(--colors-ContrastBrighter, var(--theme-textSubtleLight));
-    --theme-colors-ContrastBrightest: var(--colors-ContrastBrightest, var(--theme-textOnGray));
-    --theme-colors-Success: var(--colors-Success, var(--theme-green));
-    --theme-colors-Warn: var(--colors-Warn, var(--theme-orange));
     --theme-colors-Error: var(--colors-Error, var(--theme-warning));
 
-    --theme-spacing-GoldenUnit: var(--spacing-GoldenUnit, 40px);
     --theme-spacing-Full: var(--spacing-Full, 16px);
     --theme-spacing-Half: var(--spacing-Half, 8px);
     --theme-spacing-Quarter: var(--spacing-Quarter, 4px);
@@ -44,7 +29,6 @@
     --theme-fontSize-small: 12px;
     --theme-fontSize-tiny: 11px;
 
-    --theme-transition-fast: 0.1s;
     --theme-transition-default: 0.25s;
 
     /**
@@ -71,6 +55,24 @@
     --review-rowHeight: 24px;
     --review-treeIndent: 18px;
 
-    --review-zIndex-dialog: 10050;
     --review-zIndex-sticky: 20;
+}
+
+/**
+ * The backend module stylesheet gives native buttons its own font and no
+ * spacing between an icon and its label. Both are restored for every button of
+ * the module, including the dialogs, which render outside its subtree.
+ */
+.workspaceReviewTheme button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--theme-spacing-Half);
+    font-family: inherit;
+}
+
+/* The rule above outweighs the user agent's `[hidden]`, which the footer's
+   submit helper relies on. */
+.workspaceReviewTheme button[hidden] {
+    display: none;
 }

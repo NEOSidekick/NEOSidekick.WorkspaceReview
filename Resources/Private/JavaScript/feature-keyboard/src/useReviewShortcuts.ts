@@ -3,6 +3,7 @@ import {
     changeElement,
     changeElements,
     focusWithoutScroll,
+    isReviewed,
     pageElement,
     scrollIntoView,
     sidebarLinkElement,
@@ -43,6 +44,13 @@ export function useReviewShortcuts(): void {
                 return;
             }
             reveal();
+        }
+
+        // Stepping through the markers of a rendered page works on the page the
+        // shortcuts act on, so the focus follows it as in the change list.
+        function stepVisual(pageIndex: number, pageId: string, direction: 1 | -1) {
+            jumpTo(pageIndex, true);
+            visualFrameOf(pageId)?.step(direction);
         }
 
         function onKeyDown(event: KeyboardEvent) {
@@ -98,21 +106,26 @@ export function useReviewShortcuts(): void {
                     return;
                 case ']':
                     event.preventDefault();
-                    if (state.viewMode === 'visual' && page) visualFrameOf(page.id)?.step(1);
+                    if (state.viewMode === 'visual' && page) stepVisual(context.index, page.id, 1);
                     else if (context.change + 1 < changeElements(context.index).length) {
                         focusChange(context.index, context.change + 1);
                     }
                     return;
                 case '[':
                     event.preventDefault();
-                    if (state.viewMode === 'visual' && page) visualFrameOf(page.id)?.step(-1);
+                    if (state.viewMode === 'visual' && page) stepVisual(context.index, page.id, -1);
                     else if (context.change === 0) jumpTo(context.index, true);
                     else if (context.change > 0) focusChange(context.index, context.change - 1);
                     return;
-                case 'v':
+                case 'v': {
                     event.preventDefault();
-                    actions.setReviewed(context.index, !(page && state.reviewed[page.id]));
+                    const reviewed = page !== undefined && isReviewed(state.marks, page.id);
+                    // Collapsing hides the focused card, which would drop the
+                    // focus to the body; the page heading takes it instead.
+                    if (!reviewed && context.change !== -1) focusWithoutScroll(pageElement(context.index));
+                    actions.setReviewed(context.index, !reviewed);
                     return;
+                }
                 case 'd':
                     if (!features.visualCompare) return;
                     event.preventDefault();

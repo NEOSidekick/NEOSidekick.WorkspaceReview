@@ -36,6 +36,7 @@ export const WORKSPACE_QUERY = gql`
                             }
                             changes {
                                 id
+                                identifier
                                 contextPath
                                 nodePath
                                 label

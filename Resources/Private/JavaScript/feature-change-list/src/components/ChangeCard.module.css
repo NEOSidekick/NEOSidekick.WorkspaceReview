@@ -3,6 +3,9 @@
     align-items: flex-start;
     gap: var(--theme-spacing-Half);
     padding: 10px var(--theme-spacing-Full) 10px var(--theme-spacing-Half);
+    /* The same clearance the page headings keep, so a card the shortcuts jump
+       to does not end up under the Neos top bar. */
+    scroll-margin-top: var(--review-toolbarOffset);
     background: var(--review-card-background);
     color: var(--review-card-text);
 }
@@ -160,6 +163,17 @@
 
 .mediaOld img {
     opacity: 0.55;
+}
+
+/* The old file name reads as replaced even where no thumbnail exists. */
+.mediaOld {
+    text-decoration: line-through;
+    text-decoration-color: var(--review-removed-text);
+    color: var(--review-card-textSubtle);
+}
+
+.mediaOld a {
+    color: inherit;
 }
 
 .visibility {

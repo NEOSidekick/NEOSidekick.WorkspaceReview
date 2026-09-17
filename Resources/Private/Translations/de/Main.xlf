@@ -30,10 +30,6 @@
                 <source>Mark page as reviewed and collapse it</source>
                 <target>Seite als geprüft markieren und einklappen</target>
             </trans-unit>
-            <trans-unit id="review.unmarkReviewed" xml:space="preserve">
-                <source>Remove the reviewed mark from this page</source>
-                <target>Prüfmarkierung dieser Seite entfernen</target>
-            </trans-unit>
             <trans-unit id="review.progress" xml:space="preserve">
                 <source>{0}/{1} reviewed</source>
                 <target>{0}/{1} geprüft</target>
@@ -182,10 +178,6 @@
                 <source>Marker colours</source>
                 <target>Bedeutung der Markierungen</target>
             </trans-unit>
-            <trans-unit id="visual.disabled" xml:space="preserve">
-                <source>The visual compare is switched off in this installation.</source>
-                <target>Der visuelle Vergleich ist in dieser Installation abgeschaltet.</target>
-            </trans-unit>
             <trans-unit id="status.created" xml:space="preserve">
                 <source>created</source>
                 <target>erstellt</target>
@@ -263,16 +255,16 @@
                 <target>Zurück</target>
             </trans-unit>
             <trans-unit id="actions.confirmDiscardAll" xml:space="preserve">
-                <source>Really discard every change in this workspace?</source>
-                <target>Wirklich alle Änderungen in diesem Arbeitsbereich verwerfen?</target>
+                <source>Really discard every change in “{0}”?</source>
+                <target>Wirklich alle Änderungen in „{0}“ verwerfen?</target>
             </trans-unit>
             <trans-unit id="actions.cancel" xml:space="preserve">
                 <source>Cancel</source>
                 <target>Abbrechen</target>
             </trans-unit>
             <trans-unit id="actions.confirmDiscardSelected" xml:space="preserve">
-                <source>Really discard the selected changes?</source>
-                <target>Ausgewählte Änderungen wirklich verwerfen?</target>
+                <source>Really discard the selected changes in “{0}”?</source>
+                <target>Ausgewählte Änderungen in „{0}“ wirklich verwerfen?</target>
             </trans-unit>
             <trans-unit id="value.yes" xml:space="preserve">
                 <source>Yes</source>

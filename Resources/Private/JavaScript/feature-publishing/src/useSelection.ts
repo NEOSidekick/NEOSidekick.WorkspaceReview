@@ -26,15 +26,22 @@ export function useSelection() {
         [actions, pages]
     );
 
-    const state: SelectionState = useMemo(() => allSelectionState(pages, selection), [pages, selection]);
-
     return {
         selection,
         /** While a card publishes itself, its own hidden field is the only entry. */
         disabled: singleAction !== null,
-        state,
         toggleOneChange,
         toggleOnePage,
         toggleAll,
     };
+}
+
+/**
+ * Only the select-all checkbox is about the whole stream; computing it per
+ * change checkbox would walk every page for every card.
+ */
+export function useWholeSelectionState(): SelectionState {
+    const { pages } = useReviewData();
+    const { selection } = useReviewState();
+    return useMemo(() => allSelectionState(pages, selection), [pages, selection]);
 }

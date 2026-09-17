@@ -74,7 +74,6 @@ export function ChangeCard({ change, changeIndex, pageIndex }: ChangeCardProps) 
                         key={`${property.property}-${property.kind}-${index}`}
                         property={property}
                         change={change}
-                        isRemoved={change.isRemoved}
                     />
                 ))}
             </div>

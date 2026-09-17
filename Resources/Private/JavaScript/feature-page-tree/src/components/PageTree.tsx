@@ -15,12 +15,12 @@ const TITLE_ID = 'neosidekick-review-pages-title';
  */
 export function PageTree() {
     const translate = useIntl();
-    const { treeRows, pages } = useReviewData();
+    const { treeRows } = useReviewData();
     const { activePageIndex } = useReviewState();
     const actions = useReviewActions();
     const listRef = useRef<HTMLUListElement>(null);
 
-    useCurrentPageTracking(pages.length);
+    useCurrentPageTracking();
 
     // Scroll only the index, leaving the review stream and keyboard focus alone.
     useEffect(() => {

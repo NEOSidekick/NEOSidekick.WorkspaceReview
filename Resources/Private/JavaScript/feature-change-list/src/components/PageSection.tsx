@@ -5,6 +5,7 @@ import {
     PAGE_ATTRIBUTE,
     POST_HELPER_FORM_ID,
     appendQueryArgument,
+    isReviewed,
     pageContextPath,
     useIntl,
     useReviewActions,
@@ -30,14 +31,14 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
     const translate = useIntl();
     const actions = useReviewActions();
     const { uris, features } = useReviewData();
-    const { collapsed, reviewed, viewMode } = useReviewState();
+    const { collapsed, marks, viewMode } = useReviewState();
     const isCollapsed = collapsed[page.id] === true;
-    const isReviewed = reviewed[page.id] === true;
+    const reviewed = isReviewed(marks, page.id);
     const contextPath = pageContextPath(page);
     const markers = { [PAGE_ATTRIBUTE]: pageIndex };
 
     return (
-        <section className={classnames(styles.page, isReviewed && styles.reviewed)} id={`page-${page.id}`}>
+        <section className={classnames(styles.page, reviewed && styles.reviewed)} id={`page-${page.id}`}>
             <div {...markers} className={styles.header} tabIndex={-1}>
                 <PageCheckbox page={page} />
                 <div className={styles.text}>
@@ -95,18 +96,14 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
                 </button>
             </div>
 
-            {!isCollapsed && viewMode === 'list' && (
-                <div className={styles.cards} id={`changes-${page.id}`}>
-                    {page.changes.map((change, changeIndex) => (
-                        <ChangeCard
-                            key={change.id}
-                            change={change}
-                            changeIndex={changeIndex}
-                            pageIndex={pageIndex}
-                        />
-                    ))}
-                </div>
-            )}
+            {/* The cards stay mounted while the page is collapsed or the visual
+                compare is shown: their checkboxes are the fields of the batch
+                form, so unmounting them would drop the selection from the post. */}
+            <div className={styles.cards} id={`changes-${page.id}`} hidden={isCollapsed || viewMode !== 'list'}>
+                {page.changes.map((change, changeIndex) => (
+                    <ChangeCard key={change.id} change={change} changeIndex={changeIndex} pageIndex={pageIndex} />
+                ))}
+            </div>
 
             {features.visualCompare && (
                 <VisualCompare page={page} hidden={isCollapsed || viewMode !== 'visual'} />

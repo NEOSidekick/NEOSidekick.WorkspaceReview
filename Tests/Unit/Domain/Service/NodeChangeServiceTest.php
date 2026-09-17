@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NEOSidekick\WorkspaceReview\Tests\Unit\Domain\Service;
 
 use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
+use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -532,6 +533,35 @@ class NodeChangeServiceTest extends UnitTestCase
             ],
             array_keys($change)
         );
+    }
+
+    /**
+     * The same for the change itself. `identifier` is its own field because the
+     * visual compare matches it against the marker attribute, and a Neos node
+     * identifier is not necessarily a UUID that could be read back out of `id`.
+     *
+     * @test
+     */
+    public function everyChangeCarriesEveryFieldOfTheSchema(): void
+    {
+        $nodeType = $this->createNodeType('Vendor.Site:Text');
+        $nodeType->method('getLabel')->willReturn('Text');
+        $node = $this->createNode($nodeType, []);
+        $node->method('getContextPath')->willReturn('/sites/example/moved@user-admin;language=de');
+        $node->method('getLabel')->willReturn('Text element');
+        $node->method('getNodeData')->willReturn($this->createMock(NodeData::class));
+
+        $change = $this->createService(null)->buildChange($node, 'a1b2c3', false, true, true);
+
+        self::assertSame(
+            [
+                'id', 'identifier', 'contextPath', 'nodePath', 'label', 'typeLabel',
+                'isNew', 'isMoved', 'isHidden', 'isRemoved', 'lastModified', 'publishable', 'properties',
+            ],
+            array_keys($change)
+        );
+        self::assertSame('moved', $change['identifier']);
+        self::assertSame('moved-a1b2c3', $change['id']);
     }
 
     /**

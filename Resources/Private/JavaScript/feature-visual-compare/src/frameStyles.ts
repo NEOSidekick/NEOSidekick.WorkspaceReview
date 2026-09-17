@@ -17,7 +17,7 @@ export const FRAME_STYLES = [
     '.neosidekick-review-diff ins{background:#dff2e4;color:#0f5132;text-decoration:underline;text-decoration-color:#0f5132;text-decoration-thickness:2px;text-underline-offset:2px;padding:0 2px;border-radius:2px}',
     '.neosidekick-review-diff del{background:#fbe7e7;color:#96262b;text-decoration:line-through;text-decoration-color:#96262b;padding:0 2px;border-radius:2px}',
     '.neosidekick-review-sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}',
-    '.neosidekick-review-ellipsis{color:#9a9a9a;padding:0 4px}',
+    '.neosidekick-review-ellipsis{color:#9a9a9a;padding:0 5px;letter-spacing:.1em}',
     '.neosidekick-review-unplaced{margin:24px;padding:16px;border:2px dashed #ff460d;border-radius:4px}',
     '.neosidekick-review-unplaced__title{margin:0 0 12px;font:600 14px/20px "Noto Sans",sans-serif;color:#96262b}',
 ].join('\n');

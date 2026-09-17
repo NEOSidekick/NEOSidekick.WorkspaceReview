@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Icon } from '@neos-project/react-ui-components';
+import { NodeTypeIcon } from '@neosidekick/workspace-review-core';
 import type { NodeRef } from '@neosidekick/workspace-review-core';
 
 import styles from './PageSection.module.css';
@@ -16,7 +17,7 @@ export function Breadcrumb({ nodes }: { nodes: NodeRef[] }) {
                             <Icon icon="chevron-right" />
                         </span>
                     )}
-                    <Icon icon={node.icon || 'fas fa-file'} />
+                    <NodeTypeIcon icon={node.icon} />
                     {node.label}
                 </span>
             ))}

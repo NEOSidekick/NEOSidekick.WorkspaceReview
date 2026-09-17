@@ -79,8 +79,6 @@ react-dom/cjs/react-dom-server.browser.production.min.js:
    */
 
 @fortawesome/fontawesome-svg-core/index.es.js:
-@fortawesome/free-brands-svg-icons/index.es.js:
-@fortawesome/free-regular-svg-icons/index.es.js:
 @fortawesome/free-solid-svg-icons/index.es.js:
   /*!
    * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com

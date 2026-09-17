@@ -2,12 +2,13 @@ import * as React from 'react';
 import { useIntl } from '@neosidekick/workspace-review-core';
 
 import { Checkbox } from './Checkbox';
-import { useSelection } from '../useSelection';
+import { useSelection, useWholeSelectionState } from '../useSelection';
 
 /** The toolbar checkbox above the review stream, with its own visible label. */
 export function SelectAllCheckbox() {
     const translate = useIntl();
-    const { state, disabled, toggleAll } = useSelection();
+    const { disabled, toggleAll } = useSelection();
+    const state = useWholeSelectionState();
     return (
         <Checkbox
             checked={state === 'all'}

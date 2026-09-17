@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import {
+    STATUS_LABELS,
     changeStatusOf,
-    nodeIdentifierOf,
     registerVisualFrame,
     useIntl,
     useReviewActions,
@@ -23,7 +23,7 @@ interface VisualCompareProps {
 /** What the change cards of a page know about each changed element. */
 function collectFrameChanges(page: ChangedPage): FrameChange[] {
     return page.changes.map((change) => ({
-        identifier: nodeIdentifierOf(change.id),
+        identifier: change.identifier,
         changeId: change.id,
         status: changeStatusOf(change),
         label: change.label,
@@ -48,13 +48,10 @@ export function VisualCompare({ page, hidden }: VisualCompareProps) {
         const host = hostRef.current;
         if (!host) return;
 
-        const statuses: Record<ChangeStatus, string> = {
-            created: translate('status.created', 'created'),
-            edited: translate('status.edited', 'changed'),
-            moved: translate('status.moved', 'moved'),
-            hidden: translate('status.hidden', 'hidden'),
-            deleted: translate('status.deleted', 'deleted'),
-        };
+        const statuses = STATUS_LABELS.reduce(
+            (labels, item) => ({ ...labels, [item.status]: translate(item.id, item.fallback) }),
+            {} as Record<ChangeStatus, string>
+        );
 
         const mount = () => {
             if (frameRef.current) return;
@@ -67,6 +64,7 @@ export function VisualCompare({ page, hidden }: VisualCompareProps) {
                 isRemoved: page.isRemoved,
                 changes: collectFrameChanges(page),
                 labels: {
+                    loading: translate('visual.loading', 'Loading the page…'),
                     unavailable: translate(
                         'visual.unavailable',
                         'The page could not be rendered for the visual compare.'
