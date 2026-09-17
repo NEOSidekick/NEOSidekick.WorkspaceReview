@@ -8,7 +8,9 @@ use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use NEOSidekick\WorkspaceReview\Domain\Diff\RichTextDiffer;
 use NEOSidekick\WorkspaceReview\Domain\Diff\WordDiffer;
@@ -587,6 +589,45 @@ class NodeChangeServiceTest extends UnitTestCase
      * read the original node from. The translator stand-in answers with the
      * label id, so assertions can name the label they expect.
      */
+    /**
+     * The reference of a review is the base of the REVIEWED workspace. A page
+     * the reviewed workspace has not changed still carries the workspace of
+     * its data ("live"), whose base would be none at all - it must not count
+     * as new because of that.
+     *
+     * @test
+     */
+    public function getOriginalNodeLooksIntoTheBaseOfTheContextWorkspaceNotOfTheNodeData(): void
+    {
+        $liveWorkspace = $this->createMock(Workspace::class);
+        $liveWorkspace->method('getName')->willReturn('live');
+        $liveWorkspace->method('getBaseWorkspace')->willReturn(null);
+        $reviewedWorkspace = $this->createMock(Workspace::class);
+        $reviewedWorkspace->method('getBaseWorkspace')->willReturn($liveWorkspace);
+
+        $context = $this->createMock(Context::class);
+        $context->method('getWorkspace')->willReturn($reviewedWorkspace);
+        $context->method('getProperties')->willReturn(['workspaceName' => 'user-admin', 'dimensions' => ['language' => ['de']]]);
+
+        $unchangedPage = $this->createMock(NodeInterface::class);
+        $unchangedPage->method('getContext')->willReturn($context);
+        $unchangedPage->method('getWorkspace')->willReturn($liveWorkspace);
+        $unchangedPage->method('getIdentifier')->willReturn('page');
+
+        $publishedPage = $this->createMock(NodeInterface::class);
+        $baseContext = $this->createMock(Context::class);
+        $baseContext->method('getNodeByIdentifier')->with('page')->willReturn($publishedPage);
+        $contextFactory = $this->createMock(ContextFactoryInterface::class);
+        $contextFactory->expects(self::once())->method('create')
+            ->with(['workspaceName' => 'live', 'dimensions' => ['language' => ['de']]])
+            ->willReturn($baseContext);
+
+        $service = new NodeChangeService();
+        $this->inject($service, 'contextFactory', $contextFactory);
+
+        self::assertSame($publishedPage, $service->getOriginalNode($unchangedPage));
+    }
+
     private function createService(?NodeInterface $originalNode): NodeChangeService
     {
         $propertyLabelService = new class extends PropertyLabelService {

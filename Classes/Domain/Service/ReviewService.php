@@ -306,8 +306,7 @@ class ReviewService
     /**
      * The "before" rendering of a page is its state in the base workspace of
      * the reviewed one, read in the page's own dimensions. Whether that node
-     * exists is checked directly rather than derived from "isNew", because the
-     * core's live lookup carries no dimension values.
+     * exists is checked directly in that context.
      */
     protected function buildBasePreviewUri(NodeInterface $documentNode, string $baseWorkspaceName, ControllerContext $controllerContext): ?string
     {
@@ -347,9 +346,29 @@ class ReviewService
     }
 
     /**
+     * A review answers what publishing changes, and publishing goes to the
+     * base workspace. So a node is new when the base workspace does not know
+     * it in the node's own dimensions, and moved when it sits elsewhere there.
+     * The core looks both up in "live" without dimension values: in a chained
+     * workspace it calls a page new that the target already has, and it
+     * misses a new translation whose other-language variant is published.
+     *
+     * @return array{isNew: bool, isMoved: bool}
+     */
+    protected function flagsAgainstBaseWorkspace(NodeInterface $node): array
+    {
+        $originalNode = $this->nodeChangeService->getOriginalNode($node);
+        return [
+            'isNew' => $originalNode === null,
+            'isMoved' => $originalNode !== null && $originalNode->getPath() !== $node->getPath(),
+        ];
+    }
+
+    /**
      * Builds an array of changes for the sites in the given workspace - a port
-     * of the core module controller's computeSiteChanges(), including its
-     * "isNew"/"isMoved" lookup against the live workspace.
+     * of the core module controller's computeSiteChanges(). Unlike the core,
+     * "isNew" and "isMoved" refer to the base workspace, see
+     * flagsAgainstBaseWorkspace().
      *
      * @return array<string, array<string, mixed>>
      */
@@ -392,21 +411,17 @@ class ReviewService
             $siteChanges[$siteNodeName]['documents'][$documentDimension][$documentPath]['changes'][$relativePath] = ['node' => $node];
         }
 
-        $liveContext = $this->contextFactory->create(['workspaceName' => 'live']);
-
         ksort($siteChanges);
         foreach ($siteChanges as $siteKey => $site) {
             foreach ($site['documents'] as $documentDimension => $documentsPerDimension) {
                 foreach ($documentsPerDimension as $documentKey => $document) {
-                    $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
-                    $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isMoved'] =
-                        $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
-                    $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isNew'] = $liveDocumentNode === null;
+                    $flags = $this->flagsAgainstBaseWorkspace($document['documentNode']);
+                    $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isNew'] = $flags['isNew'];
+                    $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isMoved'] = $flags['isMoved'];
                     foreach ($document['changes'] as $changeKey => $change) {
-                        $liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
-                        $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['changes'][$changeKey]['isNew'] = $liveNode === null;
-                        $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['changes'][$changeKey]['isMoved'] =
-                            $liveNode && $change['node']->getPath() !== $liveNode->getPath();
+                        $flags = $this->flagsAgainstBaseWorkspace($change['node']);
+                        $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['changes'][$changeKey]['isNew'] = $flags['isNew'];
+                        $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['changes'][$changeKey]['isMoved'] = $flags['isMoved'];
                     }
                 }
             }

@@ -11,7 +11,7 @@ use Neos\ContentRepository\Domain\Service\PublishingServiceInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\Neos\Domain\Service\ContentContextFactory;
+use NEOSidekick\WorkspaceReview\Domain\Service\NodeChangeService;
 use NEOSidekick\WorkspaceReview\Domain\Service\ReviewService;
 
 class ReviewServiceTest extends UnitTestCase
@@ -32,8 +32,7 @@ class ReviewServiceTest extends UnitTestCase
         $service = $this->createService(
             [$headline, $page, $home],
             [$page, $page, $home],
-            // Every node is known to live, so nothing is new or moved.
-            static fn($identifier): ?NodeInterface => null
+            static fn(NodeInterface $node): ?NodeInterface => null
         );
 
         $siteChanges = $service->computeSiteChanges($this->createMock(Workspace::class));
@@ -61,28 +60,23 @@ class ReviewServiceTest extends UnitTestCase
         $collection = $this->createNode('/sites/example/herbst/main', ['language' => ['de']], true);
         $page = $this->createNode('/sites/example/herbst', ['language' => ['de']]);
 
-        $service = $this->createService([$collection], [$page], static fn($identifier): ?NodeInterface => null);
+        $service = $this->createService([$collection], [$page], static fn(NodeInterface $node): ?NodeInterface => null);
 
         self::assertSame([], $service->computeSiteChanges($this->createMock(Workspace::class)));
     }
 
     /**
-     * "isNew" and "isMoved" follow the core's live lookup: a document the live
-     * workspace does not know is new, one sitting elsewhere in live is moved.
+     * "isNew" and "isMoved" refer to the base workspace, where publishing goes:
+     * a document the base workspace knows under another path is moved, not new.
      *
      * @test
      */
-    public function computeSiteChangesFlagsDocumentsAgainstTheLiveWorkspace(): void
+    public function computeSiteChangesFlagsDocumentsAgainstTheBaseWorkspace(): void
     {
         $page = $this->createNode('/sites/example/herbst', ['language' => ['de']]);
-        $page->method('getIdentifier')->willReturn('page');
-        $liveNode = $this->createNode('/sites/example/sommer', ['language' => ['de']]);
+        $baseNode = $this->createNode('/sites/example/sommer', ['language' => ['de']]);
 
-        $service = $this->createService(
-            [$page],
-            [$page],
-            static fn($identifier): ?NodeInterface => $liveNode
-        );
+        $service = $this->createService([$page], [$page], static fn(NodeInterface $node): ?NodeInterface => $baseNode);
 
         $siteChanges = $service->computeSiteChanges($this->createMock(Workspace::class));
         $dimensionHash = array_key_first($siteChanges['example']['documents']);
@@ -93,19 +87,71 @@ class ReviewServiceTest extends UnitTestCase
     }
 
     /**
+     * Chained workspaces: a page created in the base workspace is not live
+     * yet, but publishing an edit of it adds no page - only the element the
+     * base workspace does not know is new.
+     *
+     * @test
+     */
+    public function computeSiteChangesDoesNotCallAPageNewThatTheBaseWorkspaceAlreadyHas(): void
+    {
+        $page = $this->createNode('/sites/example/herbst', ['language' => ['de']]);
+        $edited = $this->createNode('/sites/example/herbst/main/text', ['language' => ['de']]);
+        $added = $this->createNode('/sites/example/herbst/main/teaser', ['language' => ['de']]);
+
+        $service = $this->createService(
+            [$page, $edited, $added],
+            [$page, $page, $page],
+            static fn(NodeInterface $node): ?NodeInterface => $node === $added ? null : $node
+        );
+
+        $siteChanges = $service->computeSiteChanges($this->createMock(Workspace::class));
+        $dimensionHash = array_key_first($siteChanges['example']['documents']);
+        $document = $siteChanges['example']['documents'][$dimensionHash]['herbst'];
+
+        self::assertFalse($document['isNew']);
+        self::assertFalse($document['changes']['/main/text']['isNew']);
+        self::assertTrue($document['changes']['/main/teaser']['isNew']);
+        self::assertFalse($document['changes']['/main/teaser']['isMoved']);
+    }
+
+    /**
+     * The lookup is made per node, so it carries the node's dimensions: a new
+     * translation is new although its other-language variant exists.
+     *
+     * @test
+     */
+    public function computeSiteChangesFlagsANewTranslationVariantAsNew(): void
+    {
+        $german = $this->createNode('/sites/example/herbst', ['language' => ['de']]);
+        $english = $this->createNode('/sites/example/herbst', ['language' => ['en']]);
+
+        $service = $this->createService(
+            [$german, $english],
+            [$german, $english],
+            static fn(NodeInterface $node): ?NodeInterface => $node === $german ? $german : null
+        );
+
+        $flags = [];
+        foreach ($service->computeSiteChanges($this->createMock(Workspace::class))['example']['documents'] as $documents) {
+            $flags[] = $documents['herbst']['isNew'];
+        }
+
+        self::assertSame([false, true], $flags);
+    }
+
+    /**
      * @param NodeInterface[] $unpublishedNodes
      * @param NodeInterface[] $documents the closest document per unpublished node, in the same order
-     * @param callable $liveLookup answers the live workspace lookup by node identifier
+     * @param callable $baseLookup answers the base workspace lookup for a node, as NodeChangeService::getOriginalNode() does
      */
-    private function createService(array $unpublishedNodes, array $documents, callable $liveLookup): ReviewService
+    private function createService(array $unpublishedNodes, array $documents, callable $baseLookup): ReviewService
     {
         $publishingService = $this->createMock(PublishingServiceInterface::class);
         $publishingService->method('getUnpublishedNodes')->willReturn($unpublishedNodes);
 
-        $liveContext = $this->createMock(ContentContext::class);
-        $liveContext->method('getNodeByIdentifier')->willReturnCallback($liveLookup);
-        $contextFactory = $this->createMock(ContentContextFactory::class);
-        $contextFactory->method('create')->willReturn($liveContext);
+        $nodeChangeService = $this->createMock(NodeChangeService::class);
+        $nodeChangeService->method('getOriginalNode')->willReturnCallback($baseLookup);
 
         $siteRepository = $this->createMock(SiteRepository::class);
         $siteRepository->method('findOneByNodeName')->willReturn(null);
@@ -115,17 +161,17 @@ class ReviewServiceTest extends UnitTestCase
             $documentsByNode[$node] = $documents[$index] ?? null;
         }
 
-        return new class ($publishingService, $contextFactory, $siteRepository, $documentsByNode) extends ReviewService {
+        return new class ($publishingService, $nodeChangeService, $siteRepository, $documentsByNode) extends ReviewService {
             private \SplObjectStorage $documentsByNode;
 
             public function __construct(
                 PublishingServiceInterface $publishingService,
-                ContentContextFactory $contextFactory,
+                NodeChangeService $nodeChangeService,
                 SiteRepository $siteRepository,
                 \SplObjectStorage $documentsByNode
             ) {
                 $this->publishingService = $publishingService;
-                $this->contextFactory = $contextFactory;
+                $this->nodeChangeService = $nodeChangeService;
                 $this->siteRepository = $siteRepository;
                 $this->documentsByNode = $documentsByNode;
             }

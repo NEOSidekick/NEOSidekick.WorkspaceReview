@@ -232,7 +232,11 @@ class NodeChangeService
      */
     public function getOriginalNode(NodeInterface $modifiedNode): ?NodeInterface
     {
-        $baseWorkspace = $modifiedNode->getWorkspace()->getBaseWorkspace();
+        // The reviewed workspace is the one of the context. The node's own
+        // workspace differs for a node the reviewed workspace has not changed,
+        // such as the unchanged page of a changed element: its data still
+        // belongs to a base workspace, whose base would be the wrong reference.
+        $baseWorkspace = $modifiedNode->getContext()->getWorkspace()->getBaseWorkspace();
         if ($baseWorkspace === null) {
             return null;
         }

@@ -42,7 +42,7 @@ type ChangedPage {
   # absolute node path; the selection propagation prefix-matches it
   nodePath: String!
   breadcrumb: [NodeRef!]!
-  # from the core's live lookup (parity with the core module)
+  # not known to the base workspace in the node's dimensions; moved = known there under another path
   isNew: Boolean!
   isMoved: Boolean!
   isRemoved: Boolean!
