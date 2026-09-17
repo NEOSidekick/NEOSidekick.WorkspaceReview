@@ -1,9 +1,17 @@
-.sidebar {
+/* The sticky left column: the backend breadcrumb above the page tree. */
+.column {
     position: sticky;
     top: var(--review-toolbarOffset);
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - var(--review-toolbarOffset) - 96px);
+    min-width: 0;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     box-sizing: border-box;
     border: 1px solid var(--theme-grayLight);
     background: var(--theme-grayDark);
@@ -71,8 +79,12 @@
 }
 
 @media (max-width: 900px) {
-    .sidebar {
+    .column {
         position: static;
+        max-height: none;
+    }
+
+    .sidebar {
         max-height: 280px;
     }
 }

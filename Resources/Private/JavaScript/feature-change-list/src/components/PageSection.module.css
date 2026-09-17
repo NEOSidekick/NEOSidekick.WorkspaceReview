@@ -31,14 +31,6 @@
     color: var(--theme-textOnGray);
 }
 
-/* Also tells what the checkbox of the page selects. */
-.changeCount {
-    margin-left: 10px;
-    font-size: var(--theme-fontSize-small);
-    font-weight: 400;
-    color: var(--theme-textSubtleLight);
-}
-
 .path {
     display: flex;
     flex-wrap: wrap;

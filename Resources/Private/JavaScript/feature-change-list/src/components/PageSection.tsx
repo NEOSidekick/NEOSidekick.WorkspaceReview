@@ -4,8 +4,6 @@ import {
     PAGE_ATTRIBUTE,
     POST_HELPER_FORM_ID,
     appendQueryArgument,
-    countChangedNodes,
-    elementCountLabel,
     pageContextPath,
     useIntl,
     useReviewActions,
@@ -40,12 +38,7 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
             <div {...markers} className={styles.header} tabIndex={-1}>
                 <PageCheckbox page={page} />
                 <div className={styles.text}>
-                    <div className={styles.title}>
-                        {page.node.label}
-                        <span className={styles.changeCount}>
-                            {elementCountLabel(translate, countChangedNodes([page]))}
-                        </span>
-                    </div>
+                    <div className={styles.title}>{page.node.label}</div>
                     <div className={styles.path}>
                         <Breadcrumb nodes={page.breadcrumb} />
                         {page.node.dimensionLabel && (

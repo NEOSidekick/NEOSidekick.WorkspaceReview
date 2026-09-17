@@ -1,8 +1,17 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { Kbd, revealInScroller, sidebarLinkElement, useIntl, useReviewActions, useReviewData, useReviewState } from '@neosidekick/workspace-review-core';
+import {
+    Kbd,
+    revealInScroller,
+    sidebarLinkElement,
+    useIntl,
+    useReviewActions,
+    useReviewData,
+    useReviewState,
+} from '@neosidekick/workspace-review-core';
 
 import styles from './PageTree.module.css';
+import { BackendBreadcrumb } from './BackendBreadcrumb';
 import { PageTreeRow } from './PageTreeRow';
 import { useCurrentPageTracking } from '../useCurrentPageTracking';
 
@@ -27,28 +36,31 @@ export function PageTree() {
     }, [activePageIndex]);
 
     return (
-        <nav className={styles.sidebar} aria-labelledby={TITLE_ID}>
-            <div className={styles.header}>
-                <h2 className={styles.title} id={TITLE_ID}>
-                    {translate('navigation.pages', 'Changed pages')}
-                </h2>
-            </div>
-            <ul className={styles.list} ref={listRef}>
-                {treeRows.map((row) => (
-                    <PageTreeRow key={row.key} row={row} />
-                ))}
-            </ul>
-            <p className={styles.help}>
-                <button
-                    type="button"
-                    className={styles.shortcuts}
-                    aria-haspopup="dialog"
-                    title={translate('shortcuts.open', 'Show the keyboard shortcuts')}
-                    onClick={() => actions.setShortcutsOpen(true)}
-                >
-                    <Kbd>?</Kbd> {translate('shortcuts.title', 'Keyboard shortcuts')}
-                </button>
-            </p>
-        </nav>
+        <div className={styles.column}>
+            <BackendBreadcrumb />
+            <nav className={styles.sidebar} aria-labelledby={TITLE_ID}>
+                <div className={styles.header}>
+                    <h2 className={styles.title} id={TITLE_ID}>
+                        {translate('navigation.pages', 'Changed pages')}
+                    </h2>
+                </div>
+                <ul className={styles.list} ref={listRef}>
+                    {treeRows.map((row) => (
+                        <PageTreeRow key={row.key} row={row} />
+                    ))}
+                </ul>
+                <p className={styles.help}>
+                    <button
+                        type="button"
+                        className={styles.shortcuts}
+                        aria-haspopup="dialog"
+                        title={translate('shortcuts.open', 'Show the keyboard shortcuts')}
+                        onClick={() => actions.setShortcutsOpen(true)}
+                    >
+                        <Kbd>?</Kbd> {translate('shortcuts.title', 'Keyboard shortcuts')}
+                    </button>
+                </p>
+            </nav>
+        </div>
     );
 }

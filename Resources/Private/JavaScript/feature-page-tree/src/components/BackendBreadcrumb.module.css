@@ -1,0 +1,13 @@
+/* The selectors repeat the class to outweigh the backend stylesheet, which
+   gives the breadcrumb a rule below it and room for a full-width row. */
+.breadcrumb.breadcrumb ul {
+    margin: 0;
+    padding: 0 0 10px;
+    border: 0;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.breadcrumb:empty {
+    display: none;
+}
