@@ -1,0 +1,131 @@
+# Read-only API of the workspace review. Publishing and discarding are core
+# module controller actions reached through forms, not mutations.
+
+type Query {
+  workspace(name: String!): Workspace!
+}
+
+type Workspace {
+  name: String!
+  title: String!
+  baseWorkspaceTitle: String!
+  # UserService::currentUserCanPublishToWorkspace(base), as the core showAction computes it
+  canPublishToBase: Boolean!
+  sites: [Site!]!
+}
+
+type Site {
+  name: String!
+  dimensions: [Dimension!]!
+}
+
+type Dimension {
+  hash: String!
+  # e.g. "Deutsch"; the preset label for this dimension hash
+  label: String!
+  # page-tree order, including unchanged ancestors
+  pages: [PageTreeEntry!]!
+}
+
+type PageTreeEntry {
+  node: NodeRef!
+  depth: Int!
+  hasChildren: Boolean!
+  # null for an unchanged ancestor
+  page: ChangedPage
+}
+
+type ChangedPage {
+  # "<identifier>-<dimensionHash>"
+  id: ID!
+  node: NodeRef!
+  # absolute node path; the selection propagation prefix-matches it
+  nodePath: String!
+  breadcrumb: [NodeRef!]!
+  # from the core's live lookup (parity with the core module)
+  isNew: Boolean!
+  isMoved: Boolean!
+  isRemoved: Boolean!
+  # workspace rendering; null for a removed page
+  previewUri: String
+  # rendering of the base-workspace context path in the page's dimensions;
+  # null when the node does not exist in that context
+  basePreviewUri: String
+  # frontend URI in the workspace
+  openUri: String
+  # page order
+  changes: [NodeChange!]!
+}
+
+type NodeChange {
+  id: ID!
+  # value of the moduleArguments[nodes][] checkbox
+  contextPath: String!
+  # absolute node path
+  nodePath: String!
+  label: String!
+  typeLabel: String!
+  isNew: Boolean!
+  isMoved: Boolean!
+  isHidden: Boolean!
+  isRemoved: Boolean!
+  # Unix timestamp; part of the reviewed signature
+  lastModified: Int!
+  # false inside a new page (core: cantPublishSingleNodeInNewPage)
+  publishable: Boolean!
+  properties: [PropertyChange!]!
+}
+
+enum PropertyChangeKind {
+  TEXT
+  VALUE
+  LINK
+  FORMATTING
+  DATETIME
+  IMAGE
+  ASSET
+  VISIBILITY
+  NOTE
+}
+
+type PropertyChange {
+  kind: PropertyChangeKind!
+  # node property name ("text", "_index"); entries of one property share it
+  property: String!
+  # editor label; "" (never null) on continuation entries of the same property
+  label: String!
+  # e.g. the link text a finding refers to
+  detail: String
+  # TEXT: collapsed word diff, escaped words, <ins>/<del>
+  diffHtml: String
+  # TEXT: uncollapsed, for the visual compare
+  diffHtmlFull: String
+  # TEXT: plain new wording (server tokenisation), to locate the element's text
+  changedText: String
+  # VALUE/LINK/FORMATTING: label; DATETIME: ISO 8601
+  original: String
+  changed: String
+  # IMAGE/ASSET
+  originalMedia: MediaRef
+  changedMedia: MediaRef
+  # VISIBILITY
+  hidden: Boolean
+  # VISIBILITY/NOTE
+  message: String
+}
+
+type MediaRef {
+  label: String!
+  thumbnailUri: String
+  uri: String
+  filename: String
+}
+
+type NodeRef {
+  identifier: ID!
+  label: String!
+  # normalised Font Awesome classes
+  icon: String!
+  # the node's own dimension preset label; null without dimensions
+  dimensionLabel: String
+}

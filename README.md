@@ -1,1 +1,131 @@
 # NEOSidekick.WorkspaceReview
+
+**Understand exactly what will change before publishing a Neos workspace.**
+
+The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, reviewer progress, keyboard review and a visual compare of the rendered page. Publishing, discarding and the module path keep their existing behavior. The preview requires backend access and checks read access to private workspaces.
+
+## Improvements at a glance
+
+- **See changes on the page.** A view switch shows either the change list or a visual compare: the page rendered as it will look, with created, changed, moved, hidden and deleted elements marked in place and the changed words highlighted in the text. Deleted elements are taken from the published page and shown with a red overlay.
+- **Track review progress.** Mark a page as reviewed to collapse it; the sidebar counts reviewed pages and remembers them per workspace, and flags a page that changed after it was reviewed.
+- **Review from the keyboard.** J/K move between pages, [ / ] step through changes, V toggles the reviewed mark and D switches views. **?** opens the shortcut overview.
+- **Jump between changed pages.** A sticky left sidebar lists the changed pages as a tree styled like the backend page tree, with their content dimension. The current page stays highlighted as you scroll, and each page is a separate block in the review.
+- **Read changes in page order.** Within each page, cards follow the content tree's order, with containers before their children. Each card explains the individual change directly.
+- **Configurations become visible.** Select boxes, toggles and references use translated editor labels instead of raw stored values.
+- **Word-level diffs reduce noise.** Reviewers see the changed words instead of comparing two complete paragraphs. Long unchanged passages collapse to an ellipsis. Deleted words are struck through and added words underlined, so the diff does not rely on colour alone.
+- **Status and position are instantly clear.** Created, deleted, moved and hidden elements receive explicit badges. Positions use readable sibling numbers instead of sorting indexes.
+- **Every change has an explanation.** Visibility changes, reverted edits and internal updates no longer produce unexplained empty rows.
+- **Links and formatting become visible.** Retargeted links, window behavior, linked text and formatting changes are detected even when the wording remains unchanged.
+
+## Installation
+
+```bash
+composer require neosidekick/workspace-review
+./flow flow:cache:flush
+```
+
+The package conflicts with `codeq/workspace-review`: both configure the same module controller, so only one of them can be installed.
+
+## What reviewers see
+
+Every changed node becomes one card with one entry for each effect publishing would have. Cards are grouped beneath their page header. When no renderable property changed, the card explains why instead of staying empty.
+
+| Entry        | Appears when                                                                 | Reads like                                                          |
+| ------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Text         | the wording changed                                                          | `… startet am ~~15.~~ 1. September, Karten kosten ~~12~~ 14 Euro …` |
+| Link         | a link points elsewhere, opens differently, or words were linked or unlinked | `Link "Anfahrt und Kontakt" · Text Hero → Image Hero`               |
+| Formatting   | the same words carry different formatting                                    | `"18 Uhr," · no formatting → bold`                                  |
+| Value        | a property changed, shown with its editor labels                             | `Abstand unten · Groß → Klein`                                      |
+| Position     | a node was reordered among its siblings                                      | `Position · 3 of 3 → 1 of 3`                                        |
+| Image, Asset | media was replaced                                                           | the published and the new file side by side                         |
+| Visibility   | a node was hidden or made visible                                            | `Element was hidden`                                                |
+| Note         | nothing renderable changed                                                   | an explanation of the remaining difference                          |
+
+The card header names the element type next to the node label, because the label is usually the element's own text ("Minimalismus" alone does not say that a headline was hidden), and shows whether the node was created, deleted, moved or hidden. A deleted element shows its values struck through only, without an arrow to an empty new value.
+
+### Detailed behavior
+
+- **Text changes** are compared word by word. An unchanged run longer than two dozen words collapses to the words surrounding the edit plus an ellipsis. Deleted words are struck through and added words underlined in addition to their colouring, and each edited run starts with a visually hidden "deleted:" or "added:" label, because `<del>` and `<ins>` alone are not reliably announced by screen readers. HTML entities are decoded before comparison, so titles show `&` instead of `&amp;`.
+- **Configuration values** use translated `editorOptions.values` labels, such as "Kein Abstand" instead of `none`. Booleans render as Yes or No, references as node labels. A property changed back to its NodeType default is still reported.
+- **Links and formatting** are compared a second time on the markup level, conservatively: a link pointing elsewhere (internal `node://` and `asset://` targets resolved to page and asset names), a changed window behavior, words linked or unlinked while the wording stayed, and bold, italic, underline, strikethrough, subscript, superscript, code, highlight and heading-level changes per passage. Two targets that resolve to the same label keep their raw URIs, so the result never claims `X → X`.
+- **Position and status**: a moved node shows its place among siblings, such as `3 of 3 → 1 of 3`. An index changed only by sibling renumbering is identified as internal re-sorting.
+- **Changes without a visible diff** use three distinct notes: "Changed – the wording is unchanged, please check details in the preview.", "Edited, but matching the published version again – no content differences found." and "No visible changes (internal update)."
+
+### Reviewed pages and progress
+
+Every page header has a **Reviewed** toggle. Marking a page collapses its changes and advances the progress bar in the sidebar header. Reviewed marks are stored in the browser per workspace, together with a signature of the page's changes (which nodes, last modified when). If that signature changes after review, the mark is dropped on the next load and the page carries a **"Changed since your review"** badge.
+
+These marks are personal progress notes in that browser, not a shared approval workflow. They neither select changes for publishing nor prevent any action.
+
+### Visual compare
+
+The switch above the review stream, or **D**, toggles between the change list and the visual compare, which renders the reviewed workspace in the site's own layout and adds status labels and outlines to changed elements: green for created, orange for changed, blue for moved, hatched grey for hidden and a red overlay for a deleted element restored from the published rendering. Text edits appear in place when the new wording can be matched to a text element on the page. Changes with no visible matching element are listed below the frame with links to their cards.
+
+### Keyboard review
+
+| Keys | Action |
+| --- | --- |
+| **↓ / J**, **↑ / K** | next / previous page |
+| **Home / End** | first / last page |
+| **Enter** | focus the page in the review stream (from the sidebar) |
+| **]** / **[** | next / previous change on the page |
+| **V** | mark the page as reviewed / not reviewed |
+| **D** | switch between change list and visual compare |
+| **Esc** | one step back, or close the overlay |
+
+Shortcuts stay off inside form controls, and modifier combinations are left to the browser.
+
+## Configuration
+
+```yaml
+Neos:
+  Neos:
+    Ui:
+      frontendConfiguration:
+        'NEOSidekick.WorkspaceReview':
+          visualCompare: true   # kill switch for the experimental visual compare
+```
+
+`showAction` reads that namespace and renders it into the `data-features` attribute of the application root, which is how a Neos UI setting reaches a backend module.
+
+Word-diff thresholds (24 context words, 50 edited words) are constants in `Domain\Diff\WordDiffer`: they shape server-rendered HTML and therefore cannot be client-side flags.
+
+## GraphQL API
+
+The review data is served read-only through `t3n/graphql` at `neos/graphql/workspace-review`, configured in `Configuration/Settings.GraphQL.yaml` and described by `Resources/Private/GraphQL/schema.root.graphql`. One query answers the whole review:
+
+```graphql
+query { workspace(name: "user-admin") { name canPublishToBase sites { name dimensions { hash label pages { depth hasChildren page { id changes { label properties { kind label diffHtml } } } } } } } }
+```
+
+There are no mutations: publishing and discarding stay the core module controller's actions, reached through Flow forms with their CSRF token. The endpoint is bound to the `Neos.Neos:Backend` authentication provider, and `QueryResolver` refuses any workspace the current user may not read; such a denial is a client-safe GraphQL error that writes no exception log.
+
+## Development
+
+The client lives in `Resources/Private/JavaScript` as Yarn workspaces and is built with esbuild into the committed bundles `Resources/Public/Assets/main.bundle.js|css`:
+
+```bash
+yarn install
+yarn build     # or: yarn watch
+```
+
+`ddev` serves the built files directly, so there is no dev server.
+
+## Technical implementation
+
+- `Configuration/Settings.yaml` replaces the controller of `management/workspaces` with `NEOSidekick\WorkspaceReview\Controller\Module\Management\WorkspacesController`, which extends the Neos core controller and overrides only `showAction`.
+- `Configuration/Policy.yaml` grants the inherited core controller actions, the resolver and the preview to `Neos.Neos:AbstractEditor`. Without the first grant, the module's method-based privilege matching would return 403 after the controller replacement.
+- `Domain\Service\ReviewService` carries a ported copy of the core's `computeSiteChanges()` grouping loop, because that method is protected and the GraphQL query is a separate request without a module controller instance.
+- `Domain\Service\NodeChangeService` is the type-aware replacement for the core's `renderContentChanges()`, `Domain\Diff\WordDiffer` the word-level diff and `Domain\Diff\RichTextDiffer` the markup-level comparison, which has no injected dependencies and no content repository knowledge.
+- `Controller/PreviewController.php` renders pages through `neos/workspace-review/preview` with the Fusion content cache disabled and `Cache-Control: no-store`.
+- `Resources/Private/Fusion/Root.fusion` adds node identifiers to `Neos.Neos:ContentComponent` and `Neos.Neos:Content` in that preview and suppresses the Neos.Ui editing scripts there. Public page rendering is unaffected.
+- The controller points the view at this package's templates and at the Neos layouts in `initializeView()`, because Flow applies only the single heaviest-matching `Views.yaml` entry rather than merging them.
+
+## Tests
+
+```bash
+ddev exec bin/phpunit --configuration Build/BuildEssentials/PhpUnit/UnitTests.xml \
+  DistributionPackages/NEOSidekick.WorkspaceReview/Tests/Unit
+```
+
+GitHub Actions runs the same suite plus `phpcs` and `phpstan` on PHP 8.2 × Neos 8.3 and PHP 8.4 × Neos 8.4.

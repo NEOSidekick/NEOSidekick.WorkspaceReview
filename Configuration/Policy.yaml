@@ -1,0 +1,34 @@
+privilegeTargets:
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+    # The module's ModulePrivilege builds its method matcher from the
+    # controller configured in Settings.yaml - which now points to this
+    # package's controller. Because that controller extends the Neos core
+    # controller, the inherited action methods still carry the core class'
+    # policy interception, where only "Neos.Neos:AllControllerActions" matches
+    # and abstains. This target restores the grant on the core controller's
+    # actions for the same role that holds the module access grant in Neos.Neos.
+    'NEOSidekick.WorkspaceReview:CoreWorkspacesControllerActions':
+      label: 'Access to the inherited core workspace controller actions'
+      matcher: 'method(public Neos\Neos\Controller\Module\Management\WorkspacesController->(?!initialize).*Action())'
+    # The controller clause is required: without a grant on the shared t3n
+    # controller the endpoint is denied for everyone as soon as no other
+    # GraphQL package grants it.
+    'NEOSidekick.WorkspaceReview:Queries':
+      label: 'Query the changes of a workspace'
+      matcher: 'method(public NEOSidekick\WorkspaceReview\GraphQL\Resolver\(.*)Resolver->.*()) || method(t3n\GraphQL\Controller\GraphQLController->queryAction())'
+    'NEOSidekick.WorkspaceReview:Preview':
+      label: 'Render a page of a reviewed workspace for the visual compare'
+      matcher: 'method(NEOSidekick\WorkspaceReview\Controller\PreviewController->showAction())'
+
+roles:
+  'Neos.Neos:AbstractEditor':
+    privileges:
+      -
+        privilegeTarget: 'NEOSidekick.WorkspaceReview:CoreWorkspacesControllerActions'
+        permission: GRANT
+      -
+        privilegeTarget: 'NEOSidekick.WorkspaceReview:Queries'
+        permission: GRANT
+      -
+        privilegeTarget: 'NEOSidekick.WorkspaceReview:Preview'
+        permission: GRANT

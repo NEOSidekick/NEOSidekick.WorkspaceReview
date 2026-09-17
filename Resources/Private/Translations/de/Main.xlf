@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file original="" product-name="NEOSidekick.WorkspaceReview" source-language="en" target-language="de" datatype="plaintext">
+        <body>
+            <trans-unit id="navigation.pages" xml:space="preserve">
+                <source>Changed pages</source>
+                <target>Geänderte Seiten</target>
+            </trans-unit>
+            <trans-unit id="navigation.help.review" xml:space="preserve">
+                <source>review page</source>
+                <target>Seite prüfen</target>
+            </trans-unit>
+            <trans-unit id="navigation.help.back" xml:space="preserve">
+                <source>back to the list</source>
+                <target>zurück zur Liste</target>
+            </trans-unit>
+            <trans-unit id="navigation.unchangedPage" xml:space="preserve">
+                <source>Unchanged page with changed subpages</source>
+                <target>Unveränderte Seite mit geänderten Unterseiten</target>
+            </trans-unit>
+            <trans-unit id="navigation.currentPage" xml:space="preserve">
+                <source>Current page</source>
+                <target>Aktuelle Seite</target>
+            </trans-unit>
+            <trans-unit id="review.reviewed" xml:space="preserve">
+                <source>Reviewed</source>
+                <target>Geprüft</target>
+            </trans-unit>
+            <trans-unit id="review.markReviewed" xml:space="preserve">
+                <source>Mark page as reviewed and collapse it</source>
+                <target>Seite als geprüft markieren und einklappen</target>
+            </trans-unit>
+            <trans-unit id="review.unmarkReviewed" xml:space="preserve">
+                <source>Remove the reviewed mark from this page</source>
+                <target>Prüfmarkierung dieser Seite entfernen</target>
+            </trans-unit>
+            <trans-unit id="review.progress" xml:space="preserve">
+                <source>{0}/{1} reviewed</source>
+                <target>{0}/{1} geprüft</target>
+            </trans-unit>
+            <trans-unit id="review.changedSinceReview" xml:space="preserve">
+                <source>Changed since your review</source>
+                <target>Seit der Prüfung geändert</target>
+            </trans-unit>
+            <trans-unit id="review.changedSinceReviewHelp" xml:space="preserve">
+                <source>This page was edited again after you marked it as reviewed. The reviewed mark was therefore removed, so please look through its changes once more.</source>
+                <target>Diese Seite wurde nach der Markierung als geprüft erneut bearbeitet. Die Markierung wurde deshalb entfernt – bitte die Änderungen noch einmal durchsehen.</target>
+            </trans-unit>
+            <trans-unit id="review.expand" xml:space="preserve">
+                <source>Show the changes of this page</source>
+                <target>Änderungen dieser Seite anzeigen</target>
+            </trans-unit>
+            <trans-unit id="review.collapse" xml:space="preserve">
+                <source>Hide the changes of this page</source>
+                <target>Änderungen dieser Seite ausblenden</target>
+            </trans-unit>
+            <trans-unit id="review.noChanges" xml:space="preserve">
+                <source>This workspace has no unpublished changes.</source>
+                <target>Dieser Arbeitsbereich hat keine unveröffentlichten Änderungen.</target>
+            </trans-unit>
+            <trans-unit id="review.loading" xml:space="preserve">
+                <source>Loading the changes…</source>
+                <target>Änderungen werden geladen…</target>
+            </trans-unit>
+            <trans-unit id="review.loadingFailed" xml:space="preserve">
+                <source>The changes of this workspace could not be loaded.</source>
+                <target>Die Änderungen dieses Arbeitsbereichs konnten nicht geladen werden.</target>
+            </trans-unit>
+            <trans-unit id="review.retry" xml:space="preserve">
+                <source>Try again</source>
+                <target>Erneut versuchen</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.title" xml:space="preserve">
+                <source>Keyboard shortcuts</source>
+                <target>Tastaturkürzel</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.open" xml:space="preserve">
+                <source>Show the keyboard shortcuts</source>
+                <target>Tastaturkürzel anzeigen</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.close" xml:space="preserve">
+                <source>Close</source>
+                <target>Schließen</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.groupPages" xml:space="preserve">
+                <source>Pages</source>
+                <target>Seiten</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.nextPage" xml:space="preserve">
+                <source>next page</source>
+                <target>nächste Seite</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.previousPage" xml:space="preserve">
+                <source>previous page</source>
+                <target>vorherige Seite</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.firstLastPage" xml:space="preserve">
+                <source>first / last page</source>
+                <target>erste / letzte Seite</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.groupChanges" xml:space="preserve">
+                <source>Changes</source>
+                <target>Änderungen</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.nextChange" xml:space="preserve">
+                <source>next change on the page</source>
+                <target>nächste Änderung der Seite</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.previousChange" xml:space="preserve">
+                <source>previous change on the page</source>
+                <target>vorherige Änderung der Seite</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.backToPage" xml:space="preserve">
+                <source>back to the page heading</source>
+                <target>zurück zur Seitenüberschrift</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.groupReview" xml:space="preserve">
+                <source>Review</source>
+                <target>Prüfung</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.toggleReviewed" xml:space="preserve">
+                <source>mark the page as reviewed / not reviewed</source>
+                <target>Seite als geprüft / ungeprüft markieren</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.toggleMode" xml:space="preserve">
+                <source>switch between change list and visual compare</source>
+                <target>zwischen Änderungsliste und visuellem Vergleich wechseln</target>
+            </trans-unit>
+            <trans-unit id="shortcuts.help" xml:space="preserve">
+                <source>show this overview</source>
+                <target>diese Übersicht anzeigen</target>
+            </trans-unit>
+            <trans-unit id="mode.label" xml:space="preserve">
+                <source>View</source>
+                <target>Ansicht</target>
+            </trans-unit>
+            <trans-unit id="mode.unified" xml:space="preserve">
+                <source>Change list</source>
+                <target>Änderungsliste</target>
+            </trans-unit>
+            <trans-unit id="mode.unifiedHelp" xml:space="preserve">
+                <source>Every change as a card with the changed words</source>
+                <target>Jede Änderung als Karte mit den geänderten Wörtern</target>
+            </trans-unit>
+            <trans-unit id="mode.visual" xml:space="preserve">
+                <source>Visual compare</source>
+                <target>Visueller Vergleich</target>
+            </trans-unit>
+            <trans-unit id="mode.visualHelp" xml:space="preserve">
+                <source>The page as it will look, with the changes marked in place</source>
+                <target>Die Seite, wie sie aussehen wird, mit den Änderungen an ihrer Stelle markiert</target>
+            </trans-unit>
+            <trans-unit id="visual.loading" xml:space="preserve">
+                <source>Loading the page…</source>
+                <target>Seite wird geladen…</target>
+            </trans-unit>
+            <trans-unit id="visual.unavailable" xml:space="preserve">
+                <source>The page could not be rendered for the visual compare.</source>
+                <target>Die Seite konnte für den visuellen Vergleich nicht dargestellt werden.</target>
+            </trans-unit>
+            <trans-unit id="visual.newPage" xml:space="preserve">
+                <source>New page: everything on it is published for the first time.</source>
+                <target>Neue Seite: alle Inhalte werden erstmals veröffentlicht.</target>
+            </trans-unit>
+            <trans-unit id="visual.removedPage" xml:space="preserve">
+                <source>Deleted page: shown as currently published, all of it is removed.</source>
+                <target>Gelöschte Seite: dargestellt wie derzeit veröffentlicht, alle Inhalte werden entfernt.</target>
+            </trans-unit>
+            <trans-unit id="visual.unplaced" xml:space="preserve">
+                <source>Deleted elements whose former place could not be determined</source>
+                <target>Gelöschte Elemente, deren frühere Position nicht ermittelt werden konnte</target>
+            </trans-unit>
+            <trans-unit id="visual.unlocated" xml:space="preserve">
+                <source>Not visible on the rendered page</source>
+                <target>Auf der dargestellten Seite nicht sichtbar</target>
+            </trans-unit>
+            <trans-unit id="visual.showInList" xml:space="preserve">
+                <source>Show this change in the change list</source>
+                <target>Diese Änderung in der Änderungsliste zeigen</target>
+            </trans-unit>
+            <trans-unit id="visual.legend" xml:space="preserve">
+                <source>Marker colours</source>
+                <target>Bedeutung der Markierungen</target>
+            </trans-unit>
+            <trans-unit id="visual.disabled" xml:space="preserve">
+                <source>The visual compare is switched off in this installation.</source>
+                <target>Der visuelle Vergleich ist in dieser Installation abgeschaltet.</target>
+            </trans-unit>
+            <trans-unit id="status.created" xml:space="preserve">
+                <source>created</source>
+                <target>erstellt</target>
+            </trans-unit>
+            <trans-unit id="status.edited" xml:space="preserve">
+                <source>changed</source>
+                <target>geändert</target>
+            </trans-unit>
+            <trans-unit id="status.deleted" xml:space="preserve">
+                <source>deleted</source>
+                <target>gelöscht</target>
+            </trans-unit>
+            <trans-unit id="status.moved" xml:space="preserve">
+                <source>moved</source>
+                <target>verschoben</target>
+            </trans-unit>
+            <trans-unit id="status.hidden" xml:space="preserve">
+                <source>hidden</source>
+                <target>ausgeblendet</target>
+            </trans-unit>
+            <trans-unit id="selection.all" xml:space="preserve">
+                <source>Select all changes</source>
+                <target>Alle Änderungen auswählen</target>
+            </trans-unit>
+            <trans-unit id="selection.page" xml:space="preserve">
+                <source>Select all changes of this page</source>
+                <target>Alle Änderungen dieser Seite auswählen</target>
+            </trans-unit>
+            <trans-unit id="selection.change" xml:space="preserve">
+                <source>Select this change</source>
+                <target>Diese Änderung auswählen</target>
+            </trans-unit>
+            <trans-unit id="selection.count" xml:space="preserve">
+                <source>{0} selected</source>
+                <target>{0} ausgewählt</target>
+            </trans-unit>
+            <trans-unit id="actions.publishSelected" xml:space="preserve">
+                <source>Publish selected changes to “{0}”</source>
+                <target>Ausgewählte Änderungen nach „{0}“ veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="actions.discardSelected" xml:space="preserve">
+                <source>Discard selected changes</source>
+                <target>Ausgewählte Änderungen verwerfen</target>
+            </trans-unit>
+            <trans-unit id="actions.publishAll" xml:space="preserve">
+                <source>Publish all changes to “{0}”</source>
+                <target>Alle Änderungen nach „{0}“ veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="actions.discardAll" xml:space="preserve">
+                <source>Discard all changes</source>
+                <target>Alle Änderungen verwerfen</target>
+            </trans-unit>
+            <trans-unit id="actions.publishChange" xml:space="preserve">
+                <source>Publish this change</source>
+                <target>Diese Änderung veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="actions.discardChange" xml:space="preserve">
+                <source>Discard this change</source>
+                <target>Diese Änderung verwerfen</target>
+            </trans-unit>
+            <trans-unit id="actions.cantPublishInNewPage" xml:space="preserve">
+                <source>A single element of a new page cannot be published on its own.</source>
+                <target>Ein einzelnes Element einer neuen Seite kann nicht für sich veröffentlicht werden.</target>
+            </trans-unit>
+            <trans-unit id="actions.openPage" xml:space="preserve">
+                <source>Open the page in this workspace</source>
+                <target>Seite in diesem Arbeitsbereich öffnen</target>
+            </trans-unit>
+            <trans-unit id="actions.editPage" xml:space="preserve">
+                <source>Edit the page</source>
+                <target>Seite bearbeiten</target>
+            </trans-unit>
+            <trans-unit id="actions.back" xml:space="preserve">
+                <source>Back</source>
+                <target>Zurück</target>
+            </trans-unit>
+            <trans-unit id="actions.cancel" xml:space="preserve">
+                <source>Cancel</source>
+                <target>Abbrechen</target>
+            </trans-unit>
+            <trans-unit id="actions.confirmDiscardSelected" xml:space="preserve">
+                <source>Really discard the selected changes?</source>
+                <target>Ausgewählte Änderungen wirklich verwerfen?</target>
+            </trans-unit>
+            <trans-unit id="value.yes" xml:space="preserve">
+                <source>Yes</source>
+                <target>Ja</target>
+            </trans-unit>
+            <trans-unit id="value.no" xml:space="preserve">
+                <source>No</source>
+                <target>Nein</target>
+            </trans-unit>
+            <trans-unit id="value.empty" xml:space="preserve">
+                <source>empty</source>
+                <target>leer</target>
+            </trans-unit>
+            <trans-unit id="value.formatNone" xml:space="preserve">
+                <source>no formatting</source>
+                <target>ohne Formatierung</target>
+            </trans-unit>
+            <trans-unit id="diff.deleted" xml:space="preserve">
+                <source>deleted:</source>
+                <target>gelöscht:</target>
+            </trans-unit>
+            <trans-unit id="diff.added" xml:space="preserve">
+                <source>added:</source>
+                <target>hinzugefügt:</target>
+            </trans-unit>
+            <trans-unit id="visibility.label" xml:space="preserve">
+                <source>Visibility</source>
+                <target>Sichtbarkeit</target>
+            </trans-unit>
+            <trans-unit id="visibility.hidden" xml:space="preserve">
+                <source>Element was hidden</source>
+                <target>Element wurde ausgeblendet</target>
+            </trans-unit>
+            <trans-unit id="visibility.shown" xml:space="preserve">
+                <source>Element was made visible</source>
+                <target>Element wurde eingeblendet</target>
+            </trans-unit>
+            <trans-unit id="change.noVisibleChanges" xml:space="preserve">
+                <source>No visible changes (internal update)</source>
+                <target>Keine sichtbaren Änderungen (interne Aktualisierung)</target>
+            </trans-unit>
+            <trans-unit id="change.technicalOnly" xml:space="preserve">
+                <source>Changed – the wording is unchanged, please check details in the preview.</source>
+                <target>Geändert – der Wortlaut ist unverändert, Details bitte in der Vorschau prüfen.</target>
+            </trans-unit>
+            <trans-unit id="change.identicalToOriginal" xml:space="preserve">
+                <source>Edited, but matching the published version again – no content differences found.</source>
+                <target>Bearbeitet, aber wieder auf dem Stand der veröffentlichten Version – keine inhaltlichen Unterschiede gefunden.</target>
+            </trans-unit>
+            <trans-unit id="change.lastModified" xml:space="preserve">
+                <source>Last change</source>
+                <target>Letzte Änderung</target>
+            </trans-unit>
+            <trans-unit id="system.hiddenBefore" xml:space="preserve">
+                <source>Hide before</source>
+                <target>Verstecken bis</target>
+            </trans-unit>
+            <trans-unit id="system.hiddenAfter" xml:space="preserve">
+                <source>Hide after</source>
+                <target>Verstecken nach</target>
+            </trans-unit>
+            <trans-unit id="system.hiddenInIndex" xml:space="preserve">
+                <source>Hide in menus</source>
+                <target>In Menüs verbergen</target>
+            </trans-unit>
+            <trans-unit id="system.accessRoles" xml:space="preserve">
+                <source>Access roles</source>
+                <target>Zugriffsrollen</target>
+            </trans-unit>
+            <trans-unit id="system.nodeType" xml:space="preserve">
+                <source>Type</source>
+                <target>Typ</target>
+            </trans-unit>
+            <trans-unit id="system.path" xml:space="preserve">
+                <source>Path</source>
+                <target>Pfad</target>
+            </trans-unit>
+            <trans-unit id="system.position" xml:space="preserve">
+                <source>Position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="position.internalOnly" xml:space="preserve">
+                <source>Internal re-sorting – the visible order stays unchanged.</source>
+                <target>Interne Neusortierung – die sichtbare Reihenfolge bleibt unverändert.</target>
+            </trans-unit>
+            <trans-unit id="position.ordinalOfTotal" xml:space="preserve">
+                <source>{0} of {1}</source>
+                <target>{0} von {1}</target>
+            </trans-unit>
+            <trans-unit id="link.detail" xml:space="preserve">
+                <source>Link “{0}”</source>
+                <target>Link „{0}“</target>
+            </trans-unit>
+            <trans-unit id="link.detailAttribute" xml:space="preserve">
+                <source>Link “{0}” – {1}</source>
+                <target>Link „{0}“ – {1}</target>
+            </trans-unit>
+            <trans-unit id="link.attribute.target" xml:space="preserve">
+                <source>window</source>
+                <target>Fenster</target>
+            </trans-unit>
+            <trans-unit id="link.attribute.title" xml:space="preserve">
+                <source>title</source>
+                <target>Titel</target>
+            </trans-unit>
+            <trans-unit id="link.target.newTab" xml:space="preserve">
+                <source>New tab</source>
+                <target>Neuer Tab</target>
+            </trans-unit>
+            <trans-unit id="link.target.sameTab" xml:space="preserve">
+                <source>Same tab</source>
+                <target>Gleicher Tab</target>
+            </trans-unit>
+            <trans-unit id="link.none" xml:space="preserve">
+                <source>not linked</source>
+                <target>nicht verlinkt</target>
+            </trans-unit>
+            <trans-unit id="formatting.detail" xml:space="preserve">
+                <source>“{0}”</source>
+                <target>„{0}“</target>
+            </trans-unit>
+            <trans-unit id="format.bold" xml:space="preserve">
+                <source>bold</source>
+                <target>fett</target>
+            </trans-unit>
+            <trans-unit id="format.italic" xml:space="preserve">
+                <source>italic</source>
+                <target>kursiv</target>
+            </trans-unit>
+            <trans-unit id="format.underline" xml:space="preserve">
+                <source>underlined</source>
+                <target>unterstrichen</target>
+            </trans-unit>
+            <trans-unit id="format.strikethrough" xml:space="preserve">
+                <source>struck through</source>
+                <target>durchgestrichen</target>
+            </trans-unit>
+            <trans-unit id="format.subscript" xml:space="preserve">
+                <source>subscript</source>
+                <target>tiefgestellt</target>
+            </trans-unit>
+            <trans-unit id="format.superscript" xml:space="preserve">
+                <source>superscript</source>
+                <target>hochgestellt</target>
+            </trans-unit>
+            <trans-unit id="format.code" xml:space="preserve">
+                <source>code</source>
+                <target>Code</target>
+            </trans-unit>
+            <trans-unit id="format.highlight" xml:space="preserve">
+                <source>highlighted</source>
+                <target>hervorgehoben</target>
+            </trans-unit>
+            <trans-unit id="format.heading" xml:space="preserve">
+                <source>Heading {0}</source>
+                <target>Überschrift {0}</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

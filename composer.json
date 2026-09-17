@@ -1,0 +1,32 @@
+{
+    "name": "neosidekick/workspace-review",
+    "type": "neos-package",
+    "description": "Human-readable review of workspace changes for Neos CMS: a React module with word-level text diffs, editor-aware value labels, a page tree, reviewer progress, keyboard review and a visual compare of the rendered pages.",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Roland Schütz",
+            "email": "rs@codeq.at"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "neos/neos": "^8.3",
+        "t3n/graphql": "^3.0",
+        "neos/diff": "*",
+        "ext-dom": "*"
+    },
+    "conflict": {
+        "codeq/workspace-review": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "NEOSidekick\\WorkspaceReview\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "NEOSidekick.WorkspaceReview"
+        }
+    }
+}

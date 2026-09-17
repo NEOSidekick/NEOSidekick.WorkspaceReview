@@ -1,0 +1,32 @@
+# Replace the controller of the existing Management > Workspaces module.
+# The module path stays "management/workspaces", so all existing privilege
+# targets, menu entries and the publish dropdown link keep working; only the
+# implementation is swapped.
+Neos:
+  Neos:
+    modules:
+      management:
+        submodules:
+          workspaces:
+            controller: 'NEOSidekick\WorkspaceReview\Controller\Module\Management\WorkspacesController'
+            additionalResources:
+              styleSheets:
+                - 'resource://NEOSidekick.WorkspaceReview/Public/Assets/main.bundle.css'
+              javaScripts:
+                - 'resource://NEOSidekick.WorkspaceReview/Public/Assets/main.bundle.js'
+    userInterface:
+      translation:
+        autoInclude:
+          # Without this the client's NeosCMS.I18n.translate() only ever
+          # returns the fallbacks it was called with.
+          'NEOSidekick.WorkspaceReview': ['Main']
+    fusion:
+      autoInclude:
+        # Marks content elements for the visual compare, see Root.fusion.
+        'NEOSidekick.WorkspaceReview': true
+
+    Ui:
+      frontendConfiguration:
+        'NEOSidekick.WorkspaceReview':
+          # Kill switch for the experimental visual compare.
+          visualCompare: true

@@ -1,0 +1,66 @@
+{namespace neos=Neos\Neos\ViewHelpers}
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+</f:section>
+
+<f:section name="content">
+
+	<f:if condition="{hasChanges}">
+		<f:then>
+			<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'Neos.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
+
+			<f:comment>The two forms every write of the review posts to. They stay
+			empty: React renders the element checkboxes and the buttons into them
+			from the outside through the "form" attribute, so the review root can
+			be a sibling of both instead of being nested in one of them. Fluid
+			adds the CSRF token and the referrer fields to each form.</f:comment>
+			<f:form id="publishOrDiscardNodes" action="publishOrDiscardNodes">
+				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace}"/>
+			</f:form>
+			<f:form action="index" id="postHelper" method="post"></f:form>
+
+			<f:comment>Every URI is built by the controller: the module ones carry
+			the moduleArguments namespace, the GraphQL one the "json" format its
+			route requires.</f:comment>
+			<div id="workspace-review-app"
+				 data-workspace="{selectedWorkspace.name}"
+				 data-graphql="{graphQlUri}"
+				 data-features="{features}"
+				 data-uri-rebase="{rebaseUri}"
+				 data-uri-publish-workspace="{publishWorkspaceUri}"
+				 data-uri-discard-workspace="{discardWorkspaceUri}"></div>
+
+			<f:comment>The confirmation of "discard all changes", opened by the
+			review footer with data-toggle="modal" href="#discard" exactly as the
+			core template's button does.</f:comment>
+			<div class="neos-hide" id="discard">
+				<div class="neos-modal-centered">
+					<div class="neos-modal-content">
+						<div class="neos-modal-header">
+							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'Neos.Neos')}</div>
+						</div>
+						<div class="neos-modal-footer">
+							<button href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'Neos.Neos')}</button>
+							<button form="postHelper" formaction="{discardWorkspaceUri}" type="submit" class="neos-button neos-button-danger">
+								<i class="fas fa-trash-alt icon-white"></i>
+								{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="neos-modal-backdrop neos-in"></div>
+			</div>
+		</f:then>
+		<f:else>
+			<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'Neos.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
+			<p>{neos:backend.translate(id: 'workspaces.thereAreNoUnpublishedChanges', source: 'Modules', package: 'Neos.Neos')}</p>
+			<div class="neos-footer">
+				<div class="pull-left">
+					<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', source: 'Main', package: 'Neos.Neos')}</f:link.action>
+				</div>
+			</div>
+		</f:else>
+	</f:if>
+</f:section>

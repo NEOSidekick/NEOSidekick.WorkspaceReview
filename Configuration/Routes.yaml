@@ -1,0 +1,23 @@
+# The read-only review API. The subroute carries the endpoint name, as
+# Flowpack.Media.Ui does for its own endpoint.
+-
+  name: 'Workspace review API'
+  uriPattern: 'neos/graphql/<GraphQLSubroutes>'
+  subRoutes:
+    'GraphQLSubroutes':
+      package: 't3n.GraphQL'
+      variables:
+        'endpoint': 'workspace-review'
+
+# The visual compare loads pages through this route (see PreviewController).
+# It sits before the Neos.Neos routes (Settings.Flow.yaml), otherwise the
+# backend module route "neos/{module}" would claim the path.
+-
+  name: 'Workspace review: page rendering for the visual compare'
+  uriPattern: 'neos/workspace-review/preview'
+  defaults:
+    '@package': 'NEOSidekick.WorkspaceReview'
+    '@controller': 'Preview'
+    '@action': 'show'
+    '@format': 'html'
+  appendExceedingArguments: true
