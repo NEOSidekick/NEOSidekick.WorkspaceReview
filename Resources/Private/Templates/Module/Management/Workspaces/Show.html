@@ -9,12 +9,15 @@
 	<f:if condition="{hasChanges}">
 		<f:then>
 
-			<f:comment>The two forms every write of the review posts to. They stay
+			<f:comment>The forms every write of the review posts to. They stay
 			empty: React renders the element checkboxes and the buttons into them
 			from the outside through the "form" attribute, so the review root can
-			be a sibling of both instead of being nested in one of them. Fluid
+			be a sibling of them instead of being nested in one of them. Fluid
 			adds the CSRF token and the referrer fields to each form.</f:comment>
 			<f:form id="publishOrDiscardNodes" action="publishOrDiscardNodes">
+				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace}"/>
+			</f:form>
+			<f:form id="discardReviewNodes" action="publishOrDiscardNodes">
 				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace}"/>
 			</f:form>
 			<f:form action="index" id="postHelper" method="post"></f:form>

@@ -142,7 +142,12 @@ export function createVisualFrame(options: FrameOptions): VisualFrame {
         target.addEventListener(
             'click',
             (event) => {
-                const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
+                // DOM constructors belong to their window: iframe elements
+                // are not instances of the parent window's Element.
+                const FrameElement = target.defaultView?.Element;
+                const anchor = FrameElement && event.target instanceof FrameElement
+                    ? event.target.closest('a[href]')
+                    : null;
                 if (anchor) event.preventDefault();
             },
             true

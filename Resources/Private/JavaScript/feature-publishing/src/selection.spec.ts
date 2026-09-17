@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import {
     allSelectionState,
+    discardScope,
     pageSelectionState,
     propagateUpwards,
     selectAll,
@@ -134,5 +135,32 @@ describe('selection propagation', () => {
         strictEqual(allSelectionState(pages, new Set()), 'none');
         strictEqual(pageSelectionState(newParent, new Set(['parent-a'])), 'some');
         strictEqual(pageSelectionState(newParent, all), 'all');
+    });
+
+    it('discards only the shown page without its hidden publishing dependencies', () => {
+        const newChild = { ...editedPage, isNew: true };
+        const selected = selectAll([newParent, newChild], [newChild], true);
+        deepStrictEqual([...discardScope([newChild], selected)], ['child-a']);
+        deepStrictEqual([...discardScope([newChild], new Set())], ['child-a']);
+    });
+
+    it('discards only selected shown changes and keeps dimension variants separate', () => {
+        const page = {
+            ...editedPage,
+            changes: [
+                { contextPath: '/child@user-admin;language=de' },
+                { contextPath: '/child/main/text@user-admin;language=de' },
+            ],
+        };
+        deepStrictEqual(
+            [
+                ...discardScope(
+                    [page],
+                    new Set(['/child@user-admin;language=de', '/child@user-admin;language=en', 'parent-a']),
+                ),
+            ],
+            ['/child@user-admin;language=de'],
+        );
+        deepStrictEqual([...discardScope([page], new Set(['parent-a']))], []);
     });
 });

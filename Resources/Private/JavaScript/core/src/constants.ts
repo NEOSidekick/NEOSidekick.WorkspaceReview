@@ -12,6 +12,7 @@ export const NODE_ATTRIBUTE = 'data-neosidekick-review-node';
 
 /** The Fluid forms the React root is rendered next to, see the architecture §3.1. */
 export const PUBLISH_FORM_ID = 'publishOrDiscardNodes';
+export const DISCARD_FORM_ID = 'discardReviewNodes';
 export const POST_HELPER_FORM_ID = 'postHelper';
 export const NODES_FIELD_NAME = 'moduleArguments[nodes][]';
 export const ACTION_FIELD_NAME = 'moduleArguments[action]';

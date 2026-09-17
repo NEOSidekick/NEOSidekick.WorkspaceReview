@@ -14,6 +14,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
@@ -100,6 +101,12 @@ class NodeChangeService
      * @var ResourceManager
      */
     protected $resourceManager;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * @Flow\Inject
@@ -447,6 +454,28 @@ class NodeChangeService
         $isRemoved = $changedNode->isRemoved();
 
         if (
+            $this->isAssetList($originalValue) && $this->isAssetList($changedValue)
+            && (!empty($originalValue) || !empty($changedValue))
+        ) {
+            $originalAssets = $originalValue ?? [];
+            $changedAssets = $isRemoved ? [] : ($changedValue ?? []);
+            if ($this->assetIdentifiers($originalAssets) === $this->assetIdentifiers($changedAssets)) {
+                return [];
+            }
+            $originalLabel = $this->renderAssetListLabel($originalAssets);
+            $changedLabel = $this->renderAssetListLabel($changedAssets);
+            // Equally named files must still expose replacements and reordering.
+            if ($originalLabel === $changedLabel) {
+                $originalLabel = $this->renderAssetListLabel($originalAssets, true);
+                $changedLabel = $this->renderAssetListLabel($changedAssets, true);
+            }
+            return [$this->entry('VALUE', $propertyName, $propertyLabel, [
+                'original' => $originalLabel,
+                'changed' => $changedLabel,
+            ])];
+        }
+
+        if (
             ($originalValue instanceof ImageInterface || $originalValue === null)
             && ($changedValue instanceof ImageInterface || $changedValue === null)
             && ($originalValue !== null || $changedValue !== null)
@@ -537,6 +566,61 @@ class NodeChangeService
             return $this->renderTechnicalOnlyNote($propertyName, $propertyLabel, $originalValue, $changedValue, $isRemoved);
         }
         return $entries;
+    }
+
+    /** @param mixed $value */
+    protected function isAssetList($value): bool
+    {
+        if ($value === null) {
+            return true;
+        }
+        if (!is_array($value)) {
+            return false;
+        }
+        foreach ($value as $asset) {
+            if (!$asset instanceof AssetInterface) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Persisted identity stays stable across Doctrine instances and includes
+     * image variants. Array order is part of a gallery's published content.
+     *
+     * @param AssetInterface[] $assets
+     * @return string[]
+     */
+    protected function assetIdentifiers(array $assets): array
+    {
+        return array_values(array_map(
+            fn(AssetInterface $asset): string => $this->persistenceManager->getIdentifierByObject($asset) ?? spl_object_hash($asset),
+            $assets
+        ));
+    }
+
+    /** @param AssetInterface[] $assets */
+    protected function renderAssetListLabel(array $assets, bool $includeIdentifiers = false): string
+    {
+        if ($assets === []) {
+            return $this->translate('value.empty');
+        }
+        $identifiers = $includeIdentifiers ? $this->assetIdentifiers($assets) : [];
+        $labels = [];
+        foreach (array_values($assets) as $index => $asset) {
+            $loaded = $this->loadAsset($asset);
+            if (is_string($loaded)) {
+                $label = $loaded;
+            } else {
+                $label = $this->propertyLabelService->cleanLabel((string)$loaded->getTitle());
+                if ($label === '') {
+                    $label = $this->propertyLabelService->cleanLabel((string)$loaded->getResource()?->getFilename());
+                }
+            }
+            $labels[] = $includeIdentifiers ? $label . ' (' . $identifiers[$index] . ')' : $label;
+        }
+        return implode(', ', $labels);
     }
 
     /**

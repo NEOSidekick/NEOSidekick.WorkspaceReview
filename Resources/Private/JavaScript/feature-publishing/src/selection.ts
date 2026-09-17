@@ -80,6 +80,17 @@ export function selectAll(allPages: SelectablePage[], shownPages: SelectablePage
     return shownPages.reduce((next, page) => togglePage(allPages, page, true, next), new Set<string>());
 }
 
+/** Discard never needs the hidden ancestors added for publishing a shown page. */
+export function discardScope(shownPages: SelectablePage[], selection: Selection): Set<string> {
+    const scope = new Set<string>();
+    shownPages.forEach((page) =>
+        page.changes.forEach(({ contextPath }) => {
+            if (selection.size === 0 || selection.has(contextPath)) scope.add(contextPath);
+        }),
+    );
+    return scope;
+}
+
 export type SelectionState = 'none' | 'some' | 'all';
 
 export function pageSelectionState(page: SelectablePage, selection: Selection): SelectionState {

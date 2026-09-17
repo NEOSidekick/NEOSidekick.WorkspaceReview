@@ -12,6 +12,9 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Media\Domain\Model\Image;
 use NEOSidekick\WorkspaceReview\Domain\Diff\RichTextDiffer;
 use NEOSidekick\WorkspaceReview\Domain\Diff\WordDiffer;
 use NEOSidekick\WorkspaceReview\Domain\Service\NodeChangeService;
@@ -664,7 +667,71 @@ class NodeChangeServiceTest extends UnitTestCase
         self::assertSame($publishedPage, $service->getOriginalNode($unchangedPage));
     }
 
-    private function createService(?NodeInterface $originalNode): NodeChangeService
+    /**
+     * @test
+     * @dataProvider assetListChanges
+     */
+    public function comparesGalleryAssetsByIdentityAndOrder(?array $before, ?array $after, bool $removed = false): void
+    {
+        $identifiers = [];
+        $assets = function (?array $ids) use (&$identifiers): ?array {
+            if ($ids === null) {
+                return null;
+            }
+            return array_map(function (string $id) use (&$identifiers): Image {
+                $asset = $this->createMock(Image::class);
+                $resource = $this->createMock(PersistentResource::class);
+                $resource->method('getFilename')->willReturn('image.jpg');
+                $asset->method('getResource')->willReturn($resource);
+                $asset->method('getTitle')->willReturn('');
+                $identifiers[spl_object_id($asset)] = $id;
+                return $asset;
+            }, $ids);
+        };
+        $type = $this->createNodeType('Vendor.Site:Gallery');
+        $original = $this->createNode($type, ['images' => $assets($before)]);
+        $changed = $this->createNode($type, ['images' => $assets($after)], 1, null, '/sites/example/moved', $removed);
+        $persistenceManager = $this->createMock(PersistenceManagerInterface::class);
+        $persistenceManager->method('getIdentifierByObject')->willReturnCallback(
+            static fn($asset) => $identifiers[spl_object_id($asset)]
+        );
+
+        $changes = $this->createService($original, $persistenceManager)->renderContentChanges($changed);
+
+        if ($before === $after && !$removed) {
+            self::assertSame(['_note'], array_keys($changes));
+            self::assertSame('change.identicalToOriginal', $changes['_note']['message']);
+            return;
+        }
+        self::assertSame(['images'], array_keys($changes));
+        self::assertSame('VALUE', $changes['images']['kind']);
+        self::assertNotSame($changes['images']['original'], $changes['images']['changed']);
+        if (!empty($before) && !empty($after) && count($before) === count($after) && !$removed) {
+            self::assertSame(implode(', ', array_map(static fn($id) => 'image.jpg (' . $id . ')', $before)), $changes['images']['original']);
+            self::assertSame(implode(', ', array_map(static fn($id) => 'image.jpg (' . $id . ')', $after)), $changes['images']['changed']);
+        }
+        if (empty($after) || $removed) {
+            self::assertSame('value.empty', $changes['images']['changed']);
+        }
+    }
+
+    public static function assetListChanges(): array
+    {
+        return [
+            'replace equally named images' => [['a'], ['b']],
+            'reorder equally named images' => [['a', 'b'], ['b', 'a']],
+            'add an image' => [['a'], ['a', 'b']],
+            'remove an image' => [['a', 'b'], ['a']],
+            'clear the gallery' => [['a'], []],
+            'unset the gallery' => [['a'], null],
+            'fill an empty gallery' => [[], ['a']],
+            'set the gallery for the first time' => [null, ['a']],
+            'same assets in different instances' => [['a', 'b'], ['a', 'b']],
+            'delete the gallery' => [['a'], ['a'], true],
+        ];
+    }
+
+    private function createService(?NodeInterface $originalNode, ?PersistenceManagerInterface $persistenceManager = null): NodeChangeService
     {
         $propertyLabelService = new class extends PropertyLabelService {
             public function translate(string $id, array $arguments = [], ?int $quantity = null): string
@@ -685,7 +752,7 @@ class NodeChangeServiceTest extends UnitTestCase
             }
         };
 
-        return new class ($originalNode, $propertyLabelService, $wordDiffer, $positionService) extends NodeChangeService {
+        $service = new class ($originalNode, $propertyLabelService, $wordDiffer, $positionService) extends NodeChangeService {
             private ?NodeInterface $original;
 
             public function __construct(
@@ -706,6 +773,10 @@ class NodeChangeServiceTest extends UnitTestCase
                 return $this->original;
             }
         };
+        if ($persistenceManager !== null) {
+            $this->inject($service, 'persistenceManager', $persistenceManager);
+        }
+        return $service;
     }
 
     private function createNodeType(

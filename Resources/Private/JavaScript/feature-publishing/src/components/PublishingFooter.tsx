@@ -4,6 +4,7 @@ import { Button, Icon } from '@neos-project/react-ui-components';
 import {
     ACTION_FIELD_NAME,
     Dialog,
+    DISCARD_FORM_ID,
     NODES_FIELD_NAME,
     POST_HELPER_FORM_ID,
     PUBLISH_FORM_ID,
@@ -15,7 +16,7 @@ import {
 } from '@neosidekick/workspace-review-core';
 
 import styles from './PublishingFooter.module.css';
-import { selectAll } from '../selection';
+import { discardScope, selectAll } from '../selection';
 import { useSelection } from '../useSelection';
 
 type Confirmation = 'none' | 'selected' | 'workspace' | 'shown';
@@ -48,9 +49,8 @@ export function PublishingFooter() {
 
     const hasSelection = selection.size > 0;
     // A document filter narrows the batch actions to the shown pages. The core
-    // actions for the whole workspace would publish or discard the hidden pages
-    // too, so everything shown goes through the batch form as if it were
-    // selected - with the new or moved pages it lives in, which may be hidden.
+    // publish action would include hidden pages too. Publishing shown changes
+    // still requires their new or moved ancestors; discarding does not.
     const shownScope = useMemo(
         () => (isFiltered ? [...selectAll(allPages, pages, true)] : []),
         [isFiltered, allPages, pages],
@@ -63,6 +63,8 @@ export function PublishingFooter() {
     // Selected changes of hidden pages have no checkbox that could post them.
     const hiddenSelection = [...selection].filter((contextPath) => !shownContextPaths.has(contextPath));
     const changeCount = isFiltered ? shownScope.length : countChangedNodes(pages);
+    const discardContextPaths = useMemo(() => [...discardScope(pages, selection)], [pages, selection]);
+    const discardCount = discardContextPaths.length;
     const hasOtherChanges = isFiltered && allPages.length > pages.length;
     // While a card publishes or discards itself, the form carries its node
     // alone; a batch submit would post that single node under another action.
@@ -103,12 +105,12 @@ export function PublishingFooter() {
                         <Button
                             style="error"
                             hoverStyle="error"
-                            disabled={isPending}
+                            disabled={isPending || discardCount === 0}
                             onClick={() => setConfirmation('selected')}
                             title={translate('actions.discardSelected', 'Discard selected changes')}
                         >
                             <Icon icon="trash-alt" />
-                            {translate('actions.discardSelectedCount', 'Discard {0} selected', [selection.size])}
+                            {translate('actions.discardSelectedCount', 'Discard {0} selected', [discardCount])}
                         </Button>
                         {workspace.canPublishToBase && (
                             <Button
@@ -137,9 +139,9 @@ export function PublishingFooter() {
                             onClick={() => setConfirmation(isFiltered ? 'shown' : 'workspace')}
                         >
                             <Icon icon="trash-alt" />
-                            {changeCount === 1
+                            {discardCount === 1
                                 ? translate('actions.discardOne', 'Discard the change')
-                                : translate('actions.discardAllCount', 'Discard all {0} changes', [changeCount])}
+                                : translate('actions.discardAllCount', 'Discard all {0} changes', [discardCount])}
                         </Button>
                         {workspace.canPublishToBase && (
                             <Button
@@ -175,6 +177,19 @@ export function PublishingFooter() {
                         key={contextPath}
                         type="hidden"
                         form={PUBLISH_FORM_ID}
+                        name={NODES_FIELD_NAME}
+                        value={contextPath}
+                    />
+                ))}
+
+            {/* A separate form keeps publishing dependencies and checked boxes
+                out of the discard payload, including in the visual view. */}
+            {!singleAction &&
+                discardContextPaths.map((contextPath) => (
+                    <input
+                        key={contextPath}
+                        type="hidden"
+                        form={DISCARD_FORM_ID}
                         name={NODES_FIELD_NAME}
                         value={contextPath}
                     />
@@ -234,7 +249,7 @@ export function PublishingFooter() {
                             type="submit"
                             style="error"
                             hoverStyle="error"
-                            form={PUBLISH_FORM_ID}
+                            form={DISCARD_FORM_ID}
                             name={ACTION_FIELD_NAME}
                             value="discard"
                         >
@@ -252,7 +267,7 @@ export function PublishingFooter() {
                       ])
                     : confirmation === 'shown'
                       ? translate('actions.confirmDiscardShown', 'Really discard all {0} shown changes in “{1}”?', [
-                            changeCount,
+                            discardCount,
                             workspace.title || workspace.name,
                         ])
                       : translate('actions.confirmDiscardSelected', 'Really discard the selected changes in “{0}”?', [
