@@ -65,10 +65,13 @@ class QueryResolver
         if (
             !$workspace instanceof Workspace
             || $workspace->getBaseWorkspace() === null
-            || !$this->userService->currentUserCanReadWorkspace($workspace)
+            || (
+                !$this->userService->currentUserCanReadWorkspace($workspace)
+                && !$this->userService->currentUserCanManageWorkspace($workspace)
+            )
         ) {
-            // One message for "does not exist", "is not reviewable" and "is not
-            // yours", so the API does not tell which of the three applies.
+            // The workspace module also lists private workspaces the user may manage.
+            // Keep missing, non-reviewable and unauthorized workspaces indistinguishable.
             throw new UserError(sprintf('No reviewable workspace "%s" is available.', $name));
         }
 

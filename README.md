@@ -2,7 +2,7 @@
 
 **Understand exactly what will change before publishing a Neos workspace.**
 
-The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, keyboard review, a visual compare of the rendered page and a review narrowed to a single page. Publishing, discarding and the module path keep their existing behavior. The preview requires backend access and checks read access to private workspaces.
+The package replaces the review view of the Neos backend module *Management → Workspaces* with a React application: a page tree of the changed pages, one card per changed element with word-level text diffs, keyboard review, a visual compare of the rendered page and a review narrowed to a single page. Publishing, discarding and the module path keep their existing behavior. Reviewing and previewing private workspaces requires backend access and permission to read or manage the workspace.
 
 As AI agents like [NEOSidekick v3](https://neosidekick.com/) change content, having a review that shows all changes becomes essential.
 

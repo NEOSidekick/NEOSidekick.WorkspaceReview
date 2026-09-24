@@ -44,6 +44,19 @@ class QueryResolverTest extends UnitTestCase
         $resolver->workspace(null, ['name' => 'user-someone'], $this->createContext());
     }
 
+    /** @test */
+    public function workspaceAllowsAnAuthorizedManagerOfAnotherOwnersPrivateWorkspace(): void
+    {
+        $workspace = $this->createWorkspace('private-review', true);
+        $context = $this->createContext();
+        $review = ['name' => 'private-review', 'sites' => []];
+        $reviewService = $this->createMock(ReviewService::class);
+        $reviewService->expects(self::once())->method('build')->with($workspace, $context)->willReturn($review);
+        $resolver = $this->createResolver($workspace, false, $reviewService, true);
+
+        self::assertSame($review, $resolver->workspace(null, ['name' => 'private-review'], $context));
+    }
+
     /**
      * Live has no base workspace, so there is nothing a review could compare
      * it against - and the user service would allow reading it.
@@ -52,7 +65,7 @@ class QueryResolverTest extends UnitTestCase
      */
     public function workspaceRefusesTheLiveWorkspace(): void
     {
-        $resolver = $this->createResolver($this->createWorkspace('live', false), true);
+        $resolver = $this->createResolver($this->createWorkspace('live', false), true, null, true);
 
         $this->expectException(UserError::class);
         $resolver->workspace(null, ['name' => 'live'], $this->createContext());
@@ -61,7 +74,7 @@ class QueryResolverTest extends UnitTestCase
     /** @test */
     public function workspaceRefusesAnUnknownWorkspace(): void
     {
-        $resolver = $this->createResolver(null, true);
+        $resolver = $this->createResolver(null, true, null, true);
 
         $this->expectException(UserError::class);
         $resolver->workspace(null, ['name' => 'does-not-exist'], $this->createContext());
@@ -82,7 +95,12 @@ class QueryResolverTest extends UnitTestCase
         return $this->getMockBuilder(ReviewContext::class)->disableOriginalConstructor()->getMock();
     }
 
-    private function createResolver(?Workspace $workspace, bool $canRead, ?ReviewService $reviewService = null): QueryResolver
+    private function createResolver(
+        ?Workspace $workspace,
+        bool $canRead,
+        ?ReviewService $reviewService = null,
+        bool $canManage = false
+    ): QueryResolver
     {
         // findOneByName is a magic finder of Flow's Repository, so the mock has
         // to be told to add it rather than to replace an existing method.
@@ -94,6 +112,7 @@ class QueryResolverTest extends UnitTestCase
 
         $userService = $this->createMock(UserService::class);
         $userService->method('currentUserCanReadWorkspace')->willReturn($canRead);
+        $userService->method('currentUserCanManageWorkspace')->willReturn($canManage);
 
         return new class ($workspaceRepository, $userService, $reviewService ?? $this->createMock(ReviewService::class)) extends QueryResolver {
             public function __construct(

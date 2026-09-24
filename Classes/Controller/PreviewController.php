@@ -43,7 +43,12 @@ class PreviewController extends ActionController
     public function showAction(NodeInterface $node): void
     {
         $workspace = $node->getContext()->getWorkspace();
-        if ($workspace !== null && !$workspace->isPublicWorkspace() && !$this->userService->currentUserCanReadWorkspace($workspace)) {
+        if (
+            $workspace !== null
+            && !$workspace->isPublicWorkspace()
+            && !$this->userService->currentUserCanReadWorkspace($workspace)
+            && !$this->userService->currentUserCanManageWorkspace($workspace)
+        ) {
             throw new AccessDeniedException('The current user may not read workspace "' . $workspace->getName() . '".', 1757600000);
         }
 
