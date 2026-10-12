@@ -20,7 +20,7 @@ class NodeTypeIconServiceTest extends UnitTestCase
         self::assertSame($expected, (new NodeTypeIconService())->normalize($icon));
     }
 
-    public function icons(): array
+    public static function icons(): array
     {
         return [
             'plain name' => ['globe', 'fas fa-globe'],

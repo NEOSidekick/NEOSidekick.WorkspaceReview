@@ -2,13 +2,38 @@
     padding-bottom: 12px;
 }
 
+.titleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
 /* The class is repeated to outweigh the heading rules of the backend stylesheet. */
 .title.title {
+    min-width: 0;
     margin: 0;
     font-size: 28px;
     font-weight: 400;
     line-height: 34px;
     color: var(--theme-textOnGray);
+}
+
+.brand {
+    display: inline-flex;
+    flex: 0 0 auto;
+    padding: 3px;
+    outline-offset: 2px;
+}
+
+.brand img {
+    display: block;
+    width: 118px;
+    height: 28px;
+}
+
+.brand:focus-visible {
+    outline: 2px solid #64aed4;
 }
 
 .subtitle {

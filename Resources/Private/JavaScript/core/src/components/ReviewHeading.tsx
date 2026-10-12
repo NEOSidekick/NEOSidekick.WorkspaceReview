@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { useIntl } from '../intl';
 import styles from './ReviewHeading.module.css';
+import neosidekickLogo from '../../../../../Public/Images/neosidekick-logo.svg';
 
 const PLACEHOLDER = '\u0000';
 
@@ -18,17 +19,22 @@ export function ReviewHeading({ pageLabel, children }: { pageLabel?: string; chi
     );
     return (
         <div className={styles.head}>
-            <h1 className={styles.title}>
-                {pageLabel ? (
-                    <>
-                        {before}
-                        <i>{pageLabel}</i>
-                        {after}
-                    </>
-                ) : (
-                    translate('review.heading', 'Review changes')
-                )}
-            </h1>
+            <div className={styles.titleRow}>
+                <h1 className={styles.title}>
+                    {pageLabel ? (
+                        <>
+                            {before}
+                            <i>{pageLabel}</i>
+                            {after}
+                        </>
+                    ) : (
+                        translate('review.heading', 'Review changes')
+                    )}
+                </h1>
+                <a className={styles.brand} href="https://neosidekick.com/" target="_blank" rel="noopener noreferrer">
+                    <img src={neosidekickLogo} alt="NEOSidekick" width={118} height={28} />
+                </a>
+            </div>
             {children && <p className={styles.subtitle}>{children}</p>}
         </div>
     );

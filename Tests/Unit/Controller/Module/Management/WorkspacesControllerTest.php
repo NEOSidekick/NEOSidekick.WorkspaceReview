@@ -34,7 +34,7 @@ class WorkspacesControllerTest extends UnitTestCase
         ], $controller->getFrontendConfigurationForTest());
     }
 
-    public function visualCompareConfigurations(): array
+    public static function visualCompareConfigurations(): array
     {
         return [
             'automatic Fusion' => [null, false, true],

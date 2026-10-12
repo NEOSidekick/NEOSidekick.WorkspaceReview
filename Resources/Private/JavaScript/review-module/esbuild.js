@@ -18,6 +18,7 @@ const options = {
     },
     outdir: '../../../Public/Assets',
     bundle: true,
+    loader: { '.svg': 'dataurl' },
     minify: !isWatch,
     sourcemap: 'linked',
     legalComments: 'linked',
