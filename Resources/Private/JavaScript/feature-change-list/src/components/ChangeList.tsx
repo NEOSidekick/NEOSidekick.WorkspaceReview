@@ -19,13 +19,16 @@ import { PageSection } from './PageSection';
 /** The review stream: the toolbar and one section per changed page. */
 export function ChangeList() {
     const translate = useIntl();
-    const { pages, allPages, features, workspace, isFiltered, uris } = useReviewData();
+    const { pages, allPages, features, workspace, isFiltered, documentCount, uris } = useReviewData();
     const { viewMode } = useReviewState();
 
     // What is published where, and how much of it. A dimension variant of a
     // page is a review entry of its own, so it counts as a page of its own.
     const heading = (
-        <ReviewHeading pageLabel={isFiltered ? pages[0]?.node.label : undefined}>
+        <ReviewHeading
+            pageLabel={documentCount === 1 ? pages[0]?.node.label : undefined}
+            onSelectedPages={documentCount > 1}
+        >
             {workspace.title || workspace.name}
             <span className={styles.to} aria-hidden="true">
                 →
@@ -47,7 +50,9 @@ export function ChangeList() {
                     <p className={styles.notice} role="status">
                         <Icon icon="info-circle" />
                         <span>
-                            {translate('filter.noChanges', 'This page has no unpublished changes.')}{' '}
+                            {documentCount === 1
+                                ? translate('filter.noChanges', 'This page has no unpublished changes.')
+                                : translate('filter.noChangesOnPages', 'These pages have no unpublished changes.')}{' '}
                             {allPages.length > 0 && (
                                 <a href={uris.showAll}>
                                     {translate('filter.showAllChanges', 'Show all changes of the workspace')}

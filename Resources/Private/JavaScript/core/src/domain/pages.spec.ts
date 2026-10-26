@@ -11,6 +11,7 @@ import {
     moduleIndexUri,
     pageContextPath,
     parseDocumentFilter,
+    parseDocumentFilters,
 } from './pages';
 import type { TreeRow } from './pages';
 import type { Workspace } from '../types';
@@ -99,6 +100,18 @@ describe('document filter', () => {
         strictEqual(parseDocumentFilter(undefined), null);
     });
 
+    it('reads the list of the data attribute and narrows nothing without one', () => {
+        deepStrictEqual(parseDocumentFilters('["/sites/example/a@user-admin;language=en", "", "/sites/example/b"]'), [
+            { nodePath: '/sites/example/a', dimensions: 'language=en' },
+            { nodePath: '/sites/example/b', dimensions: null },
+        ]);
+        deepStrictEqual(parseDocumentFilters('[]'), []);
+        deepStrictEqual(parseDocumentFilters(''), []);
+        deepStrictEqual(parseDocumentFilters(undefined), []);
+        deepStrictEqual(parseDocumentFilters('{"document": "/sites/example/a"}'), []);
+        deepStrictEqual(parseDocumentFilters('not json'), []);
+    });
+
     it('matches the node path and, if given, the dimensions', () => {
         const english = parseDocumentFilter('/sites/example/a@live;language=en')!;
         strictEqual(matchesDocument(inLanguage('/sites/example/a', 'en'), english), true);
@@ -110,31 +123,61 @@ describe('document filter', () => {
         );
     });
 
+    const row = (key: string, depth: number, changedPage: TreeRow['page'], pageIndex: number): TreeRow => ({
+        key,
+        node: node(key),
+        depth,
+        hasChildren: true,
+        page: changedPage,
+        pageIndex,
+    });
+    const rows = [
+        row('root', 0, null, -1),
+        row('blog', 1, page('blog', '/sites/example/blog', 1), 0),
+        row('post', 2, page('post', '/sites/example/blog/post', 1), 1),
+        row('other', 1, page('other', '/sites/example/other', 1), 2),
+        row('team', 1, null, -1),
+        row('jobs', 2, page('jobs', '/sites/example/team/jobs', 1), 3),
+    ];
+    const summary = (filtered: TreeRow[]) =>
+        filtered.map((entry) => [entry.key, entry.page?.id ?? null, entry.pageIndex]);
+
     it('keeps the matching page with its ancestors and numbers it anew', () => {
-        const row = (key: string, depth: number, changedPage: TreeRow['page'], pageIndex: number): TreeRow => ({
-            key,
-            node: node(key),
-            depth,
-            hasChildren: true,
-            page: changedPage,
-            pageIndex,
-        });
-        const rows = [
-            row('root', 0, null, -1),
-            row('blog', 1, page('blog', '/sites/example/blog', 1), 0),
-            row('post', 2, page('post', '/sites/example/blog/post', 1), 1),
-            row('other', 1, page('other', '/sites/example/other', 1), 2),
-        ];
-        const filtered = filterTreeRows(rows, parseDocumentFilter('/sites/example/blog/post')!);
-        deepStrictEqual(
-            filtered.map((entry) => [entry.key, entry.page?.id ?? null, entry.pageIndex]),
-            [
-                ['root', null, -1],
-                // A changed ancestor is listed without its own changes.
-                ['blog', null, -1],
-                ['post', 'post', 0],
-            ],
+        const filtered = filterTreeRows(rows, [parseDocumentFilter('/sites/example/blog/post')!]);
+        deepStrictEqual(summary(filtered), [
+            ['root', null, -1],
+            // A changed ancestor is listed without its own changes.
+            ['blog', null, -1],
+            ['post', 'post', 0],
+        ]);
+    });
+
+    it('keeps every page matching one of several filters in tree order', () => {
+        const filtered = filterTreeRows(
+            rows,
+            ['/sites/example/team/jobs', '/sites/example/blog/post', '/sites/example/missing'].map((value) =>
+                parseDocumentFilter(value)!,
+            ),
         );
+        deepStrictEqual(summary(filtered), [
+            ['root', null, -1],
+            ['blog', null, -1],
+            ['post', 'post', 0],
+            ['team', null, -1],
+            ['jobs', 'jobs', 1],
+        ]);
+    });
+
+    it('lists a matching ancestor once, as a page with its own changes', () => {
+        const filtered = filterTreeRows(rows, [
+            parseDocumentFilter('/sites/example/blog/post')!,
+            parseDocumentFilter('/sites/example/blog')!,
+        ]);
+        deepStrictEqual(summary(filtered), [
+            ['root', null, -1],
+            ['blog', 'blog', 0],
+            ['post', 'post', 1],
+        ]);
     });
 });
 

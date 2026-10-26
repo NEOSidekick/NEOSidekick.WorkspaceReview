@@ -13,12 +13,14 @@ import type { ChangedPage, FeatureFlags, ModuleUris, PublishingAction, ViewMode,
 
 export interface ReviewData {
     workspace: Workspace;
-    /** The pages the review shows: all of them, or those of the document filter. */
+    /** The pages the review shows: all of them, or those of the document filters. */
     pages: ChangedPage[];
     /** Every changed page of the workspace, whatever the review shows. */
     allPages: ChangedPage[];
-    /** True while a document filter narrows the review. */
+    /** True while document filters narrow the review. */
     isFiltered: boolean;
+    /** The number of documents the review is narrowed to, 0 for the whole workspace. */
+    documentCount: number;
     treeRows: TreeRow[];
     features: FeatureFlags;
     uris: ModuleUris;
@@ -41,14 +43,14 @@ const ActionsContext = createContext<ReviewActions | null>(null);
 const DataContext = createContext<ReviewData | null>(null);
 
 interface ProviderProps extends Pick<ReviewData, 'workspace' | 'features' | 'uris'> {
-    documentFilter: DocumentFilter | null;
+    documentFilters: DocumentFilter[];
     children: React.ReactNode;
 }
 
 const changedPagesOf = (rows: TreeRow[]): ChangedPage[] =>
     rows.filter((row): row is TreeRow & { page: ChangedPage } => row.page !== null).map((row) => row.page);
 
-export function ReviewStateProvider({ workspace, features, uris, documentFilter, children }: ProviderProps) {
+export function ReviewStateProvider({ workspace, features, uris, documentFilters, children }: ProviderProps) {
     const storageRef = useRef<StorageLike | null>(null);
     if (storageRef.current === null) storageRef.current = safeLocalStorage();
     const storage = storageRef.current;
@@ -56,8 +58,8 @@ export function ReviewStateProvider({ workspace, features, uris, documentFilter,
     const allTreeRows = useMemo(() => collectTreeRows(workspace), [workspace]);
     const allPages = useMemo(() => changedPagesOf(allTreeRows), [allTreeRows]);
     const treeRows = useMemo(
-        () => (documentFilter ? filterTreeRows(allTreeRows, documentFilter) : allTreeRows),
-        [allTreeRows, documentFilter],
+        () => (documentFilters.length ? filterTreeRows(allTreeRows, documentFilters) : allTreeRows),
+        [allTreeRows, documentFilters],
     );
     const pages = useMemo(() => changedPagesOf(treeRows), [treeRows]);
 
@@ -109,8 +111,17 @@ export function ReviewStateProvider({ workspace, features, uris, documentFilter,
     }, [storage]);
 
     const data = useMemo<ReviewData>(
-        () => ({ workspace, pages, allPages, isFiltered: documentFilter !== null, treeRows, features, uris }),
-        [workspace, pages, allPages, documentFilter, treeRows, features, uris],
+        () => ({
+            workspace,
+            pages,
+            allPages,
+            isFiltered: documentFilters.length > 0,
+            documentCount: documentFilters.length,
+            treeRows,
+            features,
+            uris,
+        }),
+        [workspace, pages, allPages, documentFilters, treeRows, features, uris],
     );
 
     return (

@@ -46,6 +46,22 @@ class WorkspacesControllerTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function collectDocumentsCombinesBothArgumentsWithoutBlanksAndRepetitions(): void
+    {
+        self::assertSame(
+            ['/sites/site/a@user-admin;language=de', '/sites/site/b', '/sites/site/c'],
+            $this->createController()->collectDocumentsForTest(
+                '/sites/site/a@user-admin;language=de',
+                [' /sites/site/b ', '', '/sites/site/a@user-admin;language=de', ['nested'], '/sites/site/c']
+            )
+        );
+        self::assertSame([], $this->createController()->collectDocumentsForTest(null, []));
+        self::assertSame(['/sites/site/a'], $this->createController()->collectDocumentsForTest('/sites/site/a', []));
+    }
+
+    /**
      * The bug this guards against: another package's view configuration won and
      * declared no layout root, so Fluid derived the module layout from this
      * package - which ships none - and the module failed to render.
@@ -251,6 +267,11 @@ class WorkspacesControllerTest extends UnitTestCase
             public function completeRootPathsForTest(array $configuredPaths, string $type, bool $includeOwnPath = true): array
             {
                 return $this->completeRootPaths($configuredPaths, $type, $includeOwnPath);
+            }
+
+            public function collectDocumentsForTest(?string $document, array $documents): array
+            {
+                return $this->collectDocuments($document, $documents);
             }
 
             public function getFrontendConfigurationForTest(): array

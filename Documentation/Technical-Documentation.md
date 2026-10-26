@@ -45,31 +45,34 @@ The switch above the review stream, or **D**, toggles between the change list an
 
 Shortcuts stay off inside form controls, and modifier combinations are left to the browser.
 
-### Review a single page
+### Review selected pages
 
-The review accepts an optional `document` module argument with the context path of a document node. Another package, a bookmark or a message to a reviewer can link straight to the changes of one page:
+The review accepts the optional module arguments `document`, with the context path of one document node, and `documents`, with a list of them. Another package, a bookmark or a message to a reviewer can link straight to the changes of one page or of several pages that belong together:
 
 ```
 /neos/management/workspaces/show?moduleArguments[workspace][__identity]=user-admin&moduleArguments[document]=/sites/site/blog/post@user-admin%3Blanguage=de
+/neos/management/workspaces/show?moduleArguments[workspace][__identity]=user-admin&moduleArguments[documents][]=/sites/site/blog/post@user-admin%3Blanguage=de&moduleArguments[documents][]=/sites/site/about
 ```
 
-What the argument changes:
+Both arguments can be combined; repeated values count once.
 
-- **The review lists only that page.** The heading reads "Review changes on *Page title*", the subtitle counts its changed elements, and the page tree shows the page with the ancestors that lead to it.
-- **The batch buttons act on that page only.** "Publish all" and "Discard all" post everything shown through the batch form instead of calling the core actions for the whole workspace. Selecting single changes and the buttons of a single element work as in the full review.
-- **Other changes stay reachable.** If other pages have changes too, the footer says "There are more changes on other pages, show all" and links to the review without the argument.
-- **A page without changes says so.** Instead of an empty list, a notice states that the page has no unpublished changes and links to the whole workspace.
+What the arguments change:
+
+- **The review lists only those pages.** With one page the heading reads "Review changes on *Page title*", with several "Review changes on selected pages". The subtitle counts the shown pages and their changed elements, and the page tree shows the pages with the ancestors that lead to them, in tree order.
+- **The batch buttons act on those pages only.** "Publish all" and "Discard all" post everything shown through the batch form instead of calling the core actions for the whole workspace. Selecting single changes and the buttons of a single element work as in the full review.
+- **Other changes stay reachable.** If other pages have changes too, the footer says "There are more changes on other pages, show all" and links to the review without the arguments.
+- **Pages without changes are left out.** A requested page without unpublished changes is not listed. If none of them has changes, a notice says so instead of an empty list and links to the whole workspace.
 - **New pages are published with what they need.** A new page is published together with the new or moved pages it lives in, as in the full review, even though the filter hides them.
-- **Discard stays within the shown page.** Hidden ancestors needed for publishing are excluded from both "Discard all" and "Discard selected". The discard count reflects that narrower scope.
+- **Discard stays within the shown pages.** Hidden ancestors needed for publishing are excluded from both "Discard all" and "Discard selected". The discard count reflects that narrower scope.
 
-The value of the argument:
+The value of each entry:
 
 | Value | Matches |
 | --- | --- |
 | `/sites/site/blog/post@user-admin%3Blanguage=de` | that page in that dimension combination |
 | `/sites/site/blog/post` | every dimension variant of the page |
 
-The `;` of a context path has to be URL-encoded as `%3B`, because a query string ends an argument at a plain `;`. A context path cut off there arrives without its dimension part and is treated like the plain node path. The workspace part of the value is ignored; the review is about the workspace it was opened for.
+The `;` of a context path has to be URL-encoded as `%3B`, because a query string ends an argument at a plain `;`. A context path cut off there arrives without its dimension part and is treated like the plain node path. The workspace part of the value is ignored; the review is about the workspace it was opened for. Each entry of `documents` needs its own `[]`: a plain string is split at commas, which dimension fallback values contain.
 
 After publishing or discarding, the inherited core action returns to the review of the whole workspace.
 

@@ -4,7 +4,7 @@ import {
     ReviewApplicationWrapper,
     createTranslate,
     moduleIndexUri,
-    parseDocumentFilter,
+    parseDocumentFilters,
     parseFeatureFlags,
 } from '@neosidekick/workspace-review-core';
 import type { ModuleUris } from '@neosidekick/workspace-review-core';
@@ -42,7 +42,7 @@ function bootstrap(): void {
                 graphQlUri={root.dataset.graphql || ''}
                 workspaceName={workspaceName}
                 features={parseFeatureFlags(root.dataset.features)}
-                documentFilter={parseDocumentFilter(root.dataset.document)}
+                documentFilters={parseDocumentFilters(root.dataset.documents)}
                 uris={uris}
                 notify={notify}
             />
