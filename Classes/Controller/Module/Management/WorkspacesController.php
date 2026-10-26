@@ -117,17 +117,19 @@ class WorkspacesController extends NeosWorkspacesController
      * server alone can know: the endpoint, the feature flags and the module
      * URIs that carry the module argument namespace.
      *
-     * With a document the review is narrowed to that page: only its changes
-     * are listed, and the batch actions publish or discard only them. The
-     * value is the context path of the document node, or its node path to
-     * cover every dimension variant. The client applies it, because it needs
+     * With documents the review is narrowed to those pages: only their changes
+     * are listed, and the batch actions publish or discard only them. Each
+     * value is the context path of a document node, or its node path to cover
+     * every dimension variant. "document" takes one page, "documents" a list
+     * of them; both can be combined. The client applies them, because it needs
      * the whole review anyway to tell whether other pages have changes too.
      *
      * @param Workspace $workspace
      * @param string|null $document
+     * @param array $documents
      * @return void
      */
-    public function showAction(Workspace $workspace, ?string $document = null)
+    public function showAction(Workspace $workspace, ?string $document = null, array $documents = [])
     {
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspace,
@@ -140,9 +142,27 @@ class WorkspacesController extends NeosWorkspacesController
             'rebaseUri' => $this->buildModuleUri('rebaseAndRedirect', ['targetWorkspace' => $workspace]),
             'publishWorkspaceUri' => $this->buildModuleUri('publishWorkspace', ['workspace' => $workspace]),
             'discardWorkspaceUri' => $this->buildModuleUri('discardWorkspace', ['workspace' => $workspace]),
-            'document' => (string)$document,
+            'documents' => json_encode($this->collectDocuments($document, $documents), JSON_THROW_ON_ERROR),
             'showUri' => $this->buildModuleUri('show', ['workspace' => $workspace]),
         ]);
+    }
+
+    /**
+     * The values of both document arguments in the order given, without blanks
+     * and repetitions. The list comes from the query string as it is, so an
+     * entry that is not a string - a nested array - is dropped.
+     *
+     * @param array<mixed> $documents
+     * @return string[]
+     */
+    protected function collectDocuments(?string $document, array $documents): array
+    {
+        $values = array_filter(
+            array_merge([$document], $documents),
+            static fn ($value): bool => is_string($value) && trim($value) !== ''
+        );
+
+        return array_values(array_unique(array_map('trim', $values)));
     }
 
     /**

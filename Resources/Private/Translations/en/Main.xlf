@@ -378,6 +378,12 @@
             <trans-unit id="review.headingOnPage" xml:space="preserve">
                 <source>Review changes on {0}</source>
             </trans-unit>
+            <trans-unit id="review.headingOnSelectedPages" xml:space="preserve">
+                <source>Review changes on selected pages</source>
+            </trans-unit>
+            <trans-unit id="filter.noChangesOnPages" xml:space="preserve">
+                <source>These pages have no unpublished changes.</source>
+            </trans-unit>
             <trans-unit id="actions.scopeHelp" xml:space="preserve">
                 <source>What will be published or discarded?</source>
             </trans-unit>

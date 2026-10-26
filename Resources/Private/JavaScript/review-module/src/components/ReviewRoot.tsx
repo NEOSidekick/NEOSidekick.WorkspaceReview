@@ -17,13 +17,13 @@ interface ReviewRootProps {
     graphQlUri: string;
     workspaceName: string;
     features: FeatureFlags;
-    documentFilter: DocumentFilter | null;
+    documentFilters: DocumentFilter[];
     uris: ModuleUris;
     notify: (message: string) => void;
 }
 
 /** Loads the single review query and hands its result to the state provider. */
-export function ReviewRoot({ graphQlUri, workspaceName, features, documentFilter, uris, notify }: ReviewRootProps) {
+export function ReviewRoot({ graphQlUri, workspaceName, features, documentFilters, uris, notify }: ReviewRootProps) {
     const translate = useIntl();
     const { data, loading, failed, refetch } = useWorkspaceQuery(graphQlUri, workspaceName, notify);
 
@@ -49,7 +49,12 @@ export function ReviewRoot({ graphQlUri, workspaceName, features, documentFilter
     }
 
     return (
-        <ReviewStateProvider workspace={data.workspace} features={features} uris={uris} documentFilter={documentFilter}>
+        <ReviewStateProvider
+            workspace={data.workspace}
+            features={features}
+            uris={uris}
+            documentFilters={documentFilters}
+        >
             <App />
         </ReviewStateProvider>
     );

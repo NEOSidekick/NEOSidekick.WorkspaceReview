@@ -70,6 +70,25 @@ export function parseDocumentFilter(value: string | null | undefined): DocumentF
     return { nodePath: document.slice(0, separator), dimensions };
 }
 
+/**
+ * Reads the JSON list of the root's `data-documents` attribute: the values of
+ * the "document" and "documents" arguments, each read like a single one. An
+ * empty list - or an unreadable one - leaves the review unfiltered.
+ */
+export function parseDocumentFilters(raw: string | null | undefined): DocumentFilter[] {
+    let values: unknown;
+    try {
+        values = JSON.parse(raw || '[]');
+    } catch (error) {
+        return [];
+    }
+    if (!Array.isArray(values)) return [];
+    return values.flatMap((value) => {
+        const filter = typeof value === 'string' ? parseDocumentFilter(value) : null;
+        return filter ? [filter] : [];
+    });
+}
+
 export function matchesDocument(
     page: { nodePath: string; changes: Pick<NodeChange, 'contextPath'>[] },
     filter: DocumentFilter,
@@ -81,17 +100,20 @@ export function matchesDocument(
 }
 
 /**
- * The rows of the matching pages with the ancestors that lead to them,
- * numbered anew. An ancestor that has changes of its own is listed like an
- * unchanged one, because its changes are not part of the narrowed review.
+ * The rows of the pages matching any of the filters with the ancestors that
+ * lead to them, numbered anew and kept in tree order. An ancestor that has
+ * changes of its own is listed like an unchanged one, because its changes are
+ * not part of the narrowed review - unless a filter matches it too, which
+ * lists it as a page before its descendants.
  */
-export function filterTreeRows(rows: TreeRow[], filter: DocumentFilter): TreeRow[] {
+export function filterTreeRows(rows: TreeRow[], filters: DocumentFilter[]): TreeRow[] {
     const result: TreeRow[] = [];
     const ancestors: TreeRow[] = [];
     let pageIndex = 0;
     rows.forEach((row) => {
         while (ancestors.length && ancestors[ancestors.length - 1].depth >= row.depth) ancestors.pop();
-        if (row.page && matchesDocument(row.page, filter)) {
+        const { page } = row;
+        if (page && filters.some((filter) => matchesDocument(page, filter))) {
             ancestors.forEach((ancestor) => {
                 if (!result.some((listed) => listed.key === ancestor.key)) {
                     result.push({ ...ancestor, page: null, pageIndex: -1 });

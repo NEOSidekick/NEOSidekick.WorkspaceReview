@@ -506,6 +506,14 @@
                 <source>Review changes on {0}</source>
                 <target>Änderungen prüfen auf {0}</target>
             </trans-unit>
+            <trans-unit id="review.headingOnSelectedPages" xml:space="preserve">
+                <source>Review changes on selected pages</source>
+                <target>Änderungen prüfen auf ausgewählten Seiten</target>
+            </trans-unit>
+            <trans-unit id="filter.noChangesOnPages" xml:space="preserve">
+                <source>These pages have no unpublished changes.</source>
+                <target>Diese Seiten haben keine unveröffentlichten Änderungen.</target>
+            </trans-unit>
             <trans-unit id="actions.scopeHelp" xml:space="preserve">
                 <source>What will be published or discarded?</source>
                 <target>Was wird veröffentlicht oder verworfen?</target>
