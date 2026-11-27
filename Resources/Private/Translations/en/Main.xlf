@@ -164,8 +164,8 @@
             <trans-unit id="actions.editPage" xml:space="preserve">
                 <source>Edit the page</source>
             </trans-unit>
-            <trans-unit id="actions.back" xml:space="preserve">
-                <source>Back</source>
+            <trans-unit id="actions.goToWorkspaces" xml:space="preserve">
+                <source>Go to workspaces</source>
             </trans-unit>
             <trans-unit id="actions.confirmDiscardAll" xml:space="preserve">
                 <source>Really discard every change in “{0}”?</source>

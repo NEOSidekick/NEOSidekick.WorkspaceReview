@@ -82,7 +82,7 @@ export function PublishingFooter() {
                     </button>
                 ) : (
                     <a className={styles.back} href={uris.index}>
-                        {translate('actions.back', 'Back')}
+                        {translate('actions.goToWorkspaces', 'Go to workspaces')}
                     </a>
                 )}
             </div>

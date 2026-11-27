@@ -85,7 +85,7 @@ The module argument `presentation=popup` shows the review in a popup window, for
 ```
 
 - **No backend chrome.** The top bar with the menu and the user and the breadcrumb are hidden, and the page has less padding.
-- **Close instead of Back.** The footer button closes the window. A window the browser does not let a script close goes to the same review as a module page.
+- **Close instead of "Go to workspaces".** The footer button closes the window. A window the browser does not let a script close goes to the same review as a module page.
 - **The editor opens behind the popup.** The edit button of a page opens the Neos editor in the window that opened the popup.
 - **Publishing returns to the popup.** Every action - also "Publish all" and "Discard all" without a page filter - redirects back to the popup review with its arguments.
 - **It closes once nothing is left.** When an action leaves no change on the reviewed pages, the popup closes. Opened without changes, it stays open.

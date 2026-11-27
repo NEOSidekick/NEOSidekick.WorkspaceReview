@@ -218,9 +218,9 @@
                 <source>Edit the page</source>
                 <target>Seite bearbeiten</target>
             </trans-unit>
-            <trans-unit id="actions.back" xml:space="preserve">
-                <source>Back</source>
-                <target>Zurück</target>
+            <trans-unit id="actions.goToWorkspaces" xml:space="preserve">
+                <source>Go to workspaces</source>
+                <target>Zu den Arbeitsbereichen</target>
             </trans-unit>
             <trans-unit id="actions.confirmDiscardAll" xml:space="preserve">
                 <source>Really discard every change in “{0}”?</source>
