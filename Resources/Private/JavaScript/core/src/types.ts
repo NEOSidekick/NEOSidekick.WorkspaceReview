@@ -120,6 +120,8 @@ export interface ModuleUris {
     /** The review of the whole workspace, without a document filter. */
     showAll: string;
     index: string;
+    /** The same review as a module page, where a popup goes that cannot close itself. */
+    exit: string;
 }
 
 export type ViewMode = 'list' | 'visual';

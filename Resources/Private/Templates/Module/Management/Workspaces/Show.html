@@ -6,6 +6,18 @@
 
 <f:section name="content">
 
+	<f:comment>In popup mode the backend chrome goes: the top bar with the menu
+	and the user, and the breadcrumb. They are part of the layout of every
+	module, so they are hidden here, in the page as the server sends it,
+	before anything is painted.</f:comment>
+	<f:if condition="{presentation} == 'popup'">
+		<style>
+			#neos-top-bar, .neos-breadcrumb, #neos-application .neos-menu { display: none !important; }
+			.neos-module-wrap { padding: 24px 24px 24px 24px !important; }
+			.neos-module-wrap .neos-footer { margin: 24px -24px -24px !important; }
+		</style>
+	</f:if>
+
 	<f:if condition="{hasChanges}">
 		<f:then>
 
@@ -14,10 +26,10 @@
 			from the outside through the "form" attribute, so the review root can
 			be a sibling of them instead of being nested in one of them. Fluid
 			adds the CSRF token and the referrer fields to each form.</f:comment>
-			<f:form id="publishOrDiscardNodes" action="publishOrDiscardNodes">
+			<f:form id="publishOrDiscardNodes" action="publishOrDiscardNodes" arguments="{reviewArguments}">
 				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace}"/>
 			</f:form>
-			<f:form id="discardReviewNodes" action="publishOrDiscardNodes">
+			<f:form id="discardReviewNodes" action="publishOrDiscardNodes" arguments="{reviewArguments}">
 				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace}"/>
 			</f:form>
 			<f:form action="index" id="postHelper" method="post"></f:form>
@@ -33,14 +45,29 @@
 				 data-uri-publish-workspace="{publishWorkspaceUri}"
 				 data-uri-discard-workspace="{discardWorkspaceUri}"
 				 data-uri-show="{showUri}"
-				 data-documents="{documents}"></div>
+				 data-documents="{documents}"
+				 data-presentation="{presentation}"
+				 data-popup-results="{popupResults}"
+				 data-uri-exit="{exitUri}"></div>
 		</f:then>
 		<f:else>
 			<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'Neos.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
 			<p>{neos:backend.translate(id: 'workspaces.thereAreNoUnpublishedChanges', source: 'Modules', package: 'Neos.Neos')}</p>
 			<div class="neos-footer">
 				<div class="pull-left">
-					<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', source: 'Main', package: 'Neos.Neos')}</f:link.action>
+					<f:if condition="{presentation} == 'popup'">
+						<f:then>
+							<f:comment>Closed by the review bundle, which also reports
+							the results that led here and closes the popup by itself
+							when there are any.</f:comment>
+							<button type="button" class="neos-button" id="workspace-review-popup"
+									data-popup-results="{popupResults}"
+									data-uri-exit="{exitUri}">{neos:backend.translate(id: 'actions.close', value: 'Close', source: 'Main', package: 'NEOSidekick.WorkspaceReview')}</button>
+						</f:then>
+						<f:else>
+							<f:link.action action="index" class="neos-button">{neos:backend.translate(id: 'back', source: 'Main', package: 'Neos.Neos')}</f:link.action>
+						</f:else>
+					</f:if>
 				</div>
 			</div>
 		</f:else>

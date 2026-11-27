@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NEOSidekick\WorkspaceReview\Tests\Unit\Controller\Module\Management;
 
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Package\PackageManager;
@@ -11,6 +12,7 @@ use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\FluidAdaptor\View\TemplatePaths;
 use Neos\FluidAdaptor\View\TemplateView;
 use NEOSidekick\WorkspaceReview\Controller\Module\Management\WorkspacesController;
+use NEOSidekick\WorkspaceReview\Domain\Service\PopupResultStore;
 
 class WorkspacesControllerTest extends UnitTestCase
 {
@@ -59,6 +61,73 @@ class WorkspacesControllerTest extends UnitTestCase
         );
         self::assertSame([], $this->createController()->collectDocumentsForTest(null, []));
         self::assertSame(['/sites/site/a'], $this->createController()->collectDocumentsForTest('/sites/site/a', []));
+    }
+
+    /**
+     * @test
+     */
+    public function aPartialActionReturnsToTheFilteredReviewInBothPresentations(): void
+    {
+        $workspace = $this->createMock(Workspace::class);
+        foreach ([false, true] as $popup) {
+            $controller = $this->createController();
+            $controller->prepareForTest($workspace, ['/sites/site/a'], $popup, null);
+            $expected = ['workspace' => $workspace, 'documents' => ['/sites/site/a']];
+            if ($popup) {
+                $expected['presentation'] = 'popup';
+            }
+            self::assertSame(
+                ['show', $expected],
+                $controller->redirectToReviewForTest('show', null, ['workspace' => $workspace])
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function onlyThePopupReturnsToTheReviewAfterTheWholeWorkspaceWasPublished(): void
+    {
+        $workspace = $this->createMock(Workspace::class);
+        $controller = $this->createController();
+        $controller->prepareForTest($workspace, [], false, null);
+        self::assertSame(['index', []], $controller->redirectToReviewForTest('index', null, []));
+
+        $controller = $this->createController();
+        $controller->prepareForTest($workspace, [], true, null);
+        self::assertSame(
+            ['show', ['workspace' => $workspace, 'presentation' => 'popup']],
+            $controller->redirectToReviewForTest('index', null, [])
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function thePopupResultIsStoredOnlyWhenTheActionRedirectsAndOnlyOnce(): void
+    {
+        $workspace = $this->createMock(Workspace::class);
+        $store = new PopupResultStore();
+        $controller = $this->createController();
+        $this->inject($controller, 'popupResultStore', $store);
+        $controller->prepareForTest($workspace, [], true, ['resultId' => 'r1']);
+
+        self::assertSame([], $store->takeAll());
+        $controller->redirectToReviewForTest('show', null, []);
+        $controller->redirectToReviewForTest('show', null, []);
+        self::assertSame([['resultId' => 'r1']], $store->takeAll());
+        self::assertSame([], $store->takeAll());
+    }
+
+    /**
+     * @test
+     */
+    public function redirectsElsewhereAreLeftAlone(): void
+    {
+        $controller = $this->createController();
+        self::assertSame(['index', []], $controller->redirectToReviewForTest('index', null, []));
+        $controller->prepareForTest($this->createMock(Workspace::class), [], true, null);
+        self::assertSame(['index', []], $controller->redirectToReviewForTest('index', 'Other', []));
     }
 
     /**
@@ -282,6 +351,17 @@ class WorkspacesControllerTest extends UnitTestCase
             public function initializeViewForTest(ViewInterface $view): void
             {
                 $this->initializeView($view);
+            }
+
+            public function prepareForTest(Workspace $workspace, array $documents, bool $popup, ?array $result): void
+            {
+                $this->reviewRedirect = ['workspace' => $workspace, 'documents' => $documents, 'popup' => $popup];
+                $this->pendingPopupResult = $result;
+            }
+
+            public function redirectToReviewForTest(string $actionName, ?string $controllerName, array $arguments): array
+            {
+                return $this->redirectToReview($actionName, $controllerName, $arguments);
             }
         };
     }

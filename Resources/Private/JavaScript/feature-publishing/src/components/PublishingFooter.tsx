@@ -8,6 +8,7 @@ import {
     NODES_FIELD_NAME,
     POST_HELPER_FORM_ID,
     PUBLISH_FORM_ID,
+    closePopup,
     countChangedNodes,
     useIntl,
     useReviewActions,
@@ -30,7 +31,7 @@ type Confirmation = 'none' | 'selected' | 'workspace' | 'shown';
  */
 export function PublishingFooter() {
     const translate = useIntl();
-    const { workspace, uris, pages, allPages, isFiltered } = useReviewData();
+    const { workspace, uris, pages, allPages, isFiltered, isPopup } = useReviewData();
     const reviewActions = useReviewActions();
     const { singleAction } = useReviewState();
     const { selection, toggleAll } = useSelection();
@@ -75,9 +76,15 @@ export function PublishingFooter() {
     return (
         <div className={styles.footer}>
             <div className={styles.group}>
-                <a className={styles.back} href={uris.index}>
-                    {translate('actions.back', 'Back')}
-                </a>
+                {isPopup ? (
+                    <button type="button" className={styles.back} onClick={() => closePopup(uris.exit)}>
+                        {translate('actions.close', 'Close')}
+                    </button>
+                ) : (
+                    <a className={styles.back} href={uris.index}>
+                        {translate('actions.back', 'Back')}
+                    </a>
+                )}
             </div>
             <div className={styles.group}>
                 {hasOtherChanges && (

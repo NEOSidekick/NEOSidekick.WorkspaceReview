@@ -74,7 +74,34 @@ The value of each entry:
 
 The `;` of a context path has to be URL-encoded as `%3B`, because a query string ends an argument at a plain `;`. A context path cut off there arrives without its dimension part and is treated like the plain node path. The workspace part of the value is ignored; the review is about the workspace it was opened for. Each entry of `documents` needs its own `[]`: a plain string is split at commas, which dimension fallback values contain.
 
-After publishing or discarding, the inherited core action returns to the review of the whole workspace.
+After publishing or discarding selected changes, the review returns to the same pages: the arguments are kept.
+
+### Review as a popup
+
+The module argument `presentation=popup` shows the review in a popup window, for example one another package opens with `window.open()`:
+
+```
+/neos/management/workspaces/show?moduleArguments[workspace][__identity]=user-admin&moduleArguments[presentation]=popup&moduleArguments[documents][]=/sites/site/about
+```
+
+- **No backend chrome.** The top bar with the menu and the user and the breadcrumb are hidden, and the page has less padding.
+- **Close instead of Back.** The footer button closes the window. A window the browser does not let a script close goes to the same review as a module page.
+- **The editor opens behind the popup.** The edit button of a page opens the Neos editor in the window that opened the popup.
+- **Publishing returns to the popup.** Every action - also "Publish all" and "Discard all" without a page filter - redirects back to the popup review with its arguments.
+- **It closes once nothing is left.** When an action leaves no change on the reviewed pages, the popup closes. Opened without changes, it stays open.
+- **It reports what was done.** The page after each action posts a message to `window.opener`, restricted to the page's own origin. The result is kept in the session for that one page view, so a reload or the back button sends nothing twice. Without an opener nothing is sent.
+
+```js
+window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin || event.data?.type !== 'workspace-review:result') return;
+    // event.data.version === 1
+    // event.data.result: { resultId, action: 'published' | 'discarded', workspace, targetWorkspace,
+    //   remainingInScope, scopeResolved, changes: [{ nodeIdentifier, contextPath, nodePath, nodeType,
+    //   label, removed, dimensions, documentIdentifier, documentPath, documentLabel }] }
+});
+```
+
+`remainingInScope` counts the changes still pending on the reviewed pages - the whole workspace without a page filter. A failing action shows the error page of Flow, as in the module, and reports nothing.
 
 ## Configuration
 

@@ -226,6 +226,10 @@
                 <source>Really discard every change in “{0}”?</source>
                 <target>Wirklich alle Änderungen in „{0}“ verwerfen?</target>
             </trans-unit>
+            <trans-unit id="actions.close" xml:space="preserve">
+                <source>Close</source>
+                <target>Schließen</target>
+            </trans-unit>
             <trans-unit id="actions.cancel" xml:space="preserve">
                 <source>Cancel</source>
                 <target>Abbrechen</target>

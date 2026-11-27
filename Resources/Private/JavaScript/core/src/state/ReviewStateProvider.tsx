@@ -24,6 +24,8 @@ export interface ReviewData {
     treeRows: TreeRow[];
     features: FeatureFlags;
     uris: ModuleUris;
+    /** True while the review is shown as a popup window (`presentation=popup`). */
+    isPopup: boolean;
 }
 
 export interface ReviewActions {
@@ -43,6 +45,7 @@ const ActionsContext = createContext<ReviewActions | null>(null);
 const DataContext = createContext<ReviewData | null>(null);
 
 interface ProviderProps extends Pick<ReviewData, 'workspace' | 'features' | 'uris'> {
+    isPopup?: boolean;
     documentFilters: DocumentFilter[];
     children: React.ReactNode;
 }
@@ -50,7 +53,14 @@ interface ProviderProps extends Pick<ReviewData, 'workspace' | 'features' | 'uri
 const changedPagesOf = (rows: TreeRow[]): ChangedPage[] =>
     rows.filter((row): row is TreeRow & { page: ChangedPage } => row.page !== null).map((row) => row.page);
 
-export function ReviewStateProvider({ workspace, features, uris, documentFilters, children }: ProviderProps) {
+export function ReviewStateProvider({
+    workspace,
+    features,
+    uris,
+    documentFilters,
+    isPopup = false,
+    children,
+}: ProviderProps) {
     const storageRef = useRef<StorageLike | null>(null);
     if (storageRef.current === null) storageRef.current = safeLocalStorage();
     const storage = storageRef.current;
@@ -120,8 +130,9 @@ export function ReviewStateProvider({ workspace, features, uris, documentFilters
             treeRows,
             features,
             uris,
+            isPopup,
         }),
-        [workspace, pages, allPages, documentFilters, treeRows, features, uris],
+        [workspace, pages, allPages, documentFilters, treeRows, features, uris, isPopup],
     );
 
     return (
