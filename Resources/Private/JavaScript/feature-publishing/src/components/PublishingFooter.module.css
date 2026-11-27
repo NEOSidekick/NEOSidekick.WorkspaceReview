@@ -67,3 +67,11 @@
     color: var(--theme-colors-PrimaryBlueHover);
     text-decoration: underline;
 }
+
+/* The close button of a popup looks like the back link it replaces. */
+button.back {
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}

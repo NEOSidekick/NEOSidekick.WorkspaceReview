@@ -170,6 +170,9 @@
             <trans-unit id="actions.confirmDiscardAll" xml:space="preserve">
                 <source>Really discard every change in “{0}”?</source>
             </trans-unit>
+            <trans-unit id="actions.close" xml:space="preserve">
+                <source>Close</source>
+            </trans-unit>
             <trans-unit id="actions.cancel" xml:space="preserve">
                 <source>Cancel</source>
             </trans-unit>

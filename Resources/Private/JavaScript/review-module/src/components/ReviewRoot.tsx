@@ -8,7 +8,7 @@ import {
     useIntl,
     useWorkspaceQuery,
 } from '@neosidekick/workspace-review-core';
-import type { DocumentFilter, FeatureFlags, ModuleUris } from '@neosidekick/workspace-review-core';
+import type { DocumentFilter, FeatureFlags, ModuleUris, PopupResult } from '@neosidekick/workspace-review-core';
 
 import styles from './App.module.css';
 import { App } from './App';
@@ -19,11 +19,23 @@ interface ReviewRootProps {
     features: FeatureFlags;
     documentFilters: DocumentFilter[];
     uris: ModuleUris;
+    isPopup: boolean;
+    /** What the publishing action that led here did; only ever set in a popup. */
+    popupResults: PopupResult[];
     notify: (message: string) => void;
 }
 
 /** Loads the single review query and hands its result to the state provider. */
-export function ReviewRoot({ graphQlUri, workspaceName, features, documentFilters, uris, notify }: ReviewRootProps) {
+export function ReviewRoot({
+    graphQlUri,
+    workspaceName,
+    features,
+    documentFilters,
+    uris,
+    isPopup,
+    popupResults,
+    notify,
+}: ReviewRootProps) {
     const translate = useIntl();
     const { data, loading, failed, refetch } = useWorkspaceQuery(graphQlUri, workspaceName, notify);
 
@@ -54,8 +66,9 @@ export function ReviewRoot({ graphQlUri, workspaceName, features, documentFilter
             features={features}
             uris={uris}
             documentFilters={documentFilters}
+            isPopup={isPopup}
         >
-            <App />
+            <App popupResults={popupResults} />
         </ReviewStateProvider>
     );
 }

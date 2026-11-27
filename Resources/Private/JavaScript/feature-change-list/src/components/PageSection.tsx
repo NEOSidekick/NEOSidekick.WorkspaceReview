@@ -4,6 +4,8 @@ import {
     PAGE_ATTRIBUTE,
     POST_HELPER_FORM_ID,
     appendQueryArgument,
+    focusOpener,
+    openerTargetName,
     pageContextPath,
     useIntl,
     useReviewActions,
@@ -27,7 +29,7 @@ interface PageSectionProps {
 export function PageSection({ page, pageIndex }: PageSectionProps) {
     const translate = useIntl();
     const actions = useReviewActions();
-    const { uris, features } = useReviewData();
+    const { uris, features, isPopup } = useReviewData();
     const { collapsed, viewMode } = useReviewState();
     const isCollapsed = collapsed[page.id] === true;
     const contextPath = pageContextPath(page);
@@ -66,6 +68,18 @@ export function PageSection({ page, pageIndex }: PageSectionProps) {
                             style="lighter"
                             form={POST_HELPER_FORM_ID}
                             formAction={appendQueryArgument(uris.rebase, 'moduleArguments[targetNode]', contextPath)}
+                            onClick={
+                                isPopup
+                                    ? (event: React.MouseEvent<HTMLButtonElement>) => {
+                                          // The editor opens in the window that opened the
+                                          // popup, not in the popup itself.
+                                          const target = openerTargetName();
+                                          if (!target) return;
+                                          event.currentTarget.formTarget = target;
+                                          focusOpener();
+                                      }
+                                    : undefined
+                            }
                             title={translate('actions.editPage', 'Edit the page')}
                         >
                             <Icon icon="pencil-alt" label={translate('actions.editPage', 'Edit the page')} />

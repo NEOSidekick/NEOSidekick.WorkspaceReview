@@ -6,6 +6,7 @@ export * from './counts';
 export * from './graphql';
 export * from './query';
 export * from './visualRegistry';
+export * from './popup';
 export * from './ReviewApplicationWrapper';
 export * from './domain/features';
 export * from './domain/pages';

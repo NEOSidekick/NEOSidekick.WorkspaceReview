@@ -23,7 +23,7 @@ const TITLE_ID = 'neosidekick-review-pages-title';
  */
 export function PageTree() {
     const translate = useIntl();
-    const { treeRows } = useReviewData();
+    const { treeRows, isPopup } = useReviewData();
     const { activePageIndex } = useReviewState();
     const actions = useReviewActions();
     const listRef = useRef<HTMLUListElement>(null);
@@ -37,7 +37,8 @@ export function PageTree() {
 
     return (
         <div className={styles.column}>
-            <BackendBreadcrumb />
+            {/* A popup shows no backend chrome, the breadcrumb included. */}
+            {!isPopup && <BackendBreadcrumb />}
             <nav className={styles.sidebar} aria-labelledby={TITLE_ID}>
                 <div className={styles.header}>
                     <h2 className={styles.title} id={TITLE_ID}>
